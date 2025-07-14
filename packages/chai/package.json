@@ -1,0 +1,34 @@
+{
+  "name": "@chaibuilder/nextjs",
+  "version": "0.0.1-beta.1",
+  "description": "Chai Builder NextJS Package",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Suraj Air",
+  "email": "suraj@chaibuilder.com",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "next": "^15.3.0",
+    "react": "^19",
+    "react-dom": "^19",
+    "@chaibuilder/pages": "0.7.6",
+    "@chaibuilder/sdk": "2.3.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}

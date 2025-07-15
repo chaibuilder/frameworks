@@ -2,11 +2,11 @@
 
 import ChaiBuilderPages from "@chaibuilder/pages";
 
-import React from "react";
-
 const Logo = () => <h1 className="text-xl font-bold">Chai Builder</h1>;
 
-export default function ChaiBuilder() {
+// Adding explicit type annotation to fix the portability warning
+// Using a more compatible approach with 'any' to resolve the portability issue
+export default function ChaiBuilder(): any {
   return (
     <ChaiBuilderPages
       getPreviewUrl={(slug: string) => {

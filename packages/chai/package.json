@@ -1,11 +1,13 @@
 {
-  "name": "@chaibuilder/nextjs",
+  "name": "chai-next",
   "version": "0.0.1-beta.1",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsup src/index.tsx --watch --format esm,cjs",
+    "build": "tsup src/index.tsx --dts --format esm,cjs"
   },
   "keywords": [],
   "author": "Suraj Air",
@@ -14,6 +16,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "private": false,
   "peerDependencies": {
     "next": "^15.3.0",
     "react": "^19",
@@ -30,5 +33,10 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "5.8.2",
+    "@repo/typescript-config": "workspace:*"
+  }
 }

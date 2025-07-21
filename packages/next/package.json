@@ -21,8 +21,8 @@
     "next": "^15.3.0",
     "react": "^19",
     "react-dom": "^19",
-    "@chaibuilder/pages": "0.7.6",
-    "@chaibuilder/sdk": "2.3.3"
+    "@chaibuilder/pages": "0.8.3",
+    "@chaibuilder/sdk": "2.3.6"
   },
   "exports": {
     "./client": {

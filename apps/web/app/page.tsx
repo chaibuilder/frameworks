@@ -18,8 +18,7 @@ export default function Page() {
           Chai Builder
         </h1>
         <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-          Create beautiful, responsive websites without writing a single line of
-          code.
+          Create beautiful, responsive websites. Low Code Website Builder.
         </p>
 
         <div className="flex gap-4 justify-center">

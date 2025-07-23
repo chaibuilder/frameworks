@@ -8,10 +8,10 @@ export * from "@chaibuilder/pages";
 export * from "@chaibuilder/sdk/ui";
 
 // Use a type assertion to avoid the TypeScript error with interfaces
-export const ChaiBuilderPagesNext = dynamic(
+export const ChaiBuilder = dynamic(
   () =>
     import("@chaibuilder/pages").then((mod) => mod.default) as Promise<FC<any>>,
   { ssr: false }
 );
 
-export default ChaiBuilderPagesNext;
+export default ChaiBuilder;

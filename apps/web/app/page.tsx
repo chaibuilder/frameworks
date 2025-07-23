@@ -1,7 +1,8 @@
 "use client";
-import ChaiBuilderPagesNext from "chai-next";
-import "chai-next/styles";
+
+import ChaiBuilder from "chai-next";
+import "chai-next/builder-styles";
 
 export default function Page() {
-  return <ChaiBuilderPagesNext />;
+  return <ChaiBuilder />;
 }

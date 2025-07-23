@@ -41,7 +41,7 @@
       "import": "./dist/server/index.js",
       "require": "./dist/server/index.cjs"
     },
-    "./styles": {
+    "./builder-styles": {
       "import": "./dist/client/index.css",
       "require": "./dist/client/index.css"
     }

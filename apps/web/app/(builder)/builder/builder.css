@@ -1,0 +1,13 @@
+@config "../../../builder.tailwind.ts";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.uc-content {
+  padding: 0 !important;
+}
+/* #TODO: Remove this once we have a better way to handle pointer-events */
+body {
+  pointer-events: all !important;
+}

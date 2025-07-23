@@ -18,30 +18,40 @@
   },
   "private": false,
   "peerDependencies": {
-    "next": "^15.3.0",
+    "@chaibuilder/pages": "0.8.5",
+    "@chaibuilder/sdk": "2.3.7",
+    "next": "^15.4.2",
     "react": "^19",
-    "react-dom": "^19",
-    "@chaibuilder/pages": "0.8.3",
-    "@chaibuilder/sdk": "2.3.6"
+    "react-dom": "^19"
   },
   "exports": {
-    "./client": {
+    ".": {
       "types": "./dist/client/index.d.ts",
       "import": "./dist/client/index.js",
       "require": "./dist/client/index.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
     },
     "./server": {
       "types": "./dist/server/index.d.ts",
       "import": "./dist/server/index.js",
       "require": "./dist/server/index.cjs"
+    },
+    "./styles": {
+      "import": "./dist/styles/index.css",
+      "require": "./dist/styles/index.css"
     }
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.30",
     "tsup": "^8.0.1",
-    "typescript": "5.8.2",
-    "@repo/typescript-config": "workspace:*"
+    "typescript": "5.8.2"
   }
 }

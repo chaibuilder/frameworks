@@ -7,6 +7,6 @@
     "skipLibCheck": true,
     "moduleResolution": "NodeNext"
   },
-  "include": ["client", "server"],
+  "include": ["src/client", "src/server"],
   "exclude": ["dist", "build", "node_modules"]
 }

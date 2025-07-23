@@ -31,13 +31,13 @@ export const builderApiHandler = (apiKey: string) => {
       ) as string;
       const response = await chaiBuilderPages.handle(requestBody, authToken);
 
+      if (has(response, "error")) {
+        return NextResponse.json(response, { status: response.status });
+      }
+
       const tags = get(response, "tags", []);
       for (const tag of tags) {
         revalidateTag(tag);
-      }
-
-      if (has(response, "error")) {
-        return NextResponse.json(response, { status: response.status });
       }
       return NextResponse.json(response);
     } catch (error) {

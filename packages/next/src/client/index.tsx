@@ -1,4 +1,5 @@
 "use client";
+import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
 import dynamic from "next/dynamic";
 import type { FC } from "react";
 import "../../styles";
@@ -14,4 +15,34 @@ export const ChaiBuilder = dynamic(
   { ssr: false }
 );
 
-export default ChaiBuilder;
+type ChaiBuilderProps = {
+  logo?: React.FC;
+  apiUrl?: string;
+  getPreviewUrl?: (slug: string) => string;
+  getLiveUrl?: (slug: string) => string;
+} & Pick<
+  ChaiBuilderEditorProps,
+  | "onError"
+  | "translations"
+  | "locale"
+  | "htmlDir"
+  | "autoSaveSupport"
+  | "autoSaveInterval"
+  | "fallbackLang"
+  | "languages"
+  | "themePresets"
+>;
+
+const API_URL = "/builder/api";
+
+export default (props: ChaiBuilderProps) => {
+  const builderApiUrl = props.apiUrl ?? API_URL;
+  return (
+    <ChaiBuilder
+      apiUrl={builderApiUrl}
+      usersApiUrl={builderApiUrl}
+      assetsApiUrl={builderApiUrl}
+      {...props}
+    />
+  );
+};

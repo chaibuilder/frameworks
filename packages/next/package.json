@@ -31,9 +31,9 @@
       "require": "./dist/client/index.cjs"
     },
     "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.cjs"
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "require": "./dist/utils.cjs"
     },
     "./server": {
       "types": "./dist/server/index.d.ts",
@@ -41,8 +41,8 @@
       "require": "./dist/server/index.cjs"
     },
     "./styles": {
-      "import": "./dist/styles/index.css",
-      "require": "./dist/styles/index.css"
+      "import": "./dist/client/index.css",
+      "require": "./dist/client/index.css"
     }
   },
   "files": [
@@ -53,5 +53,12 @@
     "@types/node": "^22.15.30",
     "tsup": "^8.0.1",
     "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

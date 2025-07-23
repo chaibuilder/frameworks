@@ -6,6 +6,8 @@ import { get, has } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
+
 export const builderApiHandler = (apiKey: string) => {
   const chaiBuilderPages = new ChaiBuilderPages(
     new ChaiBuilderPagesBackend(apiKey)
@@ -13,9 +15,10 @@ export const builderApiHandler = (apiKey: string) => {
   return async (req: NextRequest) => {
     try {
       const requestBody = await req.json();
+      const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
       // Check for `authorization` header
       const authorization = req.headers.get("authorization");
-      if (!authorization) {
+      if (checkAuth && !authorization) {
         return NextResponse.json(
           { error: "Missing Authorization header" },
           { status: 401 }

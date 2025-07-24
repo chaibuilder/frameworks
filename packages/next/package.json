@@ -33,9 +33,14 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/client/index.d.ts",
-      "import": "./dist/client/index.js",
-      "require": "./dist/client/index.cjs"
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.cjs"
+    },
+    "./builder": {
+      "types": "./dist/builder/index.d.ts",
+      "import": "./dist/builder/index.js",
+      "require": "./dist/builder/index.cjs"
     },
     "./utils": {
       "types": "./dist/utils.d.ts",

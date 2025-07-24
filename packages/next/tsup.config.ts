@@ -1,7 +1,12 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/client/index.tsx", "src/server/index.ts", "src/utils.ts"],
+  entry: [
+    "src/builder/index.tsx",
+    "src/server/index.ts",
+    "src/utils/index.ts",
+    "src/core/index.tsx",
+  ],
   target: "es2018",
   esbuildOptions(options) {
     options.loader = {

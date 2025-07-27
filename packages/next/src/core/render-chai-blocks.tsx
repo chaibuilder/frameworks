@@ -10,14 +10,26 @@ export const RenderChaiBlocks = async ({
   page: ChaiBuilderPage;
   pageProps: ChaiPageProps;
 }) => {
-  const pageData = await ChaiBuilder.getPageExternalData(pageProps);
+  const [pageData, styles] = await Promise.all([
+    ChaiBuilder.getPageExternalData({
+      blocks: page.blocks,
+      pageProps,
+      pageType: page.pageType,
+      lang: page.lang,
+    }),
+    ChaiBuilder.getPageStyles(page.blocks),
+  ]);
+  //TODO: Render JSON LD for SEO
   return (
-    <RenderChaiBlocksSdk
-      externalData={pageData}
-      blocks={page.blocks}
-      fallbackLang={page.fallbackLang}
-      lang={page.pageLang}
-      pageProps={pageProps}
-    />
+    <>
+      <style id="page-styles">{styles}</style>
+      <RenderChaiBlocksSdk
+        externalData={pageData}
+        blocks={page.blocks}
+        fallbackLang={page.fallbackLang}
+        lang={page.lang}
+        pageProps={pageProps}
+      />
+    </>
   );
 };

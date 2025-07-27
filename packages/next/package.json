@@ -25,6 +25,7 @@
     "react": "^19",
     "react-dom": "^19",
     "lodash": "4.17.20",
+    "postcss": "8.5.6",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
@@ -43,9 +44,9 @@
       "require": "./dist/builder/index.cjs"
     },
     "./utils": {
-      "types": "./dist/utils.d.ts",
-      "import": "./dist/utils.js",
-      "require": "./dist/utils.cjs"
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js",
+      "require": "./dist/utils/index.cjs"
     },
     "./server": {
       "types": "./dist/server/index.d.ts",

@@ -6,8 +6,8 @@ import {
 } from "chai-next";
 import ChaiBuilder from "chai-next/server";
 import { draftMode } from "next/headers";
+import { notFound } from "next/navigation";
 
-ChaiBuilder.init(process.env.CHAIBUILDER_API_KEY!);
 loadWebBlocks();
 
 export const dynamic = "force-static"; // Remove this if you want to use ssr mode
@@ -17,7 +17,10 @@ export const generateMetadata = async (props: {
 }) => {
   const nextParams = await props.params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-  return await ChaiBuilder.getPageExternalData({ slug });
+  return {
+    title: "Chai Builder",
+    description: "Chai Builder",
+  };
 };
 
 export default async function Page({
@@ -32,13 +35,16 @@ export default async function Page({
   ChaiBuilder.setDraftMode(isEnabled);
 
   const page = await ChaiBuilder.getPage(slug);
+  if ("error" in page) {
+    return notFound();
+  }
 
   //NOTE: pageProps are received in your dataProvider functions for block and page
   const pageProps: ChaiPageProps = {
     slug,
     pageType: page.pageType,
     fallbackLang: page.fallbackLang,
-    pageLang: page.pageLang,
+    pageLang: page.lang,
   };
   return (
     <>

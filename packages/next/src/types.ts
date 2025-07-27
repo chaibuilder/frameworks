@@ -5,7 +5,7 @@ export type ChaiBuilderPage = {
   slug: string;
   pageType: string;
   fallbackLang: string;
-  pageLang: string;
+  lang: string;
   blocks: ChaiBlock[];
   blocksWithoutPartials?: ChaiBlock[];
   createdAt: string;

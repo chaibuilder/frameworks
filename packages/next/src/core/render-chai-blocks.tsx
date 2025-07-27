@@ -1,5 +1,8 @@
 import { RenderChaiBlocks as RenderChaiBlocksSdk } from "@chaibuilder/sdk/render";
-import { ChaiPageProps } from "@chaibuilder/sdk/runtime";
+import {
+  ChaiBlockComponentProps,
+  ChaiPageProps,
+} from "@chaibuilder/sdk/runtime";
 import ChaiBuilder from "../server";
 import { ChaiBuilderPage } from "../types";
 
@@ -9,6 +12,8 @@ export const RenderChaiBlocks = async ({
 }: {
   page: ChaiBuilderPage;
   pageProps: ChaiPageProps;
+  linkComponent?: Promise<React.ComponentType<ChaiBlockComponentProps<any>>>;
+  imageComponent?: Promise<React.ComponentType<ChaiBlockComponentProps<any>>>;
 }) => {
   const [pageData, styles] = await Promise.all([
     ChaiBuilder.getPageExternalData({
@@ -19,6 +24,7 @@ export const RenderChaiBlocks = async ({
     }),
     ChaiBuilder.getPageStyles(page.blocks),
   ]);
+  //Register Link and Image blocks with Chai Builder
   return (
     <>
       <style id="page-styles">{styles}</style>

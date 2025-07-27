@@ -6,6 +6,7 @@ export default defineConfig({
     "src/server/index.ts",
     "src/utils/index.ts",
     "src/core/index.tsx",
+    "src/config/index.ts",
   ],
   target: "es2018",
   esbuildOptions(options) {

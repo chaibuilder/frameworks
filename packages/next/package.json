@@ -1,6 +1,6 @@
 {
   "name": "chai-next",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -10,7 +10,17 @@
     "dev": "tsup  --watch --format esm,cjs",
     "build": "tsup  --dts --format esm,cjs"
   },
-  "keywords": [],
+  "bin": {
+    "chai-tailwind": "./scripts/chai-tailwind.cjs"
+  },
+  "keywords": [
+    "chai-builder",
+    "nextjs",
+    "tailwindcss",
+    "react",
+    "builder",
+    "cms"
+  ],
   "author": "Suraj Air",
   "email": "suraj@chaibuilder.com",
   "license": "MIT",
@@ -18,9 +28,14 @@
     "access": "public"
   },
   "private": false,
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "raw-loader": "^4.0.2",
+    "tailwindcss": "^3.4.17"
+  },
   "peerDependencies": {
-    "@chaibuilder/pages": "0.8.5",
-    "@chaibuilder/sdk": "2.3.7",
+    "@chaibuilder/pages": "0.9.0",
+    "@chaibuilder/sdk": "2.4.0",
     "next": "^15.4.2",
     "react": "^19",
     "react-dom": "^19",
@@ -56,10 +71,16 @@
     "./builder-styles": {
       "import": "./dist/builder/index.css",
       "require": "./dist/builder/index.css"
+    },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "import": "./dist/config/index.js",
+      "require": "./dist/config/index.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

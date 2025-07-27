@@ -35,16 +35,18 @@ export const FontsAndStyles = async () => {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
 
       <style
-        id="theme-colors"
+        id="theme-variables"
         dangerouslySetInnerHTML={{ __html: themeCssVariables }}
       />
       {fontUrls.map((fontUrl: string) => (
         <link key={fontUrl} rel="stylesheet" href={fontUrl} />
       ))}
-      <style
-        id="custom-font-face"
-        dangerouslySetInnerHTML={{ __html: customFontFace }}
-      />
+      {customFontFace && (
+        <style
+          id="custom-font-face"
+          dangerouslySetInnerHTML={{ __html: customFontFace }}
+        />
+      )}
     </>
   );
 };

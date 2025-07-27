@@ -61,7 +61,7 @@ class ChaiBuilder {
 
   static async getSiteSettings() {
     ChaiBuilder.verifyInit();
-    return unstable_cache(
+    return await unstable_cache(
       async () => await ChaiBuilder.pages?.getSiteSettings(),
       ["website-settings"],
       { tags: ["website-settings"] }
@@ -77,7 +77,7 @@ class ChaiBuilder {
 
     const siteSettings = await ChaiBuilder.getSiteSettings();
     const tagPageId = page.id;
-    return unstable_cache(
+    return await unstable_cache(
       async () => {
         const data = await ChaiBuilder.pages?.getFullPage(page.languagePageId);
         const fallbackLang = siteSettings?.fallbackLang;

@@ -54,8 +54,8 @@
       "require": "./dist/server/index.cjs"
     },
     "./builder-styles": {
-      "import": "./dist/client/index.css",
-      "require": "./dist/client/index.css"
+      "import": "./dist/builder/index.css",
+      "require": "./dist/builder/index.css"
     }
   },
   "files": [

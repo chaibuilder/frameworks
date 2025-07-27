@@ -19,7 +19,7 @@ export default async function RootLayout({
   const { isEnabled } = await draftMode();
   await ChaiBuilder.loadSiteSettings(isEnabled);
   return (
-    <html className={`smooth-scroll`} suppressHydrationWarning>
+    <html className={`smooth-scroll`}>
       <head>
         <FontsAndStyles />
       </head>

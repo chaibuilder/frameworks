@@ -15,8 +15,7 @@ export const dynamic = "force-static"; // Remove this if you want to use ssr mod
 export const generateMetadata = async (props: {
   params: Promise<{ slug: string[] }>;
 }) => {
-  const nextParams = await props.params;
-  const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
+  //TODO: Generate metadata
   return {
     title: "Chai Builder",
     description: "Chai Builder",

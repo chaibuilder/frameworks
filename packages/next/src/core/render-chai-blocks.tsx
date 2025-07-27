@@ -19,10 +19,15 @@ export const RenderChaiBlocks = async ({
     }),
     ChaiBuilder.getPageStyles(page.blocks),
   ]);
-  //TODO: Render JSON LD for SEO
   return (
     <>
       <style id="page-styles">{styles}</style>
+      <script type="application/jsonld">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": "[]",
+        })}
+      </script>
       <RenderChaiBlocksSdk
         externalData={pageData}
         blocks={page.blocks}

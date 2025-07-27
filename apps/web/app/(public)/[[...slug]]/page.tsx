@@ -29,9 +29,7 @@ export default async function Page({
 }) {
   const nextParams = await params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-
   const { isEnabled } = await draftMode();
-  ChaiBuilder.setDraftMode(isEnabled);
 
   const page = await ChaiBuilder.getPage(slug);
   if ("error" in page) {

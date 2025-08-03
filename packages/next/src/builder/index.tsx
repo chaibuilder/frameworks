@@ -1,5 +1,6 @@
 "use client";
 import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
+import { startsWith } from "lodash";
 import dynamic from "next/dynamic";
 import type { FC } from "react";
 import "../../styles";
@@ -42,6 +43,12 @@ export default (props: ChaiBuilderProps) => {
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}
+      getPreviewUrl={(slug: string) => {
+        return `/builder/preview?slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+      }}
+      getLiveUrl={(slug: string) => {
+        return `/builder/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+      }}
       {...props}
     />
   );

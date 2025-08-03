@@ -3,7 +3,7 @@ import {
   ChaiBuilderPagesBackend,
 } from "@chaibuilder/pages/server";
 import { get, has } from "lodash";
-import { revalidateTag } from "next/cache";
+// import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
@@ -37,7 +37,7 @@ export const builderApiHandler = (apiKey: string) => {
 
       const tags = get(response, "tags", []);
       for (const tag of tags) {
-        revalidateTag(tag);
+        // revalidateTag(tag);
       }
       return NextResponse.json(response);
     } catch (error) {

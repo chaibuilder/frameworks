@@ -1,9 +1,4 @@
-import {
-  ChaiPageProps,
-  loadWebBlocks,
-  PreviewBanner,
-  RenderChaiBlocks,
-} from "chai-next";
+import { ChaiPageProps, loadWebBlocks } from "chai-next";
 import ChaiBuilder from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -45,8 +40,8 @@ export default async function Page({
   };
   return (
     <>
-      <PreviewBanner slug={slug} show={isEnabled} />
-      <RenderChaiBlocks page={page} pageProps={pageProps} />
+      {/* <PreviewBanner slug={slug} show={isEnabled} />
+      <RenderChaiBlocks page={page} pageProps={pageProps} /> */}
     </>
   );
 }

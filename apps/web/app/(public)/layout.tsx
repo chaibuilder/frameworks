@@ -1,4 +1,3 @@
-import { FontsAndStyles } from "chai-next";
 import ChaiBuilder from "chai-next/server";
 import type { Metadata } from "next";
 import { draftMode } from "next/headers";
@@ -20,9 +19,7 @@ export default async function RootLayout({
   await ChaiBuilder.loadSiteSettings(isEnabled);
   return (
     <html className={`smooth-scroll`}>
-      <head>
-        <FontsAndStyles />
-      </head>
+      <head>{/* <FontsAndStyles /> */}</head>
       <body className={`font-body antialiased`}>{children}</body>
     </html>
   );

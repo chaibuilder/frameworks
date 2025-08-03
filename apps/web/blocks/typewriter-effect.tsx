@@ -1,6 +1,6 @@
 "use client";
 
-import { registerChaiBlock, registerChaiBlockSchema } from "chai-next";
+import { registerChaiBlock, registerChaiBlockSchema } from "chai-next/blocks";
 import { motion, stagger, useAnimate, useInView } from "motion/react";
 import { useEffect } from "react";
 import { cn } from "../lib/utils";

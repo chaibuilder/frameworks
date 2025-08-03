@@ -9,7 +9,7 @@ import {
   ChaiBlockComponentProps,
   registerChaiBlock,
   registerChaiBlockSchema,
-} from "chai-next";
+} from "chai-next/blocks";
 
 const ShadcnAccordion = (
   props: ChaiBlockComponentProps<{ type: "single" | "multiple" }>

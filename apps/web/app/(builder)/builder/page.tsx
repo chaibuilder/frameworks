@@ -1,6 +1,6 @@
 "use client";
 
-import ChaiBuilder from "chai-next/builder";
+import ChaiBuilder from "chai-next";
 import "chai-next/builder-styles";
 import "../../../blocks/accordion";
 import "../../../blocks/text-reveal";

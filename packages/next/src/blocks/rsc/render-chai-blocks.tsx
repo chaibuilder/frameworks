@@ -3,8 +3,8 @@ import {
   ChaiBlockComponentProps,
   ChaiPageProps,
 } from "@chaibuilder/sdk/runtime";
-import ChaiBuilder from "../server";
-import { ChaiBuilderPage } from "../types";
+import ChaiBuilder from "../../server";
+import { ChaiBuilderPage } from "../../types";
 
 export const RenderChaiBlocks = async ({
   page,

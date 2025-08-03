@@ -53,10 +53,15 @@
       "import": "./dist/core/index.js",
       "require": "./dist/core/index.cjs"
     },
-    "./builder": {
-      "types": "./dist/builder/index.d.ts",
-      "import": "./dist/builder/index.js",
-      "require": "./dist/builder/index.cjs"
+    "./blocks": {
+      "types": "./dist/blocks/index.d.ts",
+      "import": "./dist/blocks/index.js",
+      "require": "./dist/blocks/index.cjs"
+    },
+    "./blocks/rsc": {
+      "types": "./dist/blocks/rsc/index.d.ts",
+      "import": "./dist/blocks/rsc/index.js",
+      "require": "./dist/blocks/rsc/index.cjs"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
@@ -69,8 +74,8 @@
       "require": "./dist/server/index.cjs"
     },
     "./builder-styles": {
-      "import": "./dist/builder/index.css",
-      "require": "./dist/builder/index.css"
+      "import": "./dist/core/index.css",
+      "require": "./dist/core/index.css"
     },
     "./config": {
       "types": "./dist/config/index.d.ts",

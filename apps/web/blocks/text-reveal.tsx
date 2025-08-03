@@ -1,5 +1,5 @@
 "use client";
-import { registerChaiBlock, registerChaiBlockSchema } from "chai-next";
+import { registerChaiBlock, registerChaiBlockSchema } from "chai-next/blocks";
 import { motion } from "motion/react";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";

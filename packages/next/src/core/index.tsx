@@ -1,7 +1,55 @@
-export * from "@chaibuilder/sdk/render";
-export * from "@chaibuilder/sdk/runtime";
-export * from "@chaibuilder/sdk/web-blocks";
+"use client";
+import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
+import { startsWith } from "lodash";
+import dynamic from "next/dynamic";
+import type { FC } from "react";
+import "../../styles";
 
-// export * from "./fonts-and-styles";
-// export * from "./preview-banner";
-// export { RenderChaiBlocks } from "./render-chai-blocks";
+// Only re-export specific items from @chaibuilder/pages to avoid interface conflicts
+export * from "@chaibuilder/pages";
+export * from "@chaibuilder/sdk/ui";
+
+// Use a type assertion to avoid the TypeScript error with interfaces
+export const ChaiBuilder = dynamic(
+  () =>
+    import("@chaibuilder/pages").then((mod) => mod.default) as Promise<FC<any>>,
+  { ssr: false }
+);
+
+type ChaiBuilderProps = {
+  logo?: React.FC;
+  apiUrl?: string;
+  getPreviewUrl?: (slug: string) => string;
+  getLiveUrl?: (slug: string) => string;
+} & Pick<
+  ChaiBuilderEditorProps,
+  | "onError"
+  | "translations"
+  | "locale"
+  | "htmlDir"
+  | "autoSaveSupport"
+  | "autoSaveInterval"
+  | "fallbackLang"
+  | "languages"
+  | "themePresets"
+>;
+
+const API_URL = "/builder/api";
+
+export default (props: ChaiBuilderProps) => {
+  const builderApiUrl = props.apiUrl ?? API_URL;
+  return (
+    <ChaiBuilder
+      apiUrl={builderApiUrl}
+      usersApiUrl={builderApiUrl}
+      assetsApiUrl={builderApiUrl}
+      getPreviewUrl={(slug: string) => {
+        return `/builder/preview?slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+      }}
+      getLiveUrl={(slug: string) => {
+        return `/builder/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+      }}
+      {...props}
+    />
+  );
+};

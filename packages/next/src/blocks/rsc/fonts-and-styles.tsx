@@ -1,7 +1,10 @@
 import { getChaiThemeCssVariables } from "@chaibuilder/sdk/render";
 import { get } from "lodash";
-import ChaiBuilder from "../server";
-import { getFontHref, getThemeCustomFontFace } from "../server/styles-helper";
+import ChaiBuilder from "../../server";
+import {
+  getFontHref,
+  getThemeCustomFontFace,
+} from "../../server/styles-helper";
 
 export const FontsAndStyles = async () => {
   const siteSettings = await ChaiBuilder.getSiteSettings();

@@ -2,9 +2,10 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: [
-    "src/builder/index.tsx",
     "src/server/index.ts",
     "src/utils/index.ts",
+    "src/blocks/index.tsx",
+    "src/blocks/rsc/index.tsx",
     "src/core/index.tsx",
     "src/config/index.ts",
   ],

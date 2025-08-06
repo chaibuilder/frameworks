@@ -21,11 +21,9 @@ const ShadcnAccordion = (
   );
 };
 
-const ShadcnAccordionItem = ({
-  props,
-}: {
-  props: ChaiBlockComponentProps<{ title: string }>;
-}) => {
+const ShadcnAccordionItem = (
+  props: ChaiBlockComponentProps<{ title: string }>
+) => {
   return (
     <AccordionItem {...props.blockProps} value={props.title}>
       <AccordionTrigger>{props.title}</AccordionTrigger>
@@ -49,6 +47,7 @@ registerChaiBlock(ShadcnAccordionItem, {
       },
     },
   }),
+  canAcceptBlock: () => true,
 });
 
 registerChaiBlock(ShadcnAccordion, {

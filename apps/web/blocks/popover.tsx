@@ -14,78 +14,68 @@ import {
 
 const ShadcnPopover = (
   props: ChaiBlockComponentProps<{
-    styles: ChaiStyles;
-  }>
-) => {
-  return (
-    <Popover {...props.blockProps} {...props.styles}>
-      {props.children}
-    </Popover>
-  );
-};
-
-const ShadcnPopoverTrigger = (
-  props: ChaiBlockComponentProps<{
-    text: string;
-    styles: ChaiStyles;
-  }>
-) => {
-  return (
-    <PopoverTrigger {...props.blockProps} {...props.styles}>
-      {props.children ?? props.text}
-    </PopoverTrigger>
-  );
-};
-
-const ShadcnPopoverContent = (
-  props: ChaiBlockComponentProps<{
+    triggerText: string;
     align?: "start" | "center" | "end";
     side?: "top" | "right" | "bottom" | "left";
     sideOffset?: number;
-    styles: ChaiStyles;
+    itemStyles: ChaiStyles;
+    triggerStyles: ChaiStyles;
+    contentStyles: ChaiStyles;
   }>
 ) => {
   return (
-    <PopoverContent 
-      {...props.blockProps} 
-      align={props.align}
-      side={props.side}
-      sideOffset={props.sideOffset}
-      {...props.styles}
-    >
-      {props.children}
-    </PopoverContent>
+    <div {...props.blockProps} {...props.itemStyles}>
+      <Popover>
+        <PopoverTrigger {...props.triggerStyles}>
+          {props.triggerText}
+        </PopoverTrigger>
+        <PopoverContent
+          align={props.align}
+          side={props.side}
+          sideOffset={props.sideOffset}
+          {...props.contentStyles}
+        >
+          {props.children}
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 };
 
-registerChaiBlock(ShadcnPopoverTrigger, {
-  type: "Shadcn/PopoverTrigger",
-  label: "Popover Trigger",
+registerChaiBlock(ShadcnPopover, {
+  type: "Shadcn/Popover",
+  label: "Popover",
   category: "core",
   group: "Shadcn",
-  ...registerChaiBlockSchema({
-    properties: {
-      styles: stylesProp(""),
-      text: {
-        type: "string",
-        title: "Text",
-        default: "Open",
+  blocks() {
+    return [
+      {
+        _id: "popover-root",
+        _type: "Shadcn/Popover",
+        triggerText: "Open Popover",
+        align: "center",
+        side: "bottom",
+        sideOffset: 4,
       },
-    },
-  }),
-  i18nProps: ["text"],
-  aiProps: ["text"],
-  canAcceptBlock: () => true,
-});
-
-registerChaiBlock(ShadcnPopoverContent, {
-  type: "Shadcn/PopoverContent",
-  label: "Popover Content",
-  category: "core",
-  group: "Shadcn",
+      {
+        _id: "popover-text",
+        _type: "Paragraph",
+        _parent: "popover-root",
+        content:
+          "Place your popover content here. You can add any blocks inside this popover.",
+      },
+    ] as ChaiBlock[];
+  },
   ...registerChaiBlockSchema({
     properties: {
-      styles: stylesProp(""),
+      itemStyles: stylesProp(""),
+      triggerStyles: stylesProp(""),
+      contentStyles: stylesProp(""),
+      triggerText: {
+        type: "string",
+        title: "Trigger Text",
+        default: "Open Popover",
+      },
       align: {
         type: "string",
         title: "Alignment",
@@ -107,47 +97,7 @@ registerChaiBlock(ShadcnPopoverContent, {
       },
     },
   }),
+  i18nProps: ["triggerText"],
+  aiProps: ["triggerText"],
   canAcceptBlock: () => true,
-});
-
-registerChaiBlock(ShadcnPopover, {
-  type: "Shadcn/Popover",
-  label: "Popover",
-  category: "core",
-  group: "Shadcn",
-  blocks() {
-    return [
-      {
-        _id: "popover-root",
-        _type: "Shadcn/Popover",
-      },
-      {
-        _id: "popover-trigger",
-        _type: "Shadcn/PopoverTrigger",
-        text: "Open Popover",
-        _parent: "popover-root",
-      },
-      {
-        _id: "popover-content",
-        _type: "Shadcn/PopoverContent",
-        align: "center",
-        side: "bottom",
-        sideOffset: 4,
-        _parent: "popover-root",
-      },
-      {
-        _id: "popover-text",
-        _type: "Paragraph",
-        _parent: "popover-content",
-        content: "Place your popover content here. You can add any blocks inside this popover.",
-      },
-    ] as ChaiBlock[];
-  },
-  ...registerChaiBlockSchema({
-    properties: {
-      styles: stylesProp(""),
-    },
-  }),
-  canAcceptBlock: (type) =>
-    type === "Shadcn/PopoverTrigger" || type === "Shadcn/PopoverContent",
 });

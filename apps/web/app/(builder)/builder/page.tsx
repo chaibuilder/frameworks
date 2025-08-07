@@ -6,6 +6,7 @@ import "../../../blocks/accordion";
 import "../../../blocks/badge";
 import "../../../blocks/text-reveal";
 import "../../../blocks/typewriter-effect";
+import "../../../blocks/aspect-ratio";
 
 export default function Page() {
   return <ChaiBuilder />;

@@ -31,8 +31,8 @@ const ShadcnPopoverTrigger = (
   }>
 ) => {
   return (
-    <PopoverTrigger {...props.blockProps} {...props.styles} asChild={false}>
-      {props.text}
+    <PopoverTrigger {...props.blockProps} {...props.styles}>
+      {props.children ?? props.text}
     </PopoverTrigger>
   );
 };
@@ -75,7 +75,7 @@ registerChaiBlock(ShadcnPopoverTrigger, {
   }),
   i18nProps: ["text"],
   aiProps: ["text"],
-  canAcceptBlock: () => false,
+  canAcceptBlock: () => true,
 });
 
 registerChaiBlock(ShadcnPopoverContent, {

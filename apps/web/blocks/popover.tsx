@@ -16,11 +16,7 @@ import * as React from "react";
 
 const ShadcnPopover = (
   props: ChaiBlockComponentProps<{
-    triggerText: string;
-    align?: "start" | "center" | "end";
-    side?: "top" | "right" | "bottom" | "left";
-    sideOffset?: number;
-    alignOffset?: number;
+    buttonText: string;
     buttonVariants:
       | "default"
       | "link"
@@ -29,6 +25,10 @@ const ShadcnPopover = (
       | "secondary"
       | "ghost";
     buttonSize?: "default" | "sm" | "lg" | "icon";
+    align?: "start" | "center" | "end";
+    alignOffset?: number;
+    side?: "top" | "right" | "bottom" | "left";
+    sideOffset?: number;
     popoverStyles: ChaiStyles;
     triggerStyles: ChaiStyles;
     contentStyles: ChaiStyles;
@@ -45,7 +45,7 @@ const ShadcnPopover = (
             variant={props.buttonVariants}
             size={props.buttonSize}
           >
-            {props.triggerText}
+            {props.buttonText}
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -73,7 +73,7 @@ registerChaiBlock(ShadcnPopover, {
       {
         _id: "popover-root",
         _type: "Shadcn/Popover",
-        triggerText: "Open Popover",
+        buttonText: "Open Popover",
         align: "center",
         side: "bottom",
         sideOffset: 4,
@@ -89,39 +89,10 @@ registerChaiBlock(ShadcnPopover, {
   },
   ...registerChaiBlockSchema({
     properties: {
-      popoverStyles: stylesProp(""),
-      triggerStyles: stylesProp(""),
-      contentStyles: stylesProp(""),
-      triggerText: {
+      buttonText: {
         type: "string",
         title: "Button Text",
         default: "Open Popover",
-      },
-      align: {
-        type: "string",
-        title: "Alignment",
-        enum: ["start", "center", "end"],
-        default: "center",
-      },
-      side: {
-        type: "string",
-        title: "Side",
-        enum: ["top", "right", "bottom", "left"],
-        default: "bottom",
-      },
-      sideOffset: {
-        type: "number",
-        title: "Side Offset",
-        default: 0,
-        minimum: 0,
-        maximum: 300,
-      },
-      alignOffset: {
-        type: "number",
-        title: "Align Offset",
-        default: 0,
-        minimum: 0,
-        maximum: 300,
       },
       buttonVariants: {
         type: "string",
@@ -142,9 +113,38 @@ registerChaiBlock(ShadcnPopover, {
         enum: ["default", "sm", "lg", "icon"],
         default: "default",
       },
+      align: {
+        type: "string",
+        title: "Alignment",
+        enum: ["start", "center", "end"],
+        default: "center",
+      },
+      alignOffset: {
+        type: "number",
+        title: "Align Offset",
+        default: 0,
+        minimum: 0,
+        maximum: 300,
+      },
+      side: {
+        type: "string",
+        title: "Side",
+        enum: ["top", "right", "bottom", "left"],
+        default: "bottom",
+      },
+      sideOffset: {
+        type: "number",
+        title: "Side Offset",
+        default: 0,
+        minimum: 0,
+        maximum: 300,
+      },
+      popoverStyles: stylesProp(""),
+      triggerStyles: stylesProp(""),
+      contentStyles: stylesProp(""),
     },
   }),
-  i18nProps: ["triggerText"],
-  aiProps: ["triggerText"],
+  i18nProps: ["buttonText"],
+  aiProps: ["buttonText"],
   canAcceptBlock: () => true,
 });

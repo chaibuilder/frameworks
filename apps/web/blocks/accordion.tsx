@@ -7,27 +7,48 @@ import {
 import {
   ChaiBlock,
   ChaiBlockComponentProps,
+  ChaiStyles,
   registerChaiBlock,
   registerChaiBlockSchema,
+  stylesProp,
 } from "chai-next/blocks";
 
 const ShadcnAccordion = (
-  props: ChaiBlockComponentProps<{ type: "single" | "multiple" }>
+  props: ChaiBlockComponentProps<{
+    type: "single" | "multiple";
+    styles: ChaiStyles;
+  }>
 ) => {
   return (
-    <Accordion {...props.blockProps} type={props.type} collapsible>
+    <Accordion
+      {...props.blockProps}
+      type={props.type}
+      collapsible
+      {...props.styles}>
       {props.children}
     </Accordion>
   );
 };
 
 const ShadcnAccordionItem = (
-  props: ChaiBlockComponentProps<{ title: string }>
+  props: ChaiBlockComponentProps<{
+    title: string;
+    triggerStyles: ChaiStyles;
+    contentStyles: ChaiStyles;
+    itemStyles: ChaiStyles;
+  }>
 ) => {
   return (
-    <AccordionItem {...props.blockProps} value={props.title}>
-      <AccordionTrigger>{props.title}</AccordionTrigger>
-      <AccordionContent>{props.children}</AccordionContent>
+    <AccordionItem
+      {...props.blockProps}
+      {...props.itemStyles}
+      value={props.title}>
+      <AccordionTrigger {...props.triggerStyles}>
+        {props.title}
+      </AccordionTrigger>
+      <AccordionContent {...props.contentStyles}>
+        {props.children}
+      </AccordionContent>
     </AccordionItem>
   );
 };
@@ -36,10 +57,12 @@ registerChaiBlock(ShadcnAccordionItem, {
   type: "Shadcn/AccordionItem",
   label: "Accordion Item",
   category: "core",
-  hidden: true,
   group: "Shadcn",
   ...registerChaiBlockSchema({
     properties: {
+      itemStyles: stylesProp(""),
+      triggerStyles: stylesProp(""),
+      contentStyles: stylesProp(""),
       title: {
         type: "string",
         title: "Title",
@@ -47,6 +70,8 @@ registerChaiBlock(ShadcnAccordionItem, {
       },
     },
   }),
+  i18nProps: ["title"],
+  aiProps: ["title"],
   canAcceptBlock: () => true,
 });
 
@@ -68,10 +93,18 @@ registerChaiBlock(ShadcnAccordion, {
         title: "Title",
         _parent: "a",
       },
+      {
+        _id: "c",
+        _type: "Paragraph",
+        _parent: "b",
+        content:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      },
     ] as ChaiBlock[];
   },
   ...registerChaiBlockSchema({
     properties: {
+      styles: stylesProp(""),
       type: {
         type: "string",
         title: "Type",
@@ -80,4 +113,5 @@ registerChaiBlock(ShadcnAccordion, {
       },
     },
   }),
+  canAcceptBlock: (type) => type === "Shadcn/AccordionItem",
 });

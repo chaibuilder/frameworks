@@ -65,53 +65,48 @@ const Carousel = React.forwardRef<
     const scrollPrev = React.useCallback(() => {
       if (carouselRef.current) {
         const children = carouselRef.current.children;
-        const newIndex = Math.max(0, selectedIndex - 1);
+        const newIndex = opts?.loop && selectedIndex === 0 
+          ? children.length - 1 
+          : Math.max(0, selectedIndex - 1);
         setSelectedIndex(newIndex);
-        
-        const child = children[newIndex] as HTMLElement;
-        if (child) {
-          child.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: orientation === "horizontal" ? "start" : "nearest",
-          });
-        }
       }
-    }, [selectedIndex, orientation]);
+    }, [selectedIndex, opts?.loop]);
 
     const scrollNext = React.useCallback(() => {
       if (carouselRef.current) {
         const children = carouselRef.current.children;
-        const newIndex = Math.min(children.length - 1, selectedIndex + 1);
+        const newIndex = opts?.loop && selectedIndex === children.length - 1
+          ? 0
+          : Math.min(children.length - 1, selectedIndex + 1);
         setSelectedIndex(newIndex);
-        
-        const child = children[newIndex] as HTMLElement;
-        if (child) {
-          child.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: orientation === "horizontal" ? "start" : "nearest",
-          });
-        }
       }
-    }, [selectedIndex, orientation]);
+    }, [selectedIndex, opts?.loop]);
 
     const scrollTo = React.useCallback((index: number) => {
       if (carouselRef.current) {
         const children = carouselRef.current.children;
         const newIndex = Math.max(0, Math.min(children.length - 1, index));
         setSelectedIndex(newIndex);
-        
-        const child = children[newIndex] as HTMLElement;
-        if (child) {
-          child.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: orientation === "horizontal" ? "start" : "nearest",
-          });
-        }
       }
-    }, [orientation]);
+    }, []);
+
+    React.useEffect(() => {
+      if (carouselRef.current) {
+        const children = carouselRef.current.children;
+        const slideWidth = orientation === "horizontal" ? 100 : 0;
+        const slideHeight = orientation === "vertical" ? 100 : 0;
+        
+        const transform = orientation === "horizontal"
+          ? `translateX(-${selectedIndex * slideWidth}%)`
+          : `translateY(-${selectedIndex * slideHeight}%)`;
+          
+        carouselRef.current.style.transform = transform;
+        carouselRef.current.style.transition = "transform 0.3s ease-in-out";
+        
+        setCanScrollPrev(opts?.loop ? true : selectedIndex > 0);
+        setCanScrollNext(opts?.loop ? true : selectedIndex < children.length - 1);
+      }
+    }, [selectedIndex, orientation, opts?.loop]);
 
     const api = React.useMemo<CarouselApi>(
       () => ({
@@ -124,14 +119,6 @@ const Carousel = React.forwardRef<
       }),
       [scrollPrev, scrollNext, canScrollPrev, canScrollNext, selectedIndex, scrollTo]
     );
-
-    React.useEffect(() => {
-      if (carouselRef.current) {
-        const children = carouselRef.current.children;
-        setCanScrollPrev(selectedIndex > 0);
-        setCanScrollNext(selectedIndex < children.length - 1);
-      }
-    }, [selectedIndex]);
 
     React.useEffect(() => {
       setApi?.(api);
@@ -172,17 +159,19 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel();
 
   return (
-    <div
-      ref={carouselRef}
-      className={cn(
-        "flex",
-        orientation === "horizontal"
-          ? "-ml-4 overflow-x-auto scrollbar-hide"
-          : "-mt-4 flex-col overflow-y-auto scrollbar-hide",
-        className
-      )}
-      {...props}
-    />
+    <div className="overflow-hidden">
+      <div
+        ref={carouselRef}
+        className={cn(
+          "flex",
+          orientation === "horizontal"
+            ? "-ml-4"
+            : "-mt-4 flex-col",
+          className
+        )}
+        {...props}
+      />
+    </div>
   );
 });
 CarouselContent.displayName = "CarouselContent";

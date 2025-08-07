@@ -19,6 +19,7 @@ const ShadcnCarousel = (
     orientation: "horizontal" | "vertical";
     loop: boolean;
     showArrows: boolean;
+    maxWidth: string;
     styles: ChaiStyles;
   }>
 ) => {
@@ -30,7 +31,7 @@ const ShadcnCarousel = (
         loop: props.loop,
       }}
       orientation={props.orientation}
-      className="w-full max-w-xs mx-auto"
+      className={`w-full ${props.maxWidth} mx-auto`}
       {...props.styles}>
       <CarouselContent>
         {props.children}
@@ -85,6 +86,7 @@ registerChaiBlock(ShadcnCarousel, {
         orientation: "horizontal",
         loop: false,
         showArrows: true,
+        maxWidth: "max-w-sm",
       },
       {
         _id: "b",
@@ -172,6 +174,12 @@ registerChaiBlock(ShadcnCarousel, {
         type: "boolean",
         title: "Show Navigation Arrows",
         default: true,
+      },
+      maxWidth: {
+        type: "string",
+        title: "Max Width",
+        default: "max-w-xs",
+        enum: ["max-w-xs", "max-w-sm", "max-w-md", "max-w-lg", "max-w-xl", "max-w-2xl", "max-w-4xl", "max-w-full"],
       },
     },
   }),

@@ -17,7 +17,7 @@ import * as React from "react";
 const ShadcnPopover = (
   props: ChaiBlockComponentProps<{
     buttonText: string;
-    buttonVariants:
+    buttonVariant:
       | "default"
       | "link"
       | "outline"
@@ -42,7 +42,7 @@ const ShadcnPopover = (
         <PopoverTrigger asChild>
           <Button
             {...props.triggerStyles}
-            variant={props.buttonVariants}
+            variant={props.buttonVariant}
             size={props.buttonSize}
           >
             {props.buttonText}
@@ -94,7 +94,7 @@ registerChaiBlock(ShadcnPopover, {
         title: "Button Text",
         default: "Open Popover",
       },
-      buttonVariants: {
+      buttonVariant: {
         type: "string",
         title: "Button Variant",
         enum: [

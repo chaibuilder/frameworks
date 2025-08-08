@@ -13,7 +13,6 @@ const ShadcnAspectRatio = (
   props: ChaiBlockComponentProps<{
     width?: number;
     height?: number;
-    asChild?: boolean;
     containerStyles: ChaiStyles;
   }>
 ) => {
@@ -22,7 +21,7 @@ const ShadcnAspectRatio = (
 
   return (
     <div {...props.blockProps} {...props.containerStyles}>
-      <AspectRatio ratio={ratio} asChild={props.asChild}>
+      <AspectRatio ratio={ratio} asChild>
         {props.children}
       </AspectRatio>
     </div>
@@ -70,12 +69,6 @@ registerChaiBlock(ShadcnAspectRatio, {
         minimum: 1,
         maximum: 100,
         step: 1,
-      },
-      asChild: {
-        type: "boolean",
-        title: "As Child",
-        description: "Render as child component",
-        default: false,
       },
     },
   }),

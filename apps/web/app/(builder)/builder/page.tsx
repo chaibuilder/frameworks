@@ -9,6 +9,7 @@ import "../../../blocks/text-reveal";
 import "../../../blocks/typewriter-effect";
 import "../../../blocks/aspect-ratio";
 import "../../../blocks/avatar";
+import "../../../blocks/carousel";
 
 export default function Page() {
   return <ChaiBuilder />;

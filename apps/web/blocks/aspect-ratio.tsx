@@ -7,7 +7,6 @@ import {
   registerChaiBlockSchema,
   stylesProp,
 } from "chai-next/blocks";
-import { p } from "motion/react-client";
 
 const ShadcnAspectRatio = (
   props: ChaiBlockComponentProps<{

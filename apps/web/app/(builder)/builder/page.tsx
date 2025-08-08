@@ -8,6 +8,7 @@ import "../../../blocks/badge";
 import "../../../blocks/text-reveal";
 import "../../../blocks/typewriter-effect";
 import "../../../blocks/aspect-ratio";
+import "../../../blocks/avatar";
 
 export default function Page() {
   return <ChaiBuilder />;

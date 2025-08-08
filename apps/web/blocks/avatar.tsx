@@ -14,7 +14,7 @@ import {
 
 const ShadcnAvatar = (
   props: ChaiBlockComponentProps<{
-    src: string;
+    image: string;
     alt: string;
     fallbackText: string;
     containerStyles: ChaiStyles;
@@ -23,16 +23,12 @@ const ShadcnAvatar = (
   }>
 ) => {
   return (
-      <Avatar {...props.blockProps} {...props.containerStyles}>
-        <AvatarImage 
-          src={props.src} 
-          alt={props.alt}
-          {...props.imageStyles}
-        />
-        <AvatarFallback {...props.fallbackStyles}>
-          {props.fallbackText}
-        </AvatarFallback>
-      </Avatar>
+    <Avatar {...props.blockProps} {...props.containerStyles}>
+      <AvatarImage src={props.image} alt={props.alt} {...props.imageStyles} />
+      <AvatarFallback {...props.fallbackStyles}>
+        {props.fallbackText}
+      </AvatarFallback>
+    </Avatar>
   );
 };
 
@@ -57,10 +53,11 @@ registerChaiBlock(ShadcnAvatar, {
       containerStyles: stylesProp(""),
       imageStyles: stylesProp(""),
       fallbackStyles: stylesProp(""),
-      src: {
+      image: {
         type: "string",
-        title: "Image Source",
-        default: "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?w=128&h=128&dpr=2&q=80",
+        title: "Image",
+        default: "https://fakeimg.pl/400x200?text=Choose&font=bebas",
+        ui: { "ui:widget": "image" },
       },
       alt: {
         type: "string",

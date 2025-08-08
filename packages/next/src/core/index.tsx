@@ -40,6 +40,7 @@ export default (props: ChaiBuilderProps) => {
   const builderApiUrl = props.apiUrl ?? API_URL;
   return (
     <ChaiBuilder
+      autoSaveSupport={false}
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}

@@ -160,11 +160,11 @@ importers:
   packages/next:
     dependencies:
       '@chaibuilder/pages':
-        specifier: 0.9.3
-        version: 0.9.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.4.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)
+        specifier: 0.9.7
+        version: 0.9.7(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.4.5(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)
       '@chaibuilder/sdk':
-        specifier: 2.4.2
-        version: 2.4.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)
+        specifier: 2.4.5
+        version: 2.4.5(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
@@ -289,12 +289,12 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@chaibuilder/pages@0.9.3':
-    resolution: {integrity: sha512-UhvasiEUYqHxq/FKB/7fL1rAlLkUCEkjXpt8OCymkDyuIyBDQV4gadmSKcGN14ZXHI1rdJZa+qaG9rH+BR5q1g==}
+  '@chaibuilder/pages@0.9.7':
+    resolution: {integrity: sha512-oR9nMrUWkL3yakwckl7EXX+DJV4k1M8XJ4pBoKNYzCB43/oWpLMsZ0kykgmd90lXb+bkjNrJQLbiF/Tce6+Akw==}
     engines: {node: '>=20.10.0 <21.0.0', pnpm: '>=8.0.0 <10.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
-      '@chaibuilder/sdk': 2.4.2
+      '@chaibuilder/sdk': 2.4.5
       '@types/react': '*'
       '@types/react-dom': '*'
       react: ^18.0 || ^19.0 || ^19.1
@@ -318,8 +318,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@chaibuilder/sdk@2.4.2':
-    resolution: {integrity: sha512-4OfsEpJhV3/ZVGaZ9yMn0iSYIh0zgESwehPebIZ0fQZu1bNZkR9jYmAH254HtHriOVkvh7oz7IR0Ztci37QmwQ==}
+  '@chaibuilder/sdk@2.4.5':
+    resolution: {integrity: sha512-4YhkQj92oAmZutR6+bJXVHhYCEzZaN3WclbAf57YVELxebHB3FUaevHhCXWePwbWJ0YsH9aBAajJGkSa4KaKaQ==}
     engines: {node: ^20.18.0}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
@@ -2396,6 +2396,9 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
+  blueimp-canvas-to-blob@3.29.0:
+    resolution: {integrity: sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==}
+
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
@@ -2517,6 +2520,9 @@ packages:
   class-variance-authority@0.7.1:
     resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
 
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
@@ -2568,6 +2574,9 @@ packages:
   commander@7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
+
+  compressorjs@1.2.1:
+    resolution: {integrity: sha512-+geIjeRnPhQ+LLvvA7wxBQE5ddeLU7pJ3FsKFWirDw6veY3s9iLxAQEw7lXGHnhCJvBujEQWuNnGzZcvCvdkLQ==}
 
   compute-gcd@1.2.1:
     resolution: {integrity: sha512-TwMbxBNz0l71+8Sc4czv13h4kEqnchV9igQZBi6QUaz09dnz13juGnnaWWJTRsP3brxOoxeB4SA2WELLw1hCtg==}
@@ -2655,6 +2664,10 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
+  culori@4.0.2:
+    resolution: {integrity: sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
   data-view-buffer@1.0.2:
     resolution: {integrity: sha512-EmKO5V3OLXh1rtK2wgXRansaK1/mtVdTUEiEI0W8RkvgT05kfxaH29PliLnpLP73yYO6142Q72QNa8Wx/A5CqQ==}
     engines: {node: '>= 0.4'}
@@ -2715,6 +2728,9 @@ packages:
 
   didyoumean@1.2.2:
     resolution: {integrity: sha512-gxtyfqMg7GKyhQmb056K7M3xszy/myH8w+B4RT+QXBQsvAOdc3XymqDDPHx1BgPgsdAA5SIifona89YtRATDzw==}
+
+  diff-match-patch@1.0.5:
+    resolution: {integrity: sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==}
 
   diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
@@ -3029,20 +3045,6 @@ packages:
       react-dom:
         optional: true
 
-  framer-motion@12.23.5:
-    resolution: {integrity: sha512-t+6/f2TUowkr1gVuGwVwxR3ZQupCdCZj0mivG8M8CW2kwHPqtSePomECvmto15qoFCwost77O/XuEsq59MLDKw==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-
   fs-constants@1.0.0:
     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
 
@@ -3097,6 +3099,9 @@ packages:
   get-symbol-description@1.1.0:
     resolution: {integrity: sha512-w9UMqWwJxHNOvoNzSJ2oPF5wvYcvP7jUvYzhp67yEhTi17ZDBBC1z9pTdGuzjD+EFIqLSYRweZjqfiPzQ06Ebg==}
     engines: {node: '>= 0.4'}
+
+  gitdiff-parser@0.3.1:
+    resolution: {integrity: sha512-YQJnY8aew65id8okGxKCksH3efDCJ9HzV7M9rsvd65habf39Pkh4cgYJ27AaoDMqo1X98pgNJhNMrm/kpV7UVQ==}
 
   github-from-package@0.0.0:
     resolution: {integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==}
@@ -3250,6 +3255,10 @@ packages:
   is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
+
+  is-blob@2.1.0:
+    resolution: {integrity: sha512-SZ/fTft5eUhQM6oF/ZaASFDEdbFVe89Imltn9uZr03wdKMcWNVYSMjQPFtg05QuNkt5l5c135ElvXEQG0rk4tw==}
+    engines: {node: '>=6'}
 
   is-boolean-object@1.2.2:
     resolution: {integrity: sha512-wa56o2/ElJMYqjCjGkXri7it5FbebW5usLw/nPmCMs5DeZ7eziSYZhSmPRn0txqeW4LnAmQQU7FgqLpsEFKM4A==}
@@ -3635,12 +3644,6 @@ packages:
 
   motion-dom@12.23.12:
     resolution: {integrity: sha512-RcR4fvMCTESQBD/uKQe49D5RUeDOokkGRmz4ceaJKDBgHYtZtntC/s2vLvY38gqGaytinij/yi3hMcWVcEF5Kw==}
-
-  motion-dom@12.23.5:
-    resolution: {integrity: sha512-RrUS4X11w7kIU1COoSVptuYTx1QQ/sViDEI1Yl1zL0nem8UXn3HRcsMrFTCkZSSRLXeVpN540bFP1iS87SicPQ==}
-
-  motion-utils@12.23.2:
-    resolution: {integrity: sha512-cIEXlBlXAOUyiAtR0S+QPQUM9L3Diz23Bo+zM420NvSd/oPQJwg6U+rT+WRTpp0rizMsBGQOsAwhWIfglUcZfA==}
 
   motion-utils@12.23.6:
     resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
@@ -4327,6 +4330,11 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
+  react-diff-view@3.3.2:
+    resolution: {integrity: sha512-wPVq4ktTcGOHbhnWKU/gHLtd3N2Xd+OZ/XQWcKA06dsxlSsESePAumQILwHtiak2nMCMiWcIfBpqZ5OiharUPA==}
+    peerDependencies:
+      react: '>=16.14.0'
+
   react-dnd-html5-backend@14.1.0:
     resolution: {integrity: sha512-6ONeqEC3XKVf4eVmMTe0oPds+c5B9Foyj8p/ZKLb7kL2qh9COYxiBHv3szd6gztqi/efkmriywLUVlPotqoJyw==}
 
@@ -4602,6 +4610,9 @@ packages:
 
   shallow-equal@1.2.1:
     resolution: {integrity: sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA==}
+
+  shallow-equal@3.1.0:
+    resolution: {integrity: sha512-pfVOw8QZIXpMbhBWvzBISicvToTiM5WBF1EeAUZDDSb5Dt29yl4AYbyywbJFSEsRUMr7gJaxqCdr4L3tQf9wVg==}
 
   shallowequal@1.1.0:
     resolution: {integrity: sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==}
@@ -5145,6 +5156,9 @@ packages:
   w3c-keyname@2.2.8:
     resolution: {integrity: sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==}
 
+  warning@4.0.3:
+    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
+
   watchpack@2.4.4:
     resolution: {integrity: sha512-c5EGNOiyxxV5qmTtAB7rbiXxi1ooX1pQKMLX/MIabJjRA0SJBQOjKF+KSVfHkr9U1cADPon0mRiVe/riyaiDUA==}
     engines: {node: '>=10.13.0'}
@@ -5297,10 +5311,10 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@chaibuilder/pages@0.9.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.4.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)':
+  '@chaibuilder/pages@0.9.7(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.4.5(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)':
     dependencies:
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@chaibuilder/sdk': 2.4.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)
+      '@chaibuilder/sdk': 2.4.5(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)
       '@mhsdesign/jit-browser-tailwindcss': 0.4.2
       '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.4.17)
       '@tailwindcss/forms': 0.5.10(tailwindcss@3.4.17)
@@ -5309,16 +5323,18 @@ snapshots:
       '@types/express-fileupload': 1.5.1
       canvas: 3.1.2
       canvas-confetti: 1.9.3
+      compressorjs: 1.2.1
       cssnano: 7.0.7(postcss@8.5.6)
       date-fns: 4.1.0
       express-fileupload: 1.5.2
-      framer-motion: 12.23.5(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      framer-motion: 12.23.12(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       fs: 0.0.1-security
       jotai: 2.12.1(@types/react@19.1.0)(react@19.1.0)
       lodash-es: 4.17.21
       lucide-react: 0.474.0(react@19.1.0)
       path: 0.12.7
       react: 19.1.0
+      react-diff-view: 3.3.2(react@19.1.0)
       react-dom: 19.1.0(react@19.1.0)
       react-dropzone: 14.3.8(react@19.1.0)
       react-filerobot-image-editor: 4.9.1(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
@@ -5350,7 +5366,7 @@ snapshots:
       '@types/react': 19.1.0
       '@types/react-dom': 19.1.1(@types/react@19.1.0)
 
-  '@chaibuilder/sdk@2.4.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)':
+  '@chaibuilder/sdk@2.4.5(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)(zod@3.25.76)':
     dependencies:
       '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.76)
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -5402,8 +5418,9 @@ snapshots:
       class-variance-authority: 0.6.1
       clsx: 2.1.1
       cmdk: 0.2.0(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      culori: 4.0.2
       flagged: 3.0.0(react@19.1.0)
-      framer-motion: 12.23.5(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      framer-motion: 12.23.12(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       fuse.js: 7.0.0
       himalaya: 1.1.1
       i18next: 24.2.3(typescript@5.8.2)
@@ -7462,6 +7479,8 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
+  blueimp-canvas-to-blob@3.29.0: {}
+
   boolbase@1.0.0: {}
 
   brace-expansion@1.1.12:
@@ -7601,6 +7620,8 @@ snapshots:
     dependencies:
       clsx: 2.1.1
 
+  classnames@2.5.1: {}
+
   client-only@0.0.1: {}
 
   cliui@8.0.1:
@@ -7649,6 +7670,11 @@ snapshots:
   commander@4.1.1: {}
 
   commander@7.2.0: {}
+
+  compressorjs@1.2.1:
+    dependencies:
+      blueimp-canvas-to-blob: 3.29.0
+      is-blob: 2.1.0
 
   compute-gcd@1.2.1:
     dependencies:
@@ -7771,6 +7797,8 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  culori@4.0.2: {}
+
   data-view-buffer@1.0.2:
     dependencies:
       call-bound: 1.0.4
@@ -7826,6 +7854,8 @@ snapshots:
   detect-node-es@1.1.0: {}
 
   didyoumean@1.2.2: {}
+
+  diff-match-patch@1.0.5: {}
 
   diff-sequences@29.6.3: {}
 
@@ -8280,16 +8310,6 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  framer-motion@12.23.5(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      motion-dom: 12.23.5
-      motion-utils: 12.23.2
-      tslib: 2.8.1
-    optionalDependencies:
-      '@emotion/is-prop-valid': 1.2.2
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-
   fs-constants@1.0.0: {}
 
   fs.realpath@1.0.0: {}
@@ -8345,6 +8365,8 @@ snapshots:
       call-bound: 1.0.4
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
+
+  gitdiff-parser@0.3.1: {}
 
   github-from-package@0.0.0: {}
 
@@ -8489,6 +8511,8 @@ snapshots:
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.3.0
+
+  is-blob@2.1.0: {}
 
   is-boolean-object@1.2.2:
     dependencies:
@@ -8847,12 +8871,6 @@ snapshots:
   motion-dom@12.23.12:
     dependencies:
       motion-utils: 12.23.6
-
-  motion-dom@12.23.5:
-    dependencies:
-      motion-utils: 12.23.2
-
-  motion-utils@12.23.2: {}
 
   motion-utils@12.23.6: {}
 
@@ -9522,6 +9540,16 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
+  react-diff-view@3.3.2(react@19.1.0):
+    dependencies:
+      classnames: 2.5.1
+      diff-match-patch: 1.0.5
+      gitdiff-parser: 0.3.1
+      lodash: 4.17.21
+      react: 19.1.0
+      shallow-equal: 3.1.0
+      warning: 4.0.3
+
   react-dnd-html5-backend@14.1.0:
     dependencies:
       dnd-core: 14.0.1
@@ -9835,6 +9863,8 @@ snapshots:
       es-object-atoms: 1.1.1
 
   shallow-equal@1.2.1: {}
+
+  shallow-equal@3.1.0: {}
 
   shallowequal@1.1.0: {}
 
@@ -10474,6 +10504,10 @@ snapshots:
   void-elements@3.1.0: {}
 
   w3c-keyname@2.2.8: {}
+
+  warning@4.0.3:
+    dependencies:
+      loose-envify: 1.4.0
 
   watchpack@2.4.4:
     dependencies:

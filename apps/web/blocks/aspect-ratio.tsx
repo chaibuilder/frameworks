@@ -16,7 +16,9 @@ const ShadcnAspectRatio = (
   }>
 ) => {
   const ratio =
-    props.width && props.height ? props.width / props.height : 16 / 9;
+    props.width && props.height && props.width > 0 && props.height > 0
+      ? props.width / props.height
+      : 16 / 9;
 
   return (
     <div {...props.blockProps} {...props.containerStyles}>

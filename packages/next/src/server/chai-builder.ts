@@ -1,10 +1,7 @@
 import { ChaiBlock } from "@chaibuilder/pages/runtime";
-import {
-  ChaiBuilderPages,
-  ChaiBuilderPagesBackend,
-  ChaiPageProps,
-} from "@chaibuilder/pages/server";
+import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
 import { unstable_cache } from "next/cache";
+import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
 
 type ChaiBuilderPage =
@@ -32,9 +29,7 @@ class ChaiBuilder {
     if (!apiKey) {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
-    ChaiBuilder.pages = new ChaiBuilderPages(
-      new ChaiBuilderPagesBackend(apiKey)
-    );
+    ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
   }
 
   static async loadSiteSettings(draftMode: boolean) {
@@ -61,11 +56,9 @@ class ChaiBuilder {
 
   static async getSiteSettings() {
     ChaiBuilder.verifyInit();
-    return await unstable_cache(
-      async () => await ChaiBuilder.pages?.getSiteSettings(),
-      ["website-settings"],
-      { tags: ["website-settings"] }
-    )();
+    return await unstable_cache(async () => await ChaiBuilder.pages?.getSiteSettings(), ["website-settings"], {
+      tags: ["website-settings"],
+    })();
   }
 
   static async getPage(slug: string) {
@@ -84,8 +77,50 @@ class ChaiBuilder {
         return { ...data, fallbackLang, lang: page.lang || fallbackLang };
       },
       ["page-" + page.languagePageId, page.lang, page.id, slug],
-      { tags: ["page-" + tagPageId] }
+      { tags: ["page-" + tagPageId] },
     )();
+  }
+
+  static async getPageSeoData(slug: string) {
+    ChaiBuilder.verifyInit();
+    const page = await ChaiBuilder.getPage(slug);
+    if ("error" in page) {
+      return {
+        title: "Page Not Found",
+        description: "The requested page could not be found.",
+        robots: { index: false, follow: false },
+      };
+    }
+
+    const externalData = await ChaiBuilder.getPageExternalData({
+      blocks: page.blocks,
+      pageProps: page,
+      pageType: page.pageType,
+      lang: page.lang,
+    });
+
+    const seo = withDataBinding(page?.seo ?? {}, externalData);
+
+    return {
+      title: seo?.title,
+      description: seo?.description,
+      openGraph: {
+        title: seo?.ogTitle || seo?.title,
+        description: seo?.ogDescription || seo?.description,
+        images: seo?.ogImage ? [seo?.ogImage] : [],
+      },
+      alternates: {
+        canonical: seo?.canonicalUrl || "",
+      },
+      robots: {
+        index: !seo?.noIndex,
+        follow: !seo?.noFollow,
+        googleBot: {
+          index: !seo?.noIndex,
+          follow: !seo?.noFollow,
+        },
+      },
+    };
   }
 
   static async getPageExternalData(args: {

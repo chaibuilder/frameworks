@@ -139,7 +139,7 @@ const Carousel = React.forwardRef<
           onKeyDownCapture={handleKeyDown}
           className={cn(
             "relative",
-            orientation === "vertical" ? "h-80" : " ",
+            orientation === "vertical" ? "h-80" : "px-16",
             className
           )}
           role="region"
@@ -195,9 +195,9 @@ const CarouselItem = React.forwardRef<
       aria-roledescription="slide"
       className={cn(
         "min-w-0 shrink-0 grow-0",
-        orientation === "horizontal" 
-          ? "pl-4 basis-full" 
-          : "pt-4 basis-full min-h-0",
+        orientation === "horizontal"
+          ? "px-4 basis-full min-h-60"
+          : "py-4 basis-full min-h-0",
         className
       )}
       {...props}
@@ -220,7 +220,7 @@ const CarouselPrevious = React.forwardRef<
       className={cn(
         "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
+          ? "left-4 top-1/2 -translate-y-1/2"
           : "top-2 left-1/2 -translate-x-1/2 rotate-90 z-10",
         className
       )}
@@ -249,7 +249,7 @@ const CarouselNext = React.forwardRef<
       className={cn(
         "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
+          ? "right-4 top-1/2 -translate-y-1/2"
           : "bottom-2 left-1/2 -translate-x-1/2 rotate-90 z-10",
         className
       )}

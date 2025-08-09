@@ -41,32 +41,32 @@ const ShadcnCarousel = (
   };
 
   return (
-  
-      <Carousel
-      {...props.blockProps} {...props.containerStyles}
-        opts={opts}
-        orientation={props.orientation}
-        className={cn(
-          "w-full mx-auto",
-          props.orientation === "vertical"
-            ? "min-h-60 max-w-xs my-auto flex flex-col"
-            : "max-w-xs"
-        )}
-      >
-        <CarouselContent {...props.containerStyles}>{props.children}</CarouselContent>
-        {props.showPrevious && <CarouselPrevious {...props.navigationStyles} />}
-        {props.showNext && <CarouselNext {...props.navigationStyles} />}
-      </Carousel>
+    <Carousel
+      {...props.blockProps}
+      opts={opts}
+      orientation={props.orientation}
+      className={cn(
+        "w-full max-w-full mx-auto",
+        props.orientation === "vertical"
+          ? "min-h-60 h-80 my-auto flex flex-col"
+          : ""
+      )}
+      {...props.containerStyles}
+    >
+      <CarouselContent className="ml-0">{props.children}</CarouselContent>
+      {props.showPrevious && <CarouselPrevious {...props.navigationStyles} />}
+      {props.showNext && <CarouselNext {...props.navigationStyles} />}
+    </Carousel>
   );
 };
 
 const ShadcnCarouselItem = (
   props: ChaiBlockComponentProps<{
-    itemStyles: ChaiStyles;
+    style: ChaiStyles;
   }>
 ) => {
   return (
-    <CarouselItem {...props.blockProps} {...props.itemStyles}>
+    <CarouselItem {...props.blockProps} {...props.style}>
       {props.children}
     </CarouselItem>
   );
@@ -93,7 +93,7 @@ registerChaiBlock(ShadcnCarouselItem, {
   },
   ...registerChaiBlockSchema({
     properties: {
-      itemStyles: stylesProp(""),
+      style: stylesProp(""),
     },
   }),
   canAcceptBlock: () => true,

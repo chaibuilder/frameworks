@@ -11,4 +11,5 @@ export type ChaiBuilderPage = {
   createdAt: string;
   lastSaved: string;
   dynamic: boolean;
+  seo?: any;
 };

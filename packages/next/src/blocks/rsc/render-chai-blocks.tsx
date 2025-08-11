@@ -1,10 +1,8 @@
 import { RenderChaiBlocks as RenderChaiBlocksSdk } from "@chaibuilder/sdk/render";
-import {
-  ChaiBlockComponentProps,
-  ChaiPageProps,
-} from "@chaibuilder/sdk/runtime";
+import { ChaiBlockComponentProps, ChaiPageProps } from "@chaibuilder/sdk/runtime";
 import ChaiBuilder from "../../server";
 import { ChaiBuilderPage } from "../../types";
+import { JSONLD } from "./json-ld";
 
 export const RenderChaiBlocks = async ({
   page,
@@ -28,12 +26,7 @@ export const RenderChaiBlocks = async ({
   return (
     <>
       <style id="page-styles">{styles}</style>
-      <script type="application/jsonld">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": "[]",
-        })}
-      </script>
+      <JSONLD jsonLD={page?.seo?.jsonLD} pageData={pageData} />
       <RenderChaiBlocksSdk
         externalData={pageData}
         blocks={page.blocks}

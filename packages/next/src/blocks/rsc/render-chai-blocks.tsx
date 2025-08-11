@@ -2,9 +2,9 @@ import { RenderChaiBlocks as RenderChaiBlocksSdk } from "@chaibuilder/sdk/render
 import { ChaiBlockComponentProps, ChaiPageProps, ChaiStyles, setChaiBlockComponent } from "@chaibuilder/sdk/runtime";
 import ChaiBuilder from "../../server";
 import { ChaiBuilderPage } from "../../types";
-import { ImageBlock } from "./Image";
+import { ImageBlock } from "./image-block";
 import { JSONLD } from "./json-ld";
-import { LinkBlock } from "./Link";
+import { LinkBlock } from "./link-block";
 
 type ImageBlockProps = {
   height: string;

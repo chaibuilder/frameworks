@@ -62,8 +62,27 @@ class ChaiBuilder {
     })();
   }
 
+  static async getPartialPageBySlug(slug: string) {
+    ChaiBuilder.verifyInit();
+    // if the slug is of format /_partial/{langcode}/{uuid}, get the uuid. langcode is optional
+    const uuid = slug.split("/").pop();
+    if (!uuid) {
+      throw new Error("Invalid slug format for partial page");
+    }
+
+    // Fetch the partial page data
+    const siteSettings = await ChaiBuilder.getSiteSettings();
+    const data = await ChaiBuilder.pages?.getFullPage(uuid);
+    const fallbackLang = siteSettings?.fallbackLang;
+    const lang = slug.split("/").length > 3 ? slug.split("/")[2] : fallbackLang;
+    return { ...data, fallbackLang, lang };
+  }
+
   static getPage = cache(async (slug: string) => {
     ChaiBuilder.verifyInit();
+    if (slug.startsWith("/_partial/")) {
+      return await ChaiBuilder.getPartialPageBySlug(slug);
+    }
     const page: ChaiBuilderPage = await ChaiBuilder.pages?.getPageBySlug(slug);
     if ("error" in page) {
       return page;
@@ -84,6 +103,20 @@ class ChaiBuilder {
 
   static async getPageSeoData(slug: string) {
     ChaiBuilder.verifyInit();
+    if (slug.startsWith("/_partial/")) {
+      return {
+        title: "Partial Page",
+        description: "This is a partial page.",
+        robots: {
+          index: false,
+          follow: false,
+          googleBot: {
+            index: false,
+            follow: false,
+          },
+        },
+      };
+    }
     const page = await ChaiBuilder.getPage(slug);
     if ("error" in page) {
       return {

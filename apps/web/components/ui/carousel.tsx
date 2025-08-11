@@ -139,7 +139,7 @@ const Carousel = React.forwardRef<
           onKeyDownCapture={handleKeyDown}
           className={cn(
             "relative",
-            orientation === "vertical" ? "h-80" : "px-16",
+            orientation === "vertical" ? "h-80" : "",
             className
           )}
           role="region"

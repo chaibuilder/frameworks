@@ -28,7 +28,8 @@ const ShadcnCarousel = (
     duration?: number;
     startIndex?: number;
     containerStyles: ChaiStyles;
-    navigationStyles: ChaiStyles;
+    leftButtonStyles: ChaiStyles;
+    rightButtonStyles: ChaiStyles;
   }>
 ) => {
   const opts = {
@@ -54,8 +55,8 @@ const ShadcnCarousel = (
       {...props.containerStyles}
     >
       <CarouselContent className="ml-0">{props.children}</CarouselContent>
-      {props.showPrevious && <CarouselPrevious {...props.navigationStyles} />}
-      {props.showNext && <CarouselNext {...props.navigationStyles} />}
+      {props.showPrevious && <CarouselPrevious  {...props.leftButtonStyles} />}
+      {props.showNext && <CarouselNext {...props.rightButtonStyles} />}
     </Carousel>
   );
 };
@@ -160,7 +161,8 @@ registerChaiBlock(ShadcnCarousel, {
   ...registerChaiBlockSchema({
     properties: {
       containerStyles: stylesProp(""),
-      navigationStyles: stylesProp(""),
+      leftButtonStyles: stylesProp(""),
+      rightButtonStyles: stylesProp(""),
       orientation: {
         type: "string",
         title: "Orientation",

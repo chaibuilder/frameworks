@@ -171,6 +171,11 @@ class ChaiBuilder {
     ChaiBuilder.verifyInit();
     return await getPageStyles(blocks);
   }
+
+  static resolvePageLink = cache(async (href: string, lang: string) => {
+    ChaiBuilder.verifyInit();
+    return await ChaiBuilder.pages?.resolvePageLink(href, lang);
+  });
 }
 
 export { ChaiBuilder };

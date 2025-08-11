@@ -19,14 +19,8 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   clean: true,
-  external: [
-    "react",
-    "react-dom",
-    "next",
-    "@chaibuilder/pages",
-    "@chaibuilder/sdk",
-  ],
-  minify: false,
+  external: ["react", "react-dom", "next", "@chaibuilder/pages", "@chaibuilder/sdk"],
+  minify: true,
   sourcemap: false,
   outExtension({ format }) {
     return {

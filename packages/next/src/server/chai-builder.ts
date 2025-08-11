@@ -1,6 +1,7 @@
 import { ChaiBlock } from "@chaibuilder/pages/runtime";
 import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
 
@@ -61,7 +62,7 @@ class ChaiBuilder {
     })();
   }
 
-  static async getPage(slug: string) {
+  static getPage = cache(async (slug: string) => {
     ChaiBuilder.verifyInit();
     const page: ChaiBuilderPage = await ChaiBuilder.pages?.getPageBySlug(slug);
     if ("error" in page) {
@@ -79,7 +80,7 @@ class ChaiBuilder {
       ["page-" + page.languagePageId, page.lang, page.id, slug],
       { tags: ["page-" + tagPageId] },
     )();
-  }
+  });
 
   static async getPageSeoData(slug: string) {
     ChaiBuilder.verifyInit();

@@ -10,11 +10,9 @@ export * from "@chaibuilder/pages";
 export * from "@chaibuilder/sdk/ui";
 
 // Use a type assertion to avoid the TypeScript error with interfaces
-export const ChaiBuilder = dynamic(
-  () =>
-    import("@chaibuilder/pages").then((mod) => mod.default) as Promise<FC<any>>,
-  { ssr: false }
-);
+export const ChaiBuilder = dynamic(() => import("@chaibuilder/pages").then((mod) => mod.default) as Promise<FC<any>>, {
+  ssr: false,
+});
 
 type ChaiBuilderProps = {
   logo?: React.FC;
@@ -45,10 +43,10 @@ export default (props: ChaiBuilderProps) => {
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}
       getPreviewUrl={(slug: string) => {
-        return `/builder/preview?slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+        return `${API_URL}/preview?slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
       }}
       getLiveUrl={(slug: string) => {
-        return `/builder/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
+        return `${API_URL}/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/partial/" + slug}`;
       }}
       {...props}
     />

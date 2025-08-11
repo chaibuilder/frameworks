@@ -55,10 +55,12 @@ class ChaiBuilder {
     return ChaiBuilder.pages?.getFallbackLang();
   }
 
-  static getSiteSettings = cache(async () => {
+  static async getSiteSettings() {
     ChaiBuilder.verifyInit();
-    return await ChaiBuilder.pages?.getSiteSettings();
-  });
+    return await unstable_cache(async () => await ChaiBuilder.pages?.getSiteSettings(), ["website-settings"], {
+      tags: ["website-settings"],
+    })();
+  }
 
   static getPage = cache(async (slug: string) => {
     ChaiBuilder.verifyInit();

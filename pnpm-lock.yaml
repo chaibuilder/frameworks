@@ -173,11 +173,11 @@ importers:
   packages/next:
     dependencies:
       '@chaibuilder/pages':
-        specifier: 0.10.2
-        version: 0.10.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.5.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)
+        specifier: 0.10.3
+        version: 0.10.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.5.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)
       '@chaibuilder/sdk':
-        specifier: 2.5.2
-        version: 2.5.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)
+        specifier: 2.5.3
+        version: 2.5.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)
       '@tailwindcss/aspect-ratio':
         specifier: ^0.4.2
         version: 0.4.2(tailwindcss@3.4.17)
@@ -197,7 +197,7 @@ importers:
         specifier: 4.17.20
         version: 4.17.20
       next:
-        specifier: ^15.4.5
+        specifier: ^15
         version: 15.4.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       postcss:
         specifier: 8.5.6
@@ -276,14 +276,14 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@chaibuilder/pages@0.10.2':
-    resolution: {integrity: sha512-yizwZCo9JgWE59xH5ayyMNaO8UxbFSCjCVAGAvD9r87wHoqeUpegWcNBxJO2z6EzDCNN8VEHBk9U4vL44IQDpw==}
+  '@chaibuilder/pages@0.10.3':
+    resolution: {integrity: sha512-FTMJDLiyrM2LsowqjgnztnHxH9sPAjt5h9vjfym9qYhD0RfOIax9od4VCVPrIgdfVQcS2fZ3H5vmWyMopsnrPA==}
     engines: {node: '>=20.10.0 <21.0.0', pnpm: '>=8.0.0 <10.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
-      '@chaibuilder/sdk': 2.5.2
-      '@types/react': '*'
-      '@types/react-dom': '*'
+      '@chaibuilder/sdk': 2.5.3
+      '@types/react': 19.0.8
+      '@types/react-dom': 19.0.3
       react: ^18.0 || ^19.0 || ^19.1
       react-dom: ^18.0 || ^19.0 || ^19.1
     peerDependenciesMeta:
@@ -305,8 +305,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@chaibuilder/sdk@2.5.2':
-    resolution: {integrity: sha512-vI6U5vY2UUH9Cet2tstcsiPYA4r3jk7eN6xh9J3OkOBGXZaRP2G08B109dob4AeNV2xB+3oanxasevMCWZg/Pg==}
+  '@chaibuilder/sdk@2.5.3':
+    resolution: {integrity: sha512-t3Q+iAUv+vKSHJu5ac4wHKMkcxOcYODo9TtbpNf4mWD9MBYxswGtAzWY/gby4Hg5VvY9kIXU13I7gudHLkf1iQ==}
     engines: {node: ^20.18.0}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
@@ -1730,8 +1730,8 @@ packages:
     resolution: {integrity: sha512-3E/tqXQrsuFIeGwDHE/ANEdDCPCYrt3ETk3/Q83M5ZZaFWdFWJG3bMeVBwNP2Nuul5OMr70LH3ce3krEObz98g==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@types/react': 19.0.8
-      '@types/react-dom': 19.0.3
+      '@types/react': '>=16.0.0'
+      '@types/react-dom': '>=16.0.0'
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
 
@@ -5156,10 +5156,10 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@chaibuilder/pages@0.10.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.5.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)':
+  '@chaibuilder/pages@0.10.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@chaibuilder/sdk@2.5.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2))(@emotion/is-prop-valid@1.2.2)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(postcss@8.5.6)(react-dom@19.1.0(react@19.1.0))(react-konva@19.0.7(@types/react@19.1.0)(konva@9.3.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(styled-components@6.1.19(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@3.4.17)':
     dependencies:
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@chaibuilder/sdk': 2.5.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)
+      '@chaibuilder/sdk': 2.5.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)
       '@mhsdesign/jit-browser-tailwindcss': 0.4.2
       '@tailwindcss/aspect-ratio': 0.4.2(tailwindcss@3.4.17)
       '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.4.17)
@@ -5212,7 +5212,7 @@ snapshots:
       '@types/react': 19.1.0
       '@types/react-dom': 19.1.1(@types/react@19.1.0)
 
-  '@chaibuilder/sdk@2.5.2(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)':
+  '@chaibuilder/sdk@2.5.3(@chaibuilder/runtime@2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@emotion/is-prop-valid@1.2.2)(@tiptap/core@2.26.1(@tiptap/pm@2.26.1))(@types/node@22.15.30)(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(jotai@2.12.1(@types/react@19.1.0)(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17)(typescript@5.8.2)':
     dependencies:
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@floating-ui/dom': 1.7.3

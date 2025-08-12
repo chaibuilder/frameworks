@@ -1,6 +1,6 @@
 {
   "name": "chai-next",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.10",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -29,8 +29,8 @@
   },
   "private": false,
   "dependencies": {
-    "@chaibuilder/pages": "0.9.7",
-    "@chaibuilder/sdk": "2.4.5",
+    "@chaibuilder/pages": "0.9.9",
+    "@chaibuilder/sdk": "2.4.6",
     "chalk": "^5.4.1",
     "raw-loader": "^4.0.2",
     "tailwindcss": "^3.4.17",

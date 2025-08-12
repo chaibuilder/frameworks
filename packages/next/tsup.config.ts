@@ -8,6 +8,7 @@ export default defineConfig({
     "src/blocks/rsc/index.tsx",
     "src/core/index.tsx",
     "src/config/index.ts",
+    "src/classes.ts",
   ],
   target: "es2018",
   esbuildOptions(options) {

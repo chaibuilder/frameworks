@@ -1,5 +1,4 @@
 import { ChaiBlockComponentProps, ChaiStyles } from "@chaibuilder/pages/runtime";
-import Link from "next/link";
 import * as React from "react";
 import ChaiBuilder from "../../server";
 
@@ -25,27 +24,25 @@ export const LinkBlock = async (props: ChaiBlockComponentProps<LinkProps>) => {
   if (isPageTypeLink) {
     href = await ChaiBuilder.resolvePageLink(href, lang);
   }
+
+  // Note: prefetchLink is not directly supported in standard anchor tags
+  // You might want to implement prefetching using Intersection Observer or other methods
+
   if (children) {
     return (
-      <Link
-        href={href || "#/"}
-        target={link?.target}
-        aria-label={content}
-        {...styles}
-        {...(prefetchLink ? { prefetch: true } : {})}>
+      <a href={href || "#/"} target={link?.target} aria-label={content} {...styles}>
         {children}
-      </Link>
+      </a>
     );
   }
 
   return React.createElement(
-    Link,
+    "a",
     {
       ...styles,
       href: href,
       target: link?.target || "_self",
       "aria-label": content,
-      ...(prefetchLink ? { prefetch: true } : {}),
     },
     content,
   );

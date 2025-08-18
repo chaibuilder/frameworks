@@ -1,6 +1,5 @@
 import { ChaiBlockComponentProps, ChaiStyles } from "@chaibuilder/pages/runtime";
 import { first, isArray } from "lodash";
-import Image from "next/image";
 import * as React from "react";
 
 export const ImageBlock = (
@@ -15,22 +14,39 @@ export const ImageBlock = (
 ) => {
   const { image, styles, alt, height, width, lazyLoading } = props;
 
-  // If width or height are missing/invalid, use fill mode
+  // If width or height are missing/invalid, use CSS object-fit
   const shouldUseFill = !width || !height || isNaN(parseInt(width)) || isNaN(parseInt(height));
 
-  const imageElement = React.createElement(Image, {
+  const src = isArray(image) ? first(image)?.trimEnd() : image?.trimEnd();
+
+  const imageElement = React.createElement("img", {
     ...styles,
-    src: isArray(image) ? first(image)?.trimEnd() : image?.trimEnd(),
+    src,
     alt: alt || "",
-    priority: !lazyLoading,
-    fill: shouldUseFill,
+    loading: lazyLoading ? "lazy" : "eager",
     height: shouldUseFill ? undefined : parseInt(height),
     width: shouldUseFill ? undefined : parseInt(width),
-    style: shouldUseFill ? { objectFit: "cover" } : undefined,
+    style: {
+      ...(typeof styles?.style === "object" ? styles.style : {}),
+      ...(shouldUseFill
+        ? {
+            width: "100%",
+            height: "100%",
+            objectFit: "cover" as const,
+          }
+        : {}),
+    },
   });
 
   if (shouldUseFill) {
-    return React.createElement("div", { className: "relative flex w-full h-full" }, imageElement);
+    return React.createElement(
+      "div",
+      {
+        className: "relative flex w-full h-full",
+        style: { position: "relative" },
+      },
+      imageElement,
+    );
   }
 
   return imageElement;

@@ -1,9 +1,39 @@
 import { ChaiBlock } from "@chaibuilder/pages/runtime";
 import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
-import { unstable_cache } from "next/cache";
-import { cache } from "react";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
+
+// Simple in-memory cache for Astro (you might want to use a more sophisticated caching solution)
+const cache = new Map<string, any>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function createCacheKey(parts: (string | number)[]): string {
+  return parts.join(":");
+}
+
+function getCachedValue<T>(key: string): T | null {
+  const cached = cache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.value;
+  }
+  cache.delete(key);
+  return null;
+}
+
+function setCachedValue<T>(key: string, value: T): T {
+  cache.set(key, { value, timestamp: Date.now() });
+  return value;
+}
+
+async function withCache<T>(fn: () => Promise<T>, key: string): Promise<T> {
+  const cached = getCachedValue<T>(key);
+  if (cached !== null) {
+    return cached;
+  }
+
+  const result = await fn();
+  return setCachedValue(key, result);
+}
 
 type ChaiBuilderPage =
   | {
@@ -57,9 +87,7 @@ class ChaiBuilder {
 
   static async getSiteSettings() {
     ChaiBuilder.verifyInit();
-    return await unstable_cache(async () => await ChaiBuilder.pages?.getSiteSettings(), ["website-settings"], {
-      tags: ["website-settings"],
-    })();
+    return await withCache(async () => await ChaiBuilder.pages?.getSiteSettings(), "website-settings");
   }
 
   static async getPartialPageBySlug(slug: string) {
@@ -78,7 +106,7 @@ class ChaiBuilder {
     return { ...data, fallbackLang, lang };
   }
 
-  static getPage = cache(async (slug: string) => {
+  static async getPage(slug: string) {
     ChaiBuilder.verifyInit();
     if (slug.startsWith("/_partial/")) {
       return await ChaiBuilder.getPartialPageBySlug(slug);
@@ -89,17 +117,13 @@ class ChaiBuilder {
     }
 
     const siteSettings = await ChaiBuilder.getSiteSettings();
-    const tagPageId = page.id;
-    return await unstable_cache(
-      async () => {
-        const data = await ChaiBuilder.pages?.getFullPage(page.languagePageId);
-        const fallbackLang = siteSettings?.fallbackLang;
-        return { ...data, fallbackLang, lang: page.lang || fallbackLang };
-      },
-      ["page-" + page.languagePageId, page.lang, page.id, slug],
-      { tags: ["page-" + tagPageId] },
-    )();
-  });
+    const cacheKey = createCacheKey(["page", page.languagePageId, page.lang, page.id, slug]);
+    return await withCache(async () => {
+      const data = await ChaiBuilder.pages?.getFullPage(page.languagePageId);
+      const fallbackLang = siteSettings?.fallbackLang;
+      return { ...data, fallbackLang, lang: page.lang || fallbackLang };
+    }, cacheKey);
+  }
 
   static async getPageSeoData(slug: string) {
     ChaiBuilder.verifyInit();
@@ -172,10 +196,11 @@ class ChaiBuilder {
     return await getPageStyles(blocks);
   }
 
-  static resolvePageLink = cache(async (href: string, lang: string) => {
+  static async resolvePageLink(href: string, lang: string) {
     ChaiBuilder.verifyInit();
-    return await ChaiBuilder.pages?.resolvePageLink(href, lang);
-  });
+    const cacheKey = createCacheKey(["page-link", href, lang]);
+    return await withCache(async () => await ChaiBuilder.pages?.resolvePageLink(href, lang), cacheKey);
+  }
 }
 
 export { ChaiBuilder };

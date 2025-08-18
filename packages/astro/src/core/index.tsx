@@ -1,18 +1,21 @@
-"use client";
 import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
 import { startsWith } from "lodash";
-import dynamic from "next/dynamic";
 import type { FC } from "react";
+import { lazy, Suspense } from "react";
 import "../../styles";
 
 // Only re-export specific items from @chaibuilder/pages to avoid interface conflicts
 export * from "@chaibuilder/pages";
 export * from "@chaibuilder/sdk/ui";
 
-// Use a type assertion to avoid the TypeScript error with interfaces
-export const ChaiBuilder = dynamic(() => import("@chaibuilder/pages").then((mod) => mod.default) as Promise<FC<any>>, {
-  ssr: false,
-});
+// Use lazy loading for client-side component in Astro
+const ChaiBuilderComponent = lazy(() => import("@chaibuilder/pages"));
+
+export const ChaiBuilder: FC<any> = (props) => (
+  <Suspense fallback={<div>Loading ChaiBuilder...</div>}>
+    <ChaiBuilderComponent {...props} />
+  </Suspense>
+);
 
 type ChaiBuilderProps = {
   logo?: React.FC;

@@ -1,7 +1,7 @@
 {
   "name": "chai-astro",
   "version": "0.0.3-beta",
-  "description": "Chai Builder NextJS Package",
+  "description": "Chai Builder Astro Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "keywords": [
     "chai-builder",
-    "nextjs",
+    "astro",
     "tailwindcss",
     "react",
     "builder",

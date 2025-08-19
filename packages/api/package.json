@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "tsup  --watch --format esm,cjs",
+    "build": "tsup  --dts --format esm,cjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.16",

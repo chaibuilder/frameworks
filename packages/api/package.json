@@ -15,7 +15,21 @@
     "date-fns": "4.1.0",
     "lodash": "4.17.20",
     "sharp": "^0.34.3",
+    "vitest": "^1.4.0",
     "zod": "4.0.17"
+  },
+  "files": [
+    "dist",
+    "scripts"
+  ],
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/lodash": "4.17.20",
+    "@types/node": "^22.15.30",
+    "@vitest/coverage-v8": "^1.4.0",
+    "tsup": "^8.5.0",
+    "typescript": "5.8.2",
+    "vitest": "^1.4.0"
   },
   "keywords": [],
   "author": "Me",

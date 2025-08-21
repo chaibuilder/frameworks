@@ -1,9 +1,12 @@
 import { ChaiBlock } from "@chaibuilder/pages/runtime";
 import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
+import { has } from "lodash";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
+import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
+import { getSupabaseAdmin } from "./supabase";
 
 type ChaiBuilderPage =
   | {
@@ -31,6 +34,39 @@ class ChaiBuilder {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
+  }
+
+  static initByHostname = async (hostname: string) => {
+    if (!hostname) {
+      throw new Error("Please initialize ChaiBuilder with a hostname");
+    }
+    const siteResult = await ChaiBuilder.getSiteIdByHostname(hostname);
+    if (has(siteResult, "error")) {
+      throw new Error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
+    }
+    ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
+  };
+
+  static async getSiteIdByHostname(hostname: string) {
+    return await unstable_cache(
+      async () => {
+        const supabase = await getSupabaseAdmin();
+        const { data, error } = await supabase
+          .from("apps")
+          .select("id")
+          .or(`domain.eq.${hostname},subdomain.eq.${hostname}`)
+          .single();
+        if (error) {
+          return { error: error.message };
+        }
+        if (!data) {
+          return { error: `No app found for hostname ${hostname}` };
+        }
+        return { id: data.id };
+      },
+      ["site-id-" + hostname],
+      { tags: ["site-id-" + hostname] },
+    )();
   }
 
   static async loadSiteSettings(draftMode: boolean) {

@@ -11,7 +11,8 @@ import { ChaiPageRevisions } from "./ChaiPageRevisions";
 import { ChaiBuilderAI } from "./ai/ChaiBuilderAI";
 import { UpdatePageBody } from "./types";
 
-const apiKey = process.env.CHAI_AI_API_KEY!;
+const aiApiKey = process.env.CHAIBUILDER_AI_API_KEY!;
+const aiModel = process.env.CHAIBUILDER_AI_MODEL || "gpt-4o-mini";
 
 export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
   private pages: ChaiBuilderPages;
@@ -31,7 +32,7 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
     this.publisher = new ChaiBuilderPublishChanges(supabase, appUuid, chaiUser);
     this.website = new ChaiBuilderWebsite(supabase, appUuid, chaiUser);
     this.revisions = new ChaiPageRevisions(supabase, appUuid, chaiUser);
-    this.ai = new ChaiBuilderAI(apiKey, "gpt-4o-mini");
+    this.ai = new ChaiBuilderAI(aiApiKey, aiModel);
     this.libraries = new ChaiBuilderLibraries(supabase, appUuid, chaiUser);
     this.dam = new ChaiBuilderDAM(supabase, appUuid, chaiUser);
   }

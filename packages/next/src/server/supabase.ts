@@ -1,7 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 let ADMIIN_INSATANCE: SupabaseClient | null = null;
-let CLIENT_INSTANCE: SupabaseClient | null = null;
 
 const checkForEnv = (envVar: string | undefined, name: string) => {
   if (!envVar) {

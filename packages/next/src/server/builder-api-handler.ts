@@ -1,13 +1,25 @@
 import { ChaiBuilderPages, ChaiBuilderPagesBackend } from "@chaibuilder/pages/server";
-import { get, has } from "lodash";
+import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
+import { getSupabaseAdmin } from "./supabase";
 
 const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
 
-export const builderApiHandler = (apiKey: string) => {
-  const chaiBuilderPages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
+const getAppUuidFromRoute = async (req: NextRequest) => {
+  // This function should implement the logic to retrieve the app UUID from the route.
+  // For example, it could extract it from the request URL or headers.
+  // Placeholder implementation:
+  return "your-app-uuid"; // Replace with actual logic to get app UUID
+};
+
+export const builderApiHandler = (apiKey?: string) => {
   return async (req: NextRequest) => {
+    const USE_CHAI_API_SERVER = !isEmpty(apiKey);
+    const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
+    const backend = apiKey ? new ChaiBuilderPagesBackend(apiKeyToUse) : new ChaiBuilderSupabaseBackend(apiKeyToUse);
+    const chaiBuilderPages = new ChaiBuilderPages(backend);
     try {
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
@@ -16,10 +28,18 @@ export const builderApiHandler = (apiKey: string) => {
       if (checkAuth && !authorization) {
         return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
       }
+      let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
+      if (checkAuth && !USE_CHAI_API_SERVER) {
+        const supabase = await getSupabaseAdmin();
+        const supabaseUser = await supabase.auth.getUser(authTokenOrUserId);
+        if (supabaseUser.error) {
+          // If the token is invalid or expired, return a 401 response
+          return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
+        }
+        authTokenOrUserId = supabaseUser.data.user?.id || "";
+      }
 
-      // Check and extract, valid token string `authorization`
-      const authToken = (authorization ? authorization.split(" ")[1] : "") as string;
-      const response = await chaiBuilderPages.handle(requestBody, authToken);
+      const response = await chaiBuilderPages.handle(requestBody, authTokenOrUserId);
 
       if (has(response, "error")) {
         return NextResponse.json(response, { status: response.status });

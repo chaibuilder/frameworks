@@ -1,7 +1,9 @@
 import { ChaiBuilderPagesBackendInterface } from "@chaibuilder/pages/server";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { BaseAction } from "./builder-api/src/actions/base-action";
+import { ChaiAssets } from "./builder-api/src/assets/class-chai-assets";
 import { SupabaseChaiBuilderBackEnd } from "./builder-api/src/SupabaseChaiBuilderBackEnd";
+import { ChaiBuilderUsers } from "./builder-api/src/users/ChaiBuilderUsers";
 import { getSupabaseAdmin } from "./supabase";
 
 export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterface {
@@ -10,8 +12,119 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
     this.appId = appId;
   }
   async handleUsersAction(body: any, userId: string): Promise<any> {
-    return Promise.reject(new Error("Not implemented"));
+    try {
+      const supabase = await getSupabaseAdmin();
+      const { action, data } = body;
+      const users = new ChaiBuilderUsers(supabase, this.appId);
+
+      if (action === "LOGIN") {
+        const { email, password } = data as { email: string; password: string };
+        const { data: userData, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          console.log("error?.message", error?.message);
+          return { error: error.message, status: 400 };
+        }
+
+        const appUser = await users.getAppUser(userData.user?.id as string);
+
+        if (!appUser) {
+          return {
+            error: "This email is not registered with us. Please contact your administrator",
+            status: 400,
+          };
+        }
+
+        if (appUser.status !== "active") {
+          return {
+            error: "Your account is not active. Please contact your administrator to activate your account",
+            status: 400,
+          };
+        }
+
+        const response = {
+          id: userData.user?.id,
+          email: userData.user?.email,
+          accessToken: userData.session?.access_token,
+          refreshToken: userData.session?.refresh_token,
+          expiresAt: userData.session?.expires_at,
+          name: userData.user?.user_metadata?.name,
+          avatar: userData.user?.user_metadata?.avatar,
+        };
+
+        return {
+          ...response,
+        };
+      }
+
+      if (action === "REFRESH_TOKEN") {
+        const { error } = await supabase.auth.setSession({
+          access_token: data.accessToken as string,
+          refresh_token: data.refreshToken as string,
+        });
+        if (error) {
+          return { error: error.message, status: 400 };
+        }
+        const { data: userData, error: refreshError } = await supabase.auth.refreshSession();
+
+        if (refreshError) {
+          return { error: refreshError.message, status: 401 };
+        }
+        return {
+          id: userData.user?.id,
+          email: userData.user?.email,
+          accessToken: userData.session?.access_token,
+          refreshToken: userData.session?.refresh_token,
+          expiresAt: userData.session?.expires_at,
+          name: userData.user?.user_metadata?.name,
+          avatar: userData.user?.user_metadata?.avatar,
+        };
+      }
+
+      if (action === "LOGOUT") {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          return { error: error.message, status: 401 };
+        }
+        return { message: "Logged out", status: 200 };
+      }
+      if (action === "GET_CHAI_USER") {
+        const { data: userData, error } = await supabase.auth.admin.getUserById(data.userId as string);
+        if (error) {
+          return {
+            id: "unknown",
+            email: "unknown@chaibuilder.com",
+            name: "Unknown",
+            avatar: "",
+          };
+        }
+        return {
+          id: userData.user?.id,
+          email: userData.user?.email,
+          name: userData.user?.user_metadata?.name,
+          avatar: userData.user?.user_metadata?.avatar,
+        };
+      }
+      if (action === "GET_ROLE_AND_PERMISSIONS") {
+        const { data: userData, error } = await supabase.auth.admin.getUserById(data.userId as string);
+        return {
+          id: userData.user?.id,
+          email: userData.user?.email,
+          role: "admin",
+          permissions: null,
+          status: 200,
+        };
+      }
+      return { error: "Invalid action", status: 400 };
+    } catch (error) {
+      console.error("Error handling users action:", error);
+      return { error: "Something went wrong.", status: 500 };
+    }
   }
+
   async handleAction(body: { action: string; data: Record<string, unknown> }, userId: string): Promise<unknown> {
     try {
       const { action, data } = body;
@@ -52,6 +165,36 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
     }
   }
   async handleAssetsAction(body: any, userId: string): Promise<any> {
-    return Promise.reject(new Error("Not implemented"));
+    try {
+      const { action, data } = body;
+      const backend = new ChaiAssets(this.appId, userId);
+      let response = null;
+      switch (action) {
+        case "UPLOAD_ASSET":
+          response = await backend.upload(data);
+          break;
+        case "GET_ASSET":
+          response = await backend.getAsset(data);
+          break;
+        case "GET_ASSETS":
+          response = await backend.getAssets(data);
+          break;
+        case "DELETE_ASSET":
+          response = await backend.deleteAsset(data);
+          break;
+        case "UPDATE_ASSET":
+          response = await backend.updateAsset(data);
+          break;
+        default:
+          return { error: "INVALID ACTION", status: 400 };
+      }
+
+      if (response.status !== 200) {
+        return { ...response, status: response.status };
+      }
+      return { ...response, status: response.status };
+    } catch (error) {
+      return { error, status: 500 };
+    }
   }
 }

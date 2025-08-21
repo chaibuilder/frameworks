@@ -7,6 +7,6 @@ if (!process.env.CHAIBUILDER_API_KEY) {
   );
 }
 
-const handler: any = builderApiHandler(process.env.CHAIBUILDER_API_KEY!);
+const handler: any = builderApiHandler();
 
 export { handler as POST };

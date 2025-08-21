@@ -1,18 +1,16 @@
-import { supabase } from "@/app/supabase";
 import { isEmpty, set } from "lodash";
-import {
-  AssetUploaderInterface,
-  SupabaseStorageUploader,
-} from "./class-chai-uploader";
+import { getSupabaseAdmin } from "../../../supabase";
+import { AssetUploaderInterface, SupabaseStorageUploader } from "./class-chai-uploader";
 
 type ChaiAsset = any;
 
+const supabase = (async () => await getSupabaseAdmin()) as any;
 export class ChaiAssets {
   private uploader: AssetUploaderInterface;
 
   constructor(
     private appId: string,
-    private userId: string
+    private userId: string,
   ) {
     this.uploader = new SupabaseStorageUploader(supabase, appId);
   }
@@ -23,9 +21,7 @@ export class ChaiAssets {
     }
     // Use URL API to append params, regardless of existing query
     const urlObj = new URL(url);
-    const sanitizedUpdatedAt = (updatedAt ?? "")
-      .replace(/[^a-z0-9]/gi, "")
-      .toLowerCase();
+    const sanitizedUpdatedAt = (updatedAt ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
     urlObj.searchParams.set("cid", sanitizedUpdatedAt);
 
     // Remove dummy base if not needed
@@ -70,11 +66,7 @@ export class ChaiAssets {
       };
 
       // Insert into app_assets table
-      const { data, error } = await supabase
-        .from("app_assets")
-        .insert(assetData)
-        .select("*")
-        .single();
+      const { data, error } = await supabase.from("app_assets").insert(assetData).select("*").single();
 
       if (error) {
         throw new Error(`Failed to store asset in database: ${error.message}`);
@@ -87,10 +79,7 @@ export class ChaiAssets {
         type: data.type,
         url: this.appendUpdatedAtToUrl(data.url, data.updatedAt),
         size: data.size,
-        thumbnailUrl: this.appendUpdatedAtToUrl(
-          data.thumbnailUrl || "",
-          data.updatedAt
-        ),
+        thumbnailUrl: this.appendUpdatedAtToUrl(data.thumbnailUrl || "", data.updatedAt),
         width: data.width,
         height: data.height,
         format: data.format,
@@ -100,38 +89,23 @@ export class ChaiAssets {
         updatedAt: data.updatedAt,
       };
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       return { error: errorMessage };
     }
   }
 
-  async getAsset({
-    id,
-  }: {
-    id: string;
-  }): Promise<ChaiAsset | { error: string }> {
+  async getAsset({ id }: { id: string }): Promise<ChaiAsset | { error: string }> {
     try {
-      const { data, error } = await supabase
-        .from("app_assets")
-        .select("*")
-        .eq("id", id)
-        .eq("app", this.appId)
-        .single();
+      const { data, error } = await supabase.from("app_assets").select("*").eq("id", id).eq("app", this.appId).single();
 
       if (error) {
         throw new Error(`Failed to fetch asset: ${error.message}`);
       }
       set(data, "url", this.appendUpdatedAtToUrl(data.url, data.updatedAt));
-      set(
-        data,
-        "thumbnailUrl",
-        this.appendUpdatedAtToUrl(data.thumbnailUrl || "", data.updatedAt)
-      );
+      set(data, "thumbnailUrl", this.appendUpdatedAtToUrl(data.thumbnailUrl || "", data.updatedAt));
       return data as ChaiAsset;
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       return { error: errorMessage };
     }
   }
@@ -166,31 +140,17 @@ export class ChaiAssets {
         .order("updatedAt", { ascending: false });
 
       if (search) {
-        assetsQuery = assetsQuery.or(
-          `name.ilike.%${search}%,description.ilike.%${search}%`
-        );
+        assetsQuery = assetsQuery.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
       }
       // Apply pagination
-      const {
-        data: assetsData,
-        error,
-        count,
-      } = await assetsQuery.range(offset, offset + limit - 1);
+      const { data: assetsData, error, count } = await assetsQuery.range(offset, offset + limit - 1);
 
       if (error) {
         throw new Error(error.message);
       }
       const assets = assetsData.map((asset) => {
-        set(
-          asset,
-          "url",
-          this.appendUpdatedAtToUrl(asset.url, asset.updatedAt)
-        );
-        set(
-          asset,
-          "thumbnailUrl",
-          this.appendUpdatedAtToUrl(asset.thumbnailUrl || "", asset.updatedAt)
-        );
+        set(asset, "url", this.appendUpdatedAtToUrl(asset.url, asset.updatedAt));
+        set(asset, "thumbnailUrl", this.appendUpdatedAtToUrl(asset.thumbnailUrl || "", asset.updatedAt));
         return asset;
       });
       return {
@@ -205,11 +165,7 @@ export class ChaiAssets {
     }
   }
 
-  async deleteAsset({
-    id,
-  }: {
-    id: string;
-  }): Promise<{ success: boolean } | { error: string }> {
+  async deleteAsset({ id }: { id: string }): Promise<{ success: boolean } | { error: string }> {
     try {
       // Delete from the database
       const { error } = await supabase.from("app_assets").delete().eq("id", id);
@@ -220,8 +176,7 @@ export class ChaiAssets {
 
       return { success: true };
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       return { error: errorMessage };
     }
   }
@@ -286,23 +241,15 @@ export class ChaiAssets {
         throw new Error(`Failed to update asset: ${error.message}`);
       }
 
-      set(
-        updatedAsset,
-        "url",
-        this.appendUpdatedAtToUrl(updatedAsset.url, updatedAsset.updatedAt)
-      );
+      set(updatedAsset, "url", this.appendUpdatedAtToUrl(updatedAsset.url, updatedAsset.updatedAt));
       set(
         updatedAsset,
         "thumbnailUrl",
-        this.appendUpdatedAtToUrl(
-          updatedAsset.thumbnailUrl || "",
-          updatedAsset.updatedAt
-        )
+        this.appendUpdatedAtToUrl(updatedAsset.thumbnailUrl || "", updatedAsset.updatedAt),
       );
       return updatedAsset as ChaiAsset;
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       return { error: errorMessage };
     }
   }

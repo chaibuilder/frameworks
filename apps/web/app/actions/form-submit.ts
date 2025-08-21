@@ -10,7 +10,7 @@ interface FormSubmissionData {
 
 // Initialize Supabase server client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseSecretKey = process.env.SUPABASE_SERVICE_ROLE_SECRET!;
+const supabaseSecretKey = process.env.SUPABASE_SERVICE_KEY!;
 
 const supabaseServer = createClient(supabaseUrl, supabaseSecretKey, {
   auth: {

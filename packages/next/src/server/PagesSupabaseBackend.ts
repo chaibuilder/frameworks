@@ -157,7 +157,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         if (response.status !== 200) {
           return { ...response.data, status: response.status };
         }
-        return { ...response.data, status: response.status };
+        return response.data;
       }
     } catch (error) {
       return { error: "Something went wrong.", status: 500 };

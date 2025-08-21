@@ -11,7 +11,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
   constructor(appId: string) {
     this.appId = appId;
   }
-  async handleUsersAction(body: any, userId: string): Promise<any> {
+  async handleUsersAction(body: any, userId?: string): Promise<any> {
     try {
       const supabase = await getSupabaseAdmin();
       const { action, data } = body;
@@ -109,7 +109,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         };
       }
       if (action === "GET_ROLE_AND_PERMISSIONS") {
-        const { data: userData, error } = await supabase.auth.admin.getUserById(data.userId as string);
+        const { data: userData, error } = await supabase.auth.admin.getUserById(userId as string);
         return {
           id: userData.user?.id,
           email: userData.user?.email,
@@ -153,14 +153,13 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         // Fallback to the original implementation if action not found in registry
         const backend = new SupabaseChaiBuilderBackEnd(supabase, this.appId, userId ?? "");
         const response = await backend.handle({ action, data } as any);
-
+        if (action === "GET_WEBSITE_PAGES") console.log("Response from backend:", action, response);
         if (response.status !== 200) {
           return { ...response.data, status: response.status };
         }
         return { ...response.data, status: response.status };
       }
     } catch (error) {
-      console.error("Error handling builder API:", error);
       return { error: "Something went wrong.", status: 500 };
     }
   }

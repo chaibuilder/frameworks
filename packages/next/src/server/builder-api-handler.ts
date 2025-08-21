@@ -11,7 +11,7 @@ const getAppUuidFromRoute = async (req: NextRequest) => {
   // This function should implement the logic to retrieve the app UUID from the route.
   // For example, it could extract it from the request URL or headers.
   // Placeholder implementation:
-  return process.env.CHAIBUILDER_API_KEY!; // Replace with actual logic to get app UUID
+  return "70edd9d5-8026-4d3c-b902-fd3bb32cdaef"; //process.env.CHAIBUILDER_API_KEY!; // Replace with actual logic to get app UUID
 };
 
 export const builderApiHandler = (apiKey?: string) => {

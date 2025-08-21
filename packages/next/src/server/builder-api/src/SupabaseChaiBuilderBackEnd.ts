@@ -453,7 +453,7 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
 
   async getWebsitePages(args: { lang?: string }) {
     try {
-      const pages = await this.pages.getWebsitePages(args.lang ?? "");
+      const pages = await this.pages.getWebsitePages(args?.lang ?? "");
       return { status: 200, data: pages };
     } catch (error) {
       return this.sendError(error);

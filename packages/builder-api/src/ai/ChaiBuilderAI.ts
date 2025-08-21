@@ -1,7 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { ChaiBlock } from "@chaibuilder/sdk";
-import { apiError } from "../lib.ts";
-import { askAiForContent, askAiForStyles, AskAiResponse } from "./index.tsx";
+import { apiError } from "../lib.js";
+import { askAiForContent, askAiForStyles, AskAiResponse } from "./index.js";
 
 export class ChaiBuilderAI {
   private apiKey: string;
@@ -46,10 +46,7 @@ export class ChaiBuilderAI {
     context?: string;
   }): Promise<AskAiResponse> {
     if (!this.model) {
-      throw apiError(
-        "Something went wrong. Please contact support.",
-        new Error("Please contact support.")
-      );
+      throw apiError("Something went wrong. Please contact support.", new Error("Please contact support."));
     }
     return type === "content"
       ? askAiForContent(
@@ -59,7 +56,7 @@ export class ChaiBuilderAI {
             lang,
             context,
           },
-          this.model
+          this.model,
         )
       : askAiForStyles({ prompt, blocks }, this.model);
   }

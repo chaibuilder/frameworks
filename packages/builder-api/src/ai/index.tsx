@@ -2,8 +2,8 @@ import { ChaiBlock } from "@chaibuilder/sdk";
 import { generateObject, generateText, LanguageModel } from "ai";
 import { map } from "lodash";
 import { z } from "zod";
-import { apiError } from "../lib.ts";
-import { extractBlocksFromText } from "./lib.ts";
+import { apiError } from "../lib.js";
+import { extractBlocksFromText } from "./lib.js";
 
 export type AskAiResponse = {
   blocks?: Array<{ _id: string } & Partial<ChaiBlock>>;
@@ -16,15 +16,13 @@ export const askAiForStyles = async (
     prompt: string;
     blocks: Partial<ChaiBlock>[];
   },
-  model: LanguageModel
+  model: LanguageModel,
 ): Promise<AskAiResponse> => {
   try {
     const { object, usage } = await generateObject({
       model,
       schema: z.object({
-        blocks: z.array(
-          z.object({ _id: z.string(), classes: z.string(), key: z.string() })
-        ),
+        blocks: z.array(z.object({ _id: z.string(), classes: z.string(), key: z.string() })),
       }),
       system: `You are a UI developer who writes tailwind css.
       Instructions: Analyze the provided blocks and update their classes based on the user's prompt.
@@ -36,10 +34,7 @@ export const askAiForStyles = async (
       prompt: `Update the styles based on this prompt: ${args.prompt}
               Blocks to update: ${JSON.stringify(args.blocks)}`,
     });
-    if (
-      Array.isArray(object.blocks) &&
-      object.blocks.every((block: { _id: string }) => block._id)
-    ) {
+    if (Array.isArray(object.blocks) && object.blocks.every((block: { _id: string }) => block._id)) {
       const updatedBlocks = map(object.blocks, (block) => ({
         _id: block._id,
         [block.key]: block.classes,
@@ -60,7 +55,7 @@ export const askAiForContent = async (
     lang: string;
     context?: string;
   },
-  model: LanguageModel
+  model: LanguageModel,
 ): Promise<AskAiResponse> => {
   try {
     const { text, finishReason } = await generateText({
@@ -77,13 +72,9 @@ export const askAiForContent = async (
               Blocks to update: ${JSON.stringify(args.blocks)}`,
     });
     if (finishReason !== "stop") {
-      throw apiError(
-        "Something went wrong. Please contact support.",
-        new Error("Please contact support.")
-      );
+      throw apiError("Something went wrong. Please contact support.", new Error("Please contact support."));
     }
-    const blocks: Array<{ _id: string } & Partial<ChaiBlock>> =
-      extractBlocksFromText(text, args.lang);
+    const blocks: Array<{ _id: string } & Partial<ChaiBlock>> = extractBlocksFromText(text, args.lang);
     // check if blocks is an array and each block has _id
     if (Array.isArray(blocks) && blocks.every((block) => block._id)) {
       return { blocks };

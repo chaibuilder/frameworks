@@ -1,10 +1,7 @@
-import { supabase } from "@/app/supabase";
 import { getChaiAction } from "./actions/actions-registery";
 import { BaseAction } from "./actions/base-action";
 import { decodedApiKey } from "./lib";
 import { SupabaseChaiBuilderBackEnd } from "./SupabaseChaiBuilderBackEnd";
-
-export const maxDuration = 30;
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY ?? "";
 
@@ -59,16 +56,19 @@ export async function handleBuilderApi(req) {
       actionHandler.setContext({ appId, userId });
       // Execute the action
       const result = await actionHandler.execute(data);
-      return NextResponse.json(result, { status: 200 });
+      return result;
     } else {
       // Fallback to the original implementation if action not found in registry
       const backend = new SupabaseChaiBuilderBackEnd(supabase, appId, userId ?? "");
       const response = await backend.handle({ action, data } as any);
 
       if (response.status !== 200) {
-        return NextResponse.json(response.data, { status: response.status });
+        return response.data;
       }
-      return NextResponse.json(response.data, { status: response.status });
+      return response.data;
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error handling builder API:", error);
+    return { error: "INTERNAL_SERVER_ERROR", status: 500 };
+  }
 }

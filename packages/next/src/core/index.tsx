@@ -9,6 +9,7 @@ import { getSupabaseClient } from "./supabase";
 // Only re-export specific items from @chaibuilder/pages to avoid interface conflicts
 export * from "@chaibuilder/pages";
 export * from "@chaibuilder/sdk/ui";
+export { getSupabaseClient } from "./supabase";
 
 // Use a type assertion to avoid the TypeScript error with interfaces
 export const ChaiBuilder: any = dynamic(() => import("@chaibuilder/pages"), {

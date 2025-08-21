@@ -33,7 +33,7 @@ type ChaiBuilderProps = {
   | "themePresets"
 >;
 
-const API_URL = "/builder/api";
+const API_URL = "builder/api";
 
 export default (props: ChaiBuilderProps) => {
   const builderApiUrl = props.apiUrl ?? API_URL;

@@ -29,20 +29,25 @@
   },
   "private": false,
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.18",
     "@chaibuilder/pages": "0.10.12",
     "@chaibuilder/sdk": "2.5.6",
-    "chalk": "^5.4.1",
-    "raw-loader": "^4.0.2",
-    "tailwindcss": "^3.4.17",
-    "lodash": "4.17.20",
-    "postcss": "8.5.6",
+    "@supabase/ssr": "0.6.1",
+    "@supabase/supabase-js": "2.50.3",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
+    "ai": "^5.0.20",
+    "chalk": "^5.4.1",
+    "date-fns": "^4.1.0",
+    "lodash": "4.17.20",
+    "postcss": "8.5.6",
+    "raw-loader": "^4.0.2",
+    "sharp": "0.34.3",
+    "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
-    "@supabase/supabase-js": "2.50.3",
-    "@supabase/ssr": "0.6.1"
+    "zod": "^4.0.17"
   },
   "peerDependencies": {
     "next": "^15",
@@ -91,11 +96,11 @@
   ],
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@types/lodash": "4.17.20",
     "@types/node": "^22.15.30",
     "@vitest/coverage-v8": "^1.4.0",
     "tsup": "^8.0.1",
     "typescript": "5.8.2",
-    "vitest": "^1.4.0",
-    "@types/lodash": "4.17.20"
+    "vitest": "^1.4.0"
   }
 }

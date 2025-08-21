@@ -1,5 +1,5 @@
-import { supabase } from "@/app/supabase";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -28,20 +28,18 @@ export class UpdatePageMetadataAction extends BaseAction<
   protected getValidationSchema() {
     return z.object({
       id: z.string().nonempty(),
-      metadata: z.record(z.unknown()),
+      metadata: z.record(z.string(), z.any()),
     });
   }
 
   /**
    * Execute the update page metadata action
    */
-  async execute(
-    data: UpdatePageMetadataActionData
-  ): Promise<UpdatePageMetadataActionResponse> {
+  async execute(data: UpdatePageMetadataActionData): Promise<UpdatePageMetadataActionResponse> {
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
-
+    const supabase = await getSupabaseAdmin();
     try {
       const { data: originalPage } = await supabase
         .from("app_pages")
@@ -62,11 +60,7 @@ export class UpdatePageMetadataAction extends BaseAction<
 
       if (error) {
         console.error(error);
-        throw new ActionError(
-          "Failed to update page metadata",
-          "UPDATE_FAILED",
-          error
-        );
+        throw new ActionError("Failed to update page metadata", "UPDATE_FAILED", error);
       }
 
       return { success: true };

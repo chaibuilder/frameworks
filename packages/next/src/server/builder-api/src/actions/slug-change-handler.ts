@@ -1,4 +1,4 @@
-import { supabase } from "@/app/supabase";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ActionError } from "./action-error";
 
 /**
@@ -52,7 +52,7 @@ export class SlugChangeHandler {
     } catch (error) {
       throw new ActionError(
         `Failed to handle slug change: ${error instanceof Error ? error.message : "Unknown error"}`,
-        "SLUG_CHANGE_FAILED"
+        "SLUG_CHANGE_FAILED",
       );
     }
   }
@@ -60,14 +60,12 @@ export class SlugChangeHandler {
   /**
    * Get current page data from database with memoization
    */
-  private async getCurrentPageData(
-    pageId: string
-  ): Promise<PageSlugUpdateData> {
+  private async getCurrentPageData(pageId: string): Promise<PageSlugUpdateData> {
     // Check cache first
     if (this.pageDataCache.has(pageId)) {
       return this.pageDataCache.get(pageId)!;
     }
-
+    const supabase = await getSupabaseAdmin();
     const { data: pageData, error } = await supabase
       .from("app_pages")
       .select("id,slug,parent,lang,primaryPage,dynamic")
@@ -101,10 +99,7 @@ export class SlugChangeHandler {
   /**
    * Process slug change for a single page
    */
-  private async processPageSlugChange(
-    pageId: string,
-    newSlug: string
-  ): Promise<void> {
+  private async processPageSlugChange(pageId: string, newSlug: string): Promise<void> {
     // Update slug in app_pages_online table if record exists
     await this.updateSlugInOnlineTable(pageId, newSlug);
 
@@ -115,10 +110,8 @@ export class SlugChangeHandler {
   /**
    * Update page slug in app_pages_online table if record exists
    */
-  private async updateSlugInOnlineTable(
-    pageId: string,
-    newSlug: string
-  ): Promise<void> {
+  private async updateSlugInOnlineTable(pageId: string, newSlug: string): Promise<void> {
+    const supabase = await getSupabaseAdmin();
     const { error } = await supabase
       .from("app_pages_online")
       .update({ slug: newSlug })
@@ -128,10 +121,7 @@ export class SlugChangeHandler {
     // It's okay if the page doesn't exist in online table or if update fails
     // We silently continue as this is not critical to the main slug change process
     if (error && !error.message.includes("No rows found")) {
-      console.warn(
-        `Failed to update page slug in online table for page ${pageId}:`,
-        error.message
-      );
+      console.warn(`Failed to update page slug in online table for page ${pageId}:`, error.message);
     }
   }
 
@@ -141,7 +131,7 @@ export class SlugChangeHandler {
   private async processChildrenSlugChanges(
     parentPageId: string,
     oldParentSlug: string,
-    newParentSlug: string
+    newParentSlug: string,
   ): Promise<void> {
     // Get parent page data to access its language and primary page info
     const parentPage = await this.getCurrentPageData(parentPageId);
@@ -155,17 +145,11 @@ export class SlugChangeHandler {
       // This is a language page - find corresponding children in the same language
       if (parentPage.primaryPage) {
         // Get children of the primary page
-        const primaryChildren = await this.getChildPages(
-          parentPage.primaryPage,
-          ""
-        );
+        const primaryChildren = await this.getChildPages(parentPage.primaryPage, "");
 
         // For each primary child, find its language variant in the same language as parent
         for (const primaryChild of primaryChildren) {
-          const languageChild = await this.getLanguageVariantOfPage(
-            primaryChild.id,
-            parentPage.lang
-          );
+          const languageChild = await this.getLanguageVariantOfPage(primaryChild.id, parentPage.lang);
           if (languageChild) {
             childPages.push(languageChild);
           }
@@ -175,11 +159,7 @@ export class SlugChangeHandler {
 
     // Process all found child pages
     for (const childPage of childPages) {
-      const newChildSlug = this.generateNewChildSlug(
-        childPage.slug,
-        oldParentSlug,
-        newParentSlug
-      );
+      const newChildSlug = this.generateNewChildSlug(childPage.slug, oldParentSlug, newParentSlug);
 
       // Update child page slug
       await this.updateChildPageSlug(childPage.id, newChildSlug);
@@ -188,21 +168,15 @@ export class SlugChangeHandler {
       await this.updateSlugInOnlineTable(childPage.id, newChildSlug);
 
       // Recursively handle grandchildren
-      await this.processChildrenSlugChanges(
-        childPage.id,
-        childPage.slug,
-        newChildSlug
-      );
+      await this.processChildrenSlugChanges(childPage.id, childPage.slug, newChildSlug);
     }
   }
 
   /**
    * Get all direct child pages of a parent page with the same language
    */
-  private async getChildPages(
-    parentPageId: string,
-    parentLang: string
-  ): Promise<PageSlugUpdateData[]> {
+  private async getChildPages(parentPageId: string, parentLang: string): Promise<PageSlugUpdateData[]> {
+    const supabase = await getSupabaseAdmin();
     const { data: childPages, error } = await supabase
       .from("app_pages")
       .select("id, slug, parent, lang, primaryPage")
@@ -211,10 +185,7 @@ export class SlugChangeHandler {
       .eq("app", this.appId);
 
     if (error) {
-      console.warn(
-        `Failed to fetch child pages for parent ${parentPageId}:`,
-        error.message
-      );
+      console.warn(`Failed to fetch child pages for parent ${parentPageId}:`, error.message);
       return [];
     }
 
@@ -226,8 +197,9 @@ export class SlugChangeHandler {
    */
   private async getLanguageVariantOfPage(
     primaryPageId: string,
-    targetLang: string
+    targetLang: string,
   ): Promise<PageSlugUpdateData | null> {
+    const supabase = await getSupabaseAdmin();
     const { data: languagePage, error } = await supabase
       .from("app_pages")
       .select("id, slug, parent, lang, primaryPage")
@@ -241,10 +213,7 @@ export class SlugChangeHandler {
       if (error.code === "PGRST116") {
         return null;
       }
-      console.warn(
-        `Failed to fetch language variant for page ${primaryPageId}:`,
-        error.message
-      );
+      console.warn(`Failed to fetch language variant for page ${primaryPageId}:`, error.message);
       return null;
     }
 
@@ -254,11 +223,7 @@ export class SlugChangeHandler {
   /**
    * Generate new slug for child page based on parent slug change
    */
-  private generateNewChildSlug(
-    currentChildSlug: string,
-    oldParentSlug: string,
-    newParentSlug: string
-  ): string {
+  private generateNewChildSlug(currentChildSlug: string, oldParentSlug: string, newParentSlug: string): string {
     //dynamic page
     if (currentChildSlug === oldParentSlug) {
       return newParentSlug;
@@ -270,10 +235,7 @@ export class SlugChangeHandler {
     }
 
     // If child slug starts with old parent slug (without trailing slash)
-    if (
-      currentChildSlug.startsWith(oldParentSlug) &&
-      currentChildSlug !== oldParentSlug
-    ) {
+    if (currentChildSlug.startsWith(oldParentSlug) && currentChildSlug !== oldParentSlug) {
       return currentChildSlug.replace(oldParentSlug, newParentSlug);
     }
 
@@ -284,10 +246,8 @@ export class SlugChangeHandler {
   /**
    * Update child page slug in the database
    */
-  private async updateChildPageSlug(
-    pageId: string,
-    newSlug: string
-  ): Promise<void> {
+  private async updateChildPageSlug(pageId: string, newSlug: string): Promise<void> {
+    const supabase = await getSupabaseAdmin();
     const { error } = await supabase
       .from("app_pages")
       .update({
@@ -298,10 +258,7 @@ export class SlugChangeHandler {
       .eq("app", this.appId);
 
     if (error) {
-      throw new ActionError(
-        `Failed to update child page slug: ${pageId}`,
-        "UPDATE_CHILD_SLUG_FAILED"
-      );
+      throw new ActionError(`Failed to update child page slug: ${pageId}`, "UPDATE_CHILD_SLUG_FAILED");
     }
 
     // Invalidate cache for this page since its data has changed
@@ -311,11 +268,9 @@ export class SlugChangeHandler {
   /**
    * Validate that the new slug doesn't conflict with existing pages
    */
-  async validateSlugAvailability(
-    newSlug: string,
-    excludePageId?: string
-  ): Promise<void> {
+  async validateSlugAvailability(newSlug: string, excludePageId?: string): Promise<void> {
     const page = await this.getCurrentPageData(excludePageId || "");
+    const supabase = await getSupabaseAdmin();
     const { data, error } = await supabase
       .from("app_pages")
       .select("id")
@@ -325,17 +280,11 @@ export class SlugChangeHandler {
       .neq("id", page.id);
 
     if (error) {
-      throw new ActionError(
-        "Failed to validate slug availability",
-        "SLUG_VALIDATION_FAILED"
-      );
+      throw new ActionError("Failed to validate slug availability", "SLUG_VALIDATION_FAILED");
     }
 
     if (data && data.length > 0) {
-      throw new ActionError(
-        `Slug '${newSlug}' is already in use`,
-        "SLUG_ALREADY_EXISTS"
-      );
+      throw new ActionError(`Slug '${newSlug}' is already in use`, "SLUG_ALREADY_EXISTS");
     }
   }
 }

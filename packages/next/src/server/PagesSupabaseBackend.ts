@@ -12,12 +12,11 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
   async handleUsersAction(body: any, userId: string): Promise<any> {
     return Promise.reject(new Error("Not implemented"));
   }
-  async handleAction(body: any, userId: string): Promise<unknown> {
+  async handleAction(body: { action: string; data: Record<string, unknown> }, userId: string): Promise<unknown> {
     try {
       const { action, data } = body;
       // Get the action handler from the registry
       const actionHandler = getChaiAction(action);
-
       if (actionHandler) {
         // Validate the data first
         if (!actionHandler.validate(data)) {

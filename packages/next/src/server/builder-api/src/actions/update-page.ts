@@ -1,7 +1,7 @@
-import { supabase } from "@/app/supabase";
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { keys, pick } from "lodash";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 import { SlugChangeHandler } from "./slug-change-handler";
@@ -39,10 +39,7 @@ type UpdatePageActionResponse = {
 /**
  * Action to update a page
  */
-export class UpdatePageAction extends BaseAction<
-  UpdatePageActionData,
-  UpdatePageActionResponse
-> {
+export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePageActionResponse> {
   /**
    * Define the validation schema for update page action
    */
@@ -53,13 +50,13 @@ export class UpdatePageAction extends BaseAction<
       currentEditor: z.string().optional(),
       slug: z.string().optional(),
       name: z.string().optional(),
-      seo: z.record(z.unknown()).optional(),
+      seo: z.record(z.string(), z.any()).optional(),
       buildTime: z.boolean().optional(),
       parent: z.union([z.string(), z.null()]).optional(),
       pageType: z.string().optional(),
       dynamic: z.boolean().optional(),
       dynamicSlugCustom: z.string().optional(),
-      tracking: z.record(z.unknown()).optional(),
+      tracking: z.record(z.string(), z.any()).optional(),
       needTranslations: z.boolean().optional(),
     });
   }
@@ -95,9 +92,7 @@ export class UpdatePageAction extends BaseAction<
   /**
    * Extract only the allowed fields for page updates
    */
-  private extractAllowedPageFields(
-    data: UpdatePageActionData
-  ): Partial<UpdatePageActionData> {
+  private extractAllowedPageFields(data: UpdatePageActionData): Partial<UpdatePageActionData> {
     return pick(data, [
       "slug",
       "name",
@@ -116,10 +111,7 @@ export class UpdatePageAction extends BaseAction<
   /**
    * Handle slug changes if detected in the update data
    */
-  private async handleSlugChangeIfNeeded(
-    pageId: string,
-    filteredData: Partial<UpdatePageActionData>
-  ): Promise<void> {
+  private async handleSlugChangeIfNeeded(pageId: string, filteredData: Partial<UpdatePageActionData>): Promise<void> {
     if (!filteredData.slug) {
       return;
     }
@@ -127,10 +119,7 @@ export class UpdatePageAction extends BaseAction<
     const slugHandler = new SlugChangeHandler(this.context!.appId);
 
     // Check if slug has actually changed
-    const hasChanged = await slugHandler.hasSlugChanged(
-      pageId,
-      filteredData.slug
-    );
+    const hasChanged = await slugHandler.hasSlugChanged(pageId, filteredData.slug);
     if (!hasChanged) {
       return;
     }
@@ -145,9 +134,7 @@ export class UpdatePageAction extends BaseAction<
   /**
    * Determine what type of changes are being made
    */
-  private determineChangeTypes(
-    filteredData: Partial<UpdatePageActionData>
-  ): string[] {
+  private determineChangeTypes(filteredData: Partial<UpdatePageActionData>): string[] {
     const changes: string[] = [];
     const dataKeys = keys(filteredData);
 
@@ -164,12 +151,9 @@ export class UpdatePageAction extends BaseAction<
   /**
    * Update the page in the database
    */
-  private async updatePageInDatabase(
-    pageId: string,
-    filteredData: Partial<UpdatePageActionData>
-  ): Promise<void> {
+  private async updatePageInDatabase(pageId: string, filteredData: Partial<UpdatePageActionData>): Promise<void> {
     const changes = this.determineChangeTypes(filteredData);
-
+    const supabase = await getSupabaseAdmin();
     const { error } = await supabase
       .from("app_pages")
       .update({
@@ -188,9 +172,7 @@ export class UpdatePageAction extends BaseAction<
   /**
    * Check if only blocks are being updated
    */
-  private isOnlyBlocksUpdate(
-    filteredData: Partial<UpdatePageActionData>
-  ): boolean {
+  private isOnlyBlocksUpdate(filteredData: Partial<UpdatePageActionData>): boolean {
     const dataKeys = keys(filteredData);
     return dataKeys.includes("blocks") && dataKeys.length === 1;
   }
@@ -199,6 +181,7 @@ export class UpdatePageAction extends BaseAction<
    * Fetch the updated page data from database
    */
   private async fetchUpdatedPageData(pageId: string): Promise<any> {
+    const supabase = await getSupabaseAdmin();
     const { data: updatedPage, error: updatedPageError } = await supabase
       .from("app_pages")
       .select("id, slug, lang, pageType, name, online, parent, seo, tracking")
@@ -217,7 +200,7 @@ export class UpdatePageAction extends BaseAction<
    */
   private async buildResponse(
     pageId: string,
-    filteredData: Partial<UpdatePageActionData>
+    filteredData: Partial<UpdatePageActionData>,
   ): Promise<UpdatePageActionResponse> {
     if (this.isOnlyBlocksUpdate(filteredData)) {
       return { success: true };
@@ -238,7 +221,7 @@ export class UpdatePageAction extends BaseAction<
 
     throw new ActionError(
       `Failed to update page: ${error instanceof Error ? error.message : "Unknown error"}`,
-      "UPDATE_PAGE_FAILED"
+      "UPDATE_PAGE_FAILED",
     );
   }
 }

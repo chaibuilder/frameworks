@@ -1,6 +1,6 @@
-import { supabase } from "@/app/supabase";
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -17,12 +17,12 @@ type GetCompareDataActionData = {
 type GetCompareDataActionResponse = {
   version1: {
     blocks: ChaiBlock[];
-    seo: object,
+    seo: object;
     tracking: object;
   };
   version2: {
     blocks: ChaiBlock[];
-    seo: object,
+    seo: object;
     tracking: object;
   };
 };
@@ -30,10 +30,7 @@ type GetCompareDataActionResponse = {
 /**
  * Action to update a page
  */
-export class GetCompareDataAction extends BaseAction<
-  GetCompareDataActionData,
-  GetCompareDataActionResponse
-> {
+export class GetCompareDataAction extends BaseAction<GetCompareDataActionData, GetCompareDataActionResponse> {
   /**
    * Define the validation schema for update page action
    */
@@ -55,22 +52,14 @@ export class GetCompareDataAction extends BaseAction<
   /**
    * Execute the update page action
    */
-  async execute(
-    data: GetCompareDataActionData
-  ): Promise<GetCompareDataActionResponse> {
+  async execute(data: GetCompareDataActionData): Promise<GetCompareDataActionResponse> {
     this.validateContext();
 
     // Get blocks for version1
-    const version1Data = await this.getBlocksForVersion(
-      data.versions.version1.type,
-      data.versions.version1.id
-    );
+    const version1Data = await this.getBlocksForVersion(data.versions.version1.type, data.versions.version1.id);
 
     // Get blocks for version2
-    const version2Data = await this.getBlocksForVersion(
-      data.versions.version2.type,
-      data.versions.version2.id
-    );
+    const version2Data = await this.getBlocksForVersion(data.versions.version2.type, data.versions.version2.id);
 
     return {
       version1: {
@@ -91,64 +80,43 @@ export class GetCompareDataAction extends BaseAction<
    */
   private async getBlocksForVersion(
     type: "draft" | "revision" | "live",
-    id: string
-  ): Promise<{blocks: ChaiBlock[], seo: any, tracking: any}> {
+    id: string,
+  ): Promise<{ blocks: ChaiBlock[]; seo: any; tracking: any }> {
     let query;
-
+    const supabase = await getSupabaseAdmin();
     switch (type) {
       case "draft":
         // Get blocks from app_pages table
-        query = supabase
-          .from("app_pages")
-          .select("blocks,seo,tracking")
-          .eq("id", id)
-          .single();
+        query = supabase.from("app_pages").select("blocks,seo,tracking").eq("id", id).single();
         break;
 
       case "live":
         // Get blocks from app_pages_online table
-        query = supabase
-          .from("app_pages_online")
-          .select("blocks,seo,tracking")
-          .eq("id", id)
-          .single();
+        query = supabase.from("app_pages_online").select("blocks,seo,tracking").eq("id", id).single();
         break;
 
       case "revision":
         // Get blocks from app_pages_revisions table
         // Note: revisions use 'uid' as primary key
-        query = supabase
-          .from("app_pages_revisions")
-          .select("blocks,seo,tracking")
-          .eq("uid", id)
-          .single();
+        query = supabase.from("app_pages_revisions").select("blocks,seo,tracking").eq("uid", id).single();
         break;
 
       default:
-        throw new ActionError(
-          `Invalid version type: ${type}`,
-          "INVALID_VERSION_TYPE"
-        );
+        throw new ActionError(`Invalid version type: ${type}`, "INVALID_VERSION_TYPE");
     }
 
     const { data, error } = await query;
 
     if (error) {
-      throw new ActionError(
-        `Failed to fetch blocks for ${type} version: ${error.message}`,
-        "FETCH_BLOCKS_ERROR"
-      );
+      throw new ActionError(`Failed to fetch blocks for ${type} version: ${error.message}`, "FETCH_BLOCKS_ERROR");
     }
 
     if (!data) {
-      throw new ActionError(
-        `No data found for ${type} version with id: ${id}`,
-        "VERSION_NOT_FOUND"
-      );
+      throw new ActionError(`No data found for ${type} version with id: ${id}`, "VERSION_NOT_FOUND");
     }
 
     // Return blocks or empty array if blocks is null/undefined
-    return data
+    return data;
   }
 
   /**

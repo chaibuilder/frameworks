@@ -1,6 +1,6 @@
-import { supabase } from "@/app/supabase";
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ChaiBuilderPageBlocks } from "../ChaiBuilderPageBlocks";
 import { apiError } from "../lib";
 import { BaseAction } from "./base-action";
@@ -22,10 +22,7 @@ type GetRevisionPageActionResponse = {
 /**
  * Action to generate SEO fields for a page
  */
-export class GetRevisionPageAction extends BaseAction<
-  GetRevisionPageActionData,
-  GetRevisionPageActionResponse
-> {
+export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData, GetRevisionPageActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */
@@ -39,12 +36,11 @@ export class GetRevisionPageAction extends BaseAction<
   /**
    * Execute the duplicate page action
    */
-  async execute(
-    data: GetRevisionPageActionData
-  ): Promise<GetRevisionPageActionResponse> {
+  async execute(data: GetRevisionPageActionData): Promise<GetRevisionPageActionResponse> {
     if (!this.context) {
       throw apiError("CONTEXT_NOT_SET", new Error("CONTEXT_NOT_SET"));
     }
+    const supabase = await getSupabaseAdmin();
     const tableName = this.getTableName(data.type);
     const column = this.getColumn(data.type);
     const { data: blocksData, error } = await supabase
@@ -61,10 +57,7 @@ export class GetRevisionPageAction extends BaseAction<
     const pageBlocks = new ChaiBuilderPageBlocks(supabase, this.context.appId);
 
     let blocks = blocksData?.blocks ?? [];
-    blocks = await pageBlocks.getMergedBlocks(
-      blocks,
-      tableName === "app_pages"
-    );
+    blocks = await pageBlocks.getMergedBlocks(blocks, tableName === "app_pages");
     return {
       ...blocksData,
       blocks,

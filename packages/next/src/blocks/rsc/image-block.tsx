@@ -12,7 +12,7 @@ export const ImageBlock = (
     lazyLoading: boolean;
     image: string;
   }>,
-) => {
+): React.ReactElement => {
   const { image, styles, alt, height, width, lazyLoading } = props;
 
   // If width or height are missing/invalid, use fill mode

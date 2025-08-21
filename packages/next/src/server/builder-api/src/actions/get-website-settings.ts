@@ -1,5 +1,5 @@
-import { supabase } from "@/app/supabase";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_APPS_TABLE_NAME } from "../CONSTANTS";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
@@ -52,6 +52,7 @@ export class GetWebsiteSettingsAction extends BaseAction<
   }
 
   async execute(): Promise<GetWebsiteSettingsActionResponse> {
+    const supabase = await getSupabaseAdmin();
     const { data: config, error } = await supabase
       .from(CHAI_APPS_TABLE_NAME)
       .select("theme,fallbackLang,languages")

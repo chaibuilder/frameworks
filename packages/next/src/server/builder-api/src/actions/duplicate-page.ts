@@ -1,6 +1,6 @@
-import { supabase } from "@/app/supabase";
 import { isEmpty } from "lodash";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -20,10 +20,7 @@ type DuplicatePageActionResponse = {
 /**
  * Action to duplicate a page
  */
-export class DuplicatePageAction extends BaseAction<
-  DuplicatePageActionData,
-  DuplicatePageActionResponse
-> {
+export class DuplicatePageAction extends BaseAction<DuplicatePageActionData, DuplicatePageActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */
@@ -38,20 +35,15 @@ export class DuplicatePageAction extends BaseAction<
   /**
    * Execute the duplicate page action
    */
-  async execute(
-    data: DuplicatePageActionData
-  ): Promise<DuplicatePageActionResponse> {
+  async execute(data: DuplicatePageActionData): Promise<DuplicatePageActionResponse> {
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
 
-    if (
-      !isEmpty(data.slug) &&
-      (await this.doesSlugExist(data.slug as string))
-    ) {
+    if (!isEmpty(data.slug) && (await this.doesSlugExist(data.slug as string))) {
       throw new ActionError("Slug already exists", "SLUG_EXISTS");
     }
-
+    const supabase = await getSupabaseAdmin();
     try {
       const { data: originalPage } = await supabase
         .from("app_pages")
@@ -88,6 +80,7 @@ export class DuplicatePageAction extends BaseAction<
   }
 
   private async doesSlugExist(slug: string): Promise<boolean> {
+    const supabase = await getSupabaseAdmin();
     const { data, error } = await supabase
       .from("app_pages")
       .select("id")

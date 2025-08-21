@@ -42,9 +42,7 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
       return null;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors
-          .map((err: any) => `${err.path.join(".")}: ${err.message}`)
-          .join(", ");
+        const errorMessages = error.issues.map((err: any) => `${err.path.join(".")}: ${err.message}`).join(", ");
         return errorMessages;
       }
       return null;
@@ -76,13 +74,8 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
       throw error;
     } else if (error instanceof z.ZodError) {
       // Convert Zod validation errors to ActionError
-      const errorMessage = error.errors
-        .map((e) => `${e.path.join(".")}: ${e.message}`)
-        .join(", ");
-      throw new ActionError(
-        `Validation failed: ${errorMessage}`,
-        "VALIDATION_ERROR"
-      );
+      const errorMessage = error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ");
+      throw new ActionError(`Validation failed: ${errorMessage}`, "VALIDATION_ERROR");
     } else {
       // Convert other errors to ActionError
       const message = error instanceof Error ? error.message : "Unknown error";

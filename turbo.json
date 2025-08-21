@@ -1,7 +1,12 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
-  "globalEnv": ["CHAIBUILDER_API_KEY", "CHAIBUILDER_WEBHOOK_SECRET"],
+  "globalEnv": [
+    "CHAIBUILDER_API_KEY",
+    "CHAIBUILDER_WEBHOOK_SECRET",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

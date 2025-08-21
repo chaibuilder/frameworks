@@ -1,3 +1,4 @@
+import { registerBlocks } from "@/blocks";
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder from "chai-next/server";
@@ -5,22 +6,17 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 loadWebBlocks();
+registerBlocks();
 
 export const dynamic = "force-static"; // Remove this if you want to use ssr mode
 
-export const generateMetadata = async (props: {
-  params: Promise<{ slug: string[] }>;
-}) => {
+export const generateMetadata = async (props: { params: Promise<{ slug: string[] }> }) => {
   const nextParams = await props.params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   return await ChaiBuilder.getPageSeoData(slug);
 };
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ slug: string[] }> }) {
   const nextParams = await params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const { isEnabled } = await draftMode();

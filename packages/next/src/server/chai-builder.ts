@@ -52,8 +52,8 @@ class ChaiBuilder {
       async () => {
         const supabase = await getSupabaseAdmin();
         const { data, error } = await supabase
-          .from("apps")
-          .select("id")
+          .from("app_domains")
+          .select("app")
           .or(`domain.eq.${hostname},subdomain.eq.${hostname}`)
           .single();
         if (error) {
@@ -62,7 +62,7 @@ class ChaiBuilder {
         if (!data) {
           return { error: `No app found for hostname ${hostname}` };
         }
-        return { id: data.id };
+        return { id: data.app };
       },
       ["site-id-" + hostname],
       { tags: ["site-id-" + hostname] },

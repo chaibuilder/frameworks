@@ -2,7 +2,9 @@
 import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
 import { startsWith } from "lodash";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 import "../../styles";
+import { getSupabaseClient } from "./supabase";
 
 // Only re-export specific items from @chaibuilder/pages to avoid interface conflicts
 export * from "@chaibuilder/pages";
@@ -35,8 +37,17 @@ const API_URL = "/builder/api";
 
 export default (props: ChaiBuilderProps) => {
   const builderApiUrl = props.apiUrl ?? API_URL;
+  const [supabaseClient, setSupabaseClient] = useState<any>(null);
+  useEffect(() => {
+    const initSupabase = async () => {
+      const client = await getSupabaseClient();
+      setSupabaseClient(client);
+    };
+    initSupabase();
+  }, []);
   return (
     <ChaiBuilder
+      supabaseInstance={supabaseClient}
       autoSaveSupport={false}
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}

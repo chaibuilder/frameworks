@@ -47,27 +47,21 @@ class ChaiBuilder {
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
   };
 
-  static async getSiteIdByHostname(hostname: string) {
-    return await unstable_cache(
-      async () => {
-        const supabase = await getSupabaseAdmin();
-        const { data, error } = await supabase
-          .from("app_domains")
-          .select("app")
-          .or(`domain.eq.${hostname},subdomain.eq.${hostname}`)
-          .single();
-        if (error) {
-          return { error: error.message };
-        }
-        if (!data) {
-          return { error: `No app found for hostname ${hostname}` };
-        }
-        return { id: data.app };
-      },
-      ["site-id-" + hostname],
-      { tags: ["site-id-" + hostname] },
-    )();
-  }
+  static getSiteIdByHostname = cache(async (hostname: string) => {
+    const supabase = await getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("app_domains")
+      .select("app")
+      .or(`domain.eq.${hostname},subdomain.eq.${hostname}`)
+      .single();
+    if (error) {
+      return { error: error.message };
+    }
+    if (!data) {
+      return { error: `No app found for hostname ${hostname}` };
+    }
+    return { id: data.app };
+  });
 
   static async loadSiteSettings(draftMode: boolean) {
     ChaiBuilder.verifyInit();

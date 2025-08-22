@@ -43,19 +43,15 @@ export const RenderChaiBlocks = async ({
 }) => {
   setChaiBlockComponent("Link", await linkComponent);
   setChaiBlockComponent("Image", await imageComponent);
-  const [pageData, styles] = await Promise.all([
-    ChaiBuilder.getPageExternalData({
-      blocks: page.blocks,
-      pageProps,
-      pageType: page.pageType,
-      lang: page.lang,
-    }),
-    ChaiBuilder.getPageStyles(page.blocks),
-  ]);
+  const pageData = await ChaiBuilder.getPageExternalData({
+    blocks: page.blocks,
+    pageProps,
+    pageType: page.pageType,
+    lang: page.lang,
+  });
   //Register Link and Image blocks with Chai Builder
   return (
     <>
-      <style id="page-styles">{styles}</style>
       <JSONLD jsonLD={page?.seo?.jsonLD} pageData={pageData} />
       <RenderChaiBlocksSdk
         externalData={pageData}

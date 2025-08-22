@@ -1,12 +1,11 @@
 import { getChaiThemeCssVariables } from "@chaibuilder/sdk/render";
 import { get } from "lodash";
 import ChaiBuilder from "../../server";
-import {
-  getFontHref,
-  getThemeCustomFontFace,
-} from "../../server/styles-helper";
+import { getFontHref, getThemeCustomFontFace } from "../../server/styles-helper";
+import { ChaiBuilderPage } from "../../types";
 
-export const FontsAndStyles = async () => {
+export const FontsAndStyles = async (props: { page: ChaiBuilderPage }) => {
+  const { page } = props;
   const siteSettings = await ChaiBuilder.getSiteSettings();
 
   if (!!get(siteSettings, "error")) {
@@ -21,35 +20,20 @@ export const FontsAndStyles = async () => {
   const headingFont = get(theme, "fontFamily.heading", "Inter");
   const fontUrls = getFontHref([bodyFont, headingFont]);
   const customFontFace = getThemeCustomFontFace([bodyFont, headingFont]);
-
+  const styles = await ChaiBuilder.getPageStyles(page.blocks);
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       {fontUrls.map((fontUrl: string) => (
-        <link
-          key={fontUrl}
-          rel="preload"
-          href={fontUrl}
-          as="style"
-          crossOrigin=""
-        />
+        <link key={fontUrl} rel="preload" href={fontUrl} as="style" crossOrigin="" />
       ))}
-
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-
-      <style
-        id="theme-variables"
-        dangerouslySetInnerHTML={{ __html: themeCssVariables }}
-      />
+      <style id="theme-variables" dangerouslySetInnerHTML={{ __html: themeCssVariables }} />
       {fontUrls.map((fontUrl: string) => (
         <link key={fontUrl} rel="stylesheet" href={fontUrl} />
       ))}
-      {customFontFace && (
-        <style
-          id="custom-font-face"
-          dangerouslySetInnerHTML={{ __html: customFontFace }}
-        />
-      )}
+      {customFontFace && <style id="custom-font-face" dangerouslySetInnerHTML={{ __html: customFontFace }} />}
+      <style id="page-styles">{styles}</style>
     </>
   );
 };

@@ -22,6 +22,7 @@ type ChaiBuilderPage =
 
 class ChaiBuilder {
   private static pages?: ChaiBuilderPages;
+  private static hostname: string = "default";
 
   static verifyInit() {
     if (!ChaiBuilder.pages) {
@@ -40,6 +41,7 @@ class ChaiBuilder {
     if (!hostname) {
       throw new Error("Please initialize ChaiBuilder with a hostname");
     }
+    ChaiBuilder.hostname = hostname;
     const siteResult = await ChaiBuilder.getSiteIdByHostname(hostname);
     if (has(siteResult, "error")) {
       throw new Error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
@@ -87,9 +89,13 @@ class ChaiBuilder {
 
   static async getSiteSettings() {
     ChaiBuilder.verifyInit();
-    return await unstable_cache(async () => await ChaiBuilder.pages?.getSiteSettings(), ["website-settings"], {
-      tags: ["website-settings"],
-    })();
+    return await unstable_cache(
+      async () => await ChaiBuilder.pages?.getSiteSettings(),
+      [`website-settings-${ChaiBuilder.hostname}`],
+      {
+        tags: [`website-settings-${ChaiBuilder.hostname}`],
+      },
+    )();
   }
 
   static async getPartialPageBySlug(slug: string) {

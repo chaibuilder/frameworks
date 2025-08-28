@@ -1,5 +1,5 @@
-import { SupabaseClient } from "@supabase/supabase-js";
 import sharp from "sharp";
+import { getSupabaseAdmin } from "../../../supabase";
 
 interface AssetUploaderArgs {
   file: Base64URLString;
@@ -20,22 +20,15 @@ export type AssetUploadResponse = {
 
 const BUCKET_NAME = "dam-assets";
 
+const supabase = (async () => await getSupabaseAdmin()) as any;
 export interface AssetUploaderInterface {
   upload(args: AssetUploaderArgs): Promise<AssetUploadResponse>;
 }
 
 export class SupabaseStorageUploader implements AssetUploaderInterface {
-  constructor(
-    private supabase: SupabaseClient,
-    private appId: string
-  ) {}
+  constructor(private appId: string) {}
 
-  async upload({
-    file,
-    folderId,
-    name,
-    optimize = true,
-  }: AssetUploaderArgs): Promise<AssetUploadResponse> {
+  async upload({ file, folderId, name, optimize = true }: AssetUploaderArgs): Promise<AssetUploadResponse> {
     try {
       const buffer = this.getBufferFromBase64(file);
 
@@ -45,20 +38,11 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
       const imageInfo = await sharp(buffer).metadata();
 
       // Process main image and thumbnail
-      const { optimizedBuffer, optimizedInfo } = await this.optimizeImage(
-        buffer,
-        imageInfo,
-        optimize
-      );
+      const { optimizedBuffer, optimizedInfo } = await this.optimizeImage(buffer, imageInfo, optimize);
       const thumbnailBuffer = await this.createThumbnail(buffer);
 
       // Upload to Supabase Storage
-      const { url, thumbnailUrl } = await this.uploadToSupabase(
-        optimizedBuffer,
-        thumbnailBuffer,
-        name,
-        folderId
-      );
+      const { url, thumbnailUrl } = await this.uploadToSupabase(optimizedBuffer, thumbnailBuffer, name, folderId);
 
       return {
         url,
@@ -78,22 +62,9 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     try {
       const metadata = await sharp(buffer).metadata();
 
-      const validImageFormats = [
-        "jpeg",
-        "jpg",
-        "png",
-        "webp",
-        "gif",
-        "svg",
-        "tiff",
-      ];
-      if (
-        !metadata.format ||
-        !validImageFormats.includes(metadata.format.toLowerCase())
-      ) {
-        throw new Error(
-          `Invalid image format: ${metadata.format || "unknown"}`
-        );
+      const validImageFormats = ["jpeg", "jpg", "png", "webp", "gif", "svg", "tiff"];
+      if (!metadata.format || !validImageFormats.includes(metadata.format.toLowerCase())) {
+        throw new Error(`Invalid image format: ${metadata.format || "unknown"}`);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -115,7 +86,7 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
   private async optimizeImage(
     buffer: Buffer,
     imageInfo: sharp.Metadata,
-    optimize = true
+    optimize = true,
   ): Promise<{
     optimizedBuffer: Buffer;
     optimizedInfo: sharp.Metadata;
@@ -133,11 +104,7 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
 
     // If still too large, further optimize
     if (optimize && optimizedBuffer.length > 100 * 1024) {
-      return await this.furtherOptimizeImage(
-        buffer,
-        imageInfo,
-        optimizedBuffer.length
-      );
+      return await this.furtherOptimizeImage(buffer, imageInfo, optimizedBuffer.length);
     }
 
     return { optimizedBuffer, optimizedInfo };
@@ -146,7 +113,7 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
   private async furtherOptimizeImage(
     buffer: Buffer,
     imageInfo: sharp.Metadata,
-    currentSize: number
+    currentSize: number,
   ): Promise<{
     optimizedBuffer: Buffer;
     optimizedInfo: sharp.Metadata;
@@ -170,17 +137,14 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
   }
 
   private async createThumbnail(buffer: Buffer): Promise<Buffer> {
-    return await sharp(buffer)
-      .webp({ quality: 70 })
-      .resize({ width: 300 })
-      .toBuffer();
+    return await sharp(buffer).webp({ quality: 70 }).resize({ width: 300 }).toBuffer();
   }
 
   private async uploadToSupabase(
     optimizedBuffer: Buffer,
     thumbnailBuffer: Buffer,
     name: string,
-    folderId?: string | null
+    folderId?: string | null,
   ): Promise<{ url: string; thumbnailUrl: string }> {
     const originalFileName = name;
     const fileName = `${originalFileName}`;
@@ -193,7 +157,7 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
 
     try {
       // Upload main image
-      const { data: fileData, error: fileError } = await this.supabase.storage
+      const { data: fileData, error: fileError } = await supabase.storage
         .from(BUCKET_NAME)
         .upload(filePath, optimizedBuffer, {
           contentType: "image/webp",
@@ -203,31 +167,28 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
       if (fileError) throw fileError;
 
       // Upload thumbnail
-      const { data: thumbnailData, error: thumbnailError } =
-        await this.supabase.storage
-          .from(BUCKET_NAME)
-          .upload(thumbnailPath, thumbnailBuffer, {
-            contentType: "image/webp",
-            upsert: true,
-          });
+      const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(thumbnailPath, thumbnailBuffer, {
+          contentType: "image/webp",
+          upsert: true,
+        });
 
       if (thumbnailError) throw thumbnailError;
 
       // Get public URLs
       const {
         data: { publicUrl: url },
-      } = this.supabase.storage.from(BUCKET_NAME).getPublicUrl(filePath);
+      } = supabase.storage.from(BUCKET_NAME).getPublicUrl(filePath);
 
       const {
         data: { publicUrl: thumbnailUrl },
-      } = this.supabase.storage.from(BUCKET_NAME).getPublicUrl(thumbnailPath);
+      } = supabase.storage.from(BUCKET_NAME).getPublicUrl(thumbnailPath);
 
       return { url, thumbnailUrl };
     } catch (error) {
       console.error("Supabase upload error:", error);
-      throw new Error(
-        `Failed to upload to Supabase: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
+      throw new Error(`Failed to upload to Supabase: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   }
 }

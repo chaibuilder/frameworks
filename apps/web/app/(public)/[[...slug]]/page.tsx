@@ -8,19 +8,13 @@ loadWebBlocks();
 
 export const dynamic = "force-static"; // Remove this if you want to use ssr mode
 
-export const generateMetadata = async (props: {
-  params: Promise<{ slug: string[] }>;
-}) => {
+export const generateMetadata = async (props: { params: Promise<{ slug: string[] }> }) => {
   const nextParams = await props.params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-  return await ChaiBuilder.getPageSeoData(slug);
+  return {}; //await ChaiBuilder.getPageSeoData(slug);
 };
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string[] }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ slug: string[] }> }) {
   const nextParams = await params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
   const { isEnabled } = await draftMode();

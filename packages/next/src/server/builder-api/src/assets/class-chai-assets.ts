@@ -12,7 +12,7 @@ export class ChaiAssets {
     private appId: string,
     private userId: string,
   ) {
-    this.uploader = new SupabaseStorageUploader(supabase, appId);
+    this.uploader = new SupabaseStorageUploader(appId);
   }
 
   private appendUpdatedAtToUrl(url: string, updatedAt: string): string {

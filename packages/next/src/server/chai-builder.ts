@@ -30,14 +30,15 @@ class ChaiBuilder {
     }
   }
 
-  static init(apiKey: string) {
+  static init = async (apiKey: string, draftMode: boolean = false) => {
     if (!apiKey) {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
-  }
+    await ChaiBuilder.loadSiteSettings(draftMode);
+  };
 
-  static initByHostname = async (hostname: string) => {
+  static initByHostname = async (hostname: string, draftMode: boolean = false) => {
     if (!hostname) {
       throw new Error("Please initialize ChaiBuilder with a hostname");
     }
@@ -47,6 +48,7 @@ class ChaiBuilder {
       throw new Error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
     }
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
+    await ChaiBuilder.loadSiteSettings(draftMode);
   };
 
   static getSiteIdByHostname = cache(async (hostname: string) => {

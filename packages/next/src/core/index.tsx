@@ -54,10 +54,10 @@ export default (props: ChaiBuilderProps) => {
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}
       getPreviewUrl={(slug: string) => {
-        return `${API_URL}/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
+        return `/api/preview?slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
       }}
       getLiveUrl={(slug: string) => {
-        return `${API_URL}/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
+        return `/api/preview?disable=true&slug=${startsWith(slug, "/") ? slug : "/_partial/" + slug}`;
       }}
       {...props}
     />

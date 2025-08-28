@@ -7,7 +7,7 @@ export const PreviewBanner = ({ slug, show }: { slug: string; show: boolean }) =
 
           <div className="ms-auto ps-3">
             <a
-              href={`/builder/api/preview?disable=true&slug=${slug}`}
+              href={`/api/preview?disable=true&slug=${slug}`}
               type="button"
               className="flex items-center rounded-lg bg-white/30 p-1 px-2 text-xs text-white focus:bg-white/10 focus:outline-none"
               data-hs-remove-element="#chai-preview-banner">

@@ -2,6 +2,7 @@ import { ChaiBlock } from "@chaibuilder/pages/runtime";
 import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
 import { has } from "lodash";
 import { unstable_cache } from "next/cache";
+import { notFound } from "next/navigation";
 import { cache } from "react";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
@@ -40,12 +41,14 @@ class ChaiBuilder {
 
   static initByHostname = async (hostname: string, draftMode: boolean = false) => {
     if (!hostname) {
-      throw new Error("Please initialize ChaiBuilder with a hostname");
+      console.error("Please initialize ChaiBuilder with a hostname");
+      return notFound();
     }
     ChaiBuilder.hostname = hostname;
     const siteResult = await ChaiBuilder.getSiteIdByHostname(hostname);
     if (has(siteResult, "error")) {
-      throw new Error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
+      console.error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
+      return notFound();
     }
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
     await ChaiBuilder.loadSiteSettings(draftMode);

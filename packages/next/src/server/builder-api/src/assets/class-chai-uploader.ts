@@ -19,8 +19,6 @@ export type AssetUploadResponse = {
 };
 
 const BUCKET_NAME = "dam-assets";
-
-const supabase = (async () => await getSupabaseAdmin()) as any;
 export interface AssetUploaderInterface {
   upload(args: AssetUploaderArgs): Promise<AssetUploadResponse>;
 }
@@ -146,6 +144,7 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     name: string,
     folderId?: string | null,
   ): Promise<{ url: string; thumbnailUrl: string }> {
+    const supabase = await getSupabaseAdmin();
     const originalFileName = name;
     const fileName = `${originalFileName}`;
     const thumbnailName = `${originalFileName}_thumbnail.webp`;

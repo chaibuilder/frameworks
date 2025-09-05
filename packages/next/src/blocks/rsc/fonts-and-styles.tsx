@@ -4,7 +4,7 @@ import ChaiBuilder from "../../server";
 import { getFontHref, getThemeCustomFontFace } from "../../server/styles-helper";
 import { ChaiBuilderPage } from "../../types";
 
-export const FontsAndStyles = async (props: { page: ChaiBuilderPage }) => {
+export const FontsAndStyles = async (props: { page?: ChaiBuilderPage }) => {
   const { page } = props;
   const siteSettings = await ChaiBuilder.getSiteSettings();
 
@@ -20,7 +20,7 @@ export const FontsAndStyles = async (props: { page: ChaiBuilderPage }) => {
   const headingFont = get(theme, "fontFamily.heading", "Inter");
   const fontUrls = getFontHref([bodyFont, headingFont]);
   const customFontFace = getThemeCustomFontFace([bodyFont, headingFont]);
-  const styles = await ChaiBuilder.getPageStyles(page.blocks);
+  const styles = page ? await ChaiBuilder.getPageStyles(page.blocks) : null;
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,7 +33,7 @@ export const FontsAndStyles = async (props: { page: ChaiBuilderPage }) => {
         <link key={fontUrl} rel="stylesheet" href={fontUrl} />
       ))}
       {customFontFace && <style id="custom-font-face" dangerouslySetInnerHTML={{ __html: customFontFace }} />}
-      <style id="page-styles">{styles}</style>
+      {styles ? <style id="page-styles">{styles}</style> : null}
     </>
   );
 };

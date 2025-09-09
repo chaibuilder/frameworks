@@ -1,3 +1,4 @@
+import { kebabCase } from "lodash";
 import sharp from "sharp";
 import { getSupabaseAdmin } from "../../../supabase";
 
@@ -146,8 +147,8 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
   ): Promise<{ url: string; thumbnailUrl: string }> {
     const supabase = await getSupabaseAdmin();
     const originalFileName = name;
-    const fileName = `${originalFileName}`;
-    const thumbnailName = `${originalFileName}_thumbnail.webp`;
+    const fileName = `${kebabCase(originalFileName)}`;
+    const thumbnailName = `${fileName}_thumbnail.webp`;
 
     const baseFolder = this.appId;
     const folderPath = folderId ? `${baseFolder}/${folderId}` : baseFolder;

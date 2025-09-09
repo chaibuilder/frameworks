@@ -34,7 +34,7 @@ export const builderApiHandler = (apiKey?: string) => {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
       const backend = apiKey ? new ChaiBuilderPagesBackend(apiKeyToUse) : new ChaiBuilderSupabaseBackend(apiKeyToUse);
-      ChaiBuilder.init(apiKeyToUse, true);
+      ChaiBuilder.setSiteId(apiKeyToUse);
       // register global data providers
       const chaiBuilderPages = new ChaiBuilderPages(backend);
       const requestBody = await req.json();

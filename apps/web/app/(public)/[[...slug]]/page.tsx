@@ -1,26 +1,36 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
+import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
+import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 loadWebBlocks();
+registerChaiGlobalDataProvider(console.log as any); //TODO: replace with your own global data provider
 
-export const dynamic = "force-static"; // Remove this if you want to use ssr mode
+export const dynamic = "force-static";
 
-export const generateMetadata = async (props: { params: Promise<{ slug: string[] }> }) => {
+export const generateMetadata = async (props: { params: Promise<{ hostname: string; slug: string[] }> }) => {
   const nextParams = await props.params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-  return {}; //await ChaiBuilder.getPageSeoData(slug);
+
+  const { isEnabled } = await draftMode();
+  ChaiBuilder.setDraftMode(isEnabled);
+  return await ChaiBuilder.getPageSeoData(slug);
 };
 
-export default async function Page({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function Page({ params }: { params: Promise<{ hostname: string; slug: string[] }> }) {
   const nextParams = await params;
   const slug = nextParams.slug ? `/${nextParams.slug.join("/")}` : "/";
-  const { isEnabled } = await draftMode();
 
-  const page = await ChaiBuilder.getPage(slug);
-  if ("error" in page) {
+  const { isEnabled } = await draftMode();
+  ChaiBuilder.setDraftMode(isEnabled);
+  let page = null;
+  try {
+    page = await ChaiBuilder.getPage(slug);
+    if ("error" in page) {
+      return notFound();
+    }
+  } catch (err) {
     return notFound();
   }
 
@@ -33,8 +43,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string[
   };
   return (
     <>
-      <PreviewBanner slug={slug} show={isEnabled} />
-      <RenderChaiBlocks page={page} pageProps={pageProps} />
+      <head>
+        <FontsAndStyles page={page} />
+      </head>
+      <body className={`font-body antialiased`}>
+        <PreviewBanner slug={slug} show={isEnabled} />
+        <RenderChaiBlocks page={page} pageProps={pageProps} />
+      </body>
     </>
   );
 }

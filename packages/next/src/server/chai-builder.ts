@@ -58,8 +58,11 @@ class ChaiBuilder {
   };
 
   static getSiteId() {
-    ChaiBuilder.verifyInit();
     return ChaiBuilder.siteId;
+  }
+
+  static setSiteId(siteId: string) {
+    ChaiBuilder.siteId = siteId;
   }
 
   static getSiteIdByHostname = cache(async (hostname: string) => {

@@ -24,6 +24,7 @@ type ChaiBuilderPage =
 class ChaiBuilder {
   private static pages?: ChaiBuilderPages;
   private static hostname: string = "default";
+  private static siteId?: string;
 
   static verifyInit() {
     if (!ChaiBuilder.pages) {
@@ -35,6 +36,7 @@ class ChaiBuilder {
     if (!apiKey) {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
+    ChaiBuilder.siteId = apiKey;
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
@@ -50,9 +52,15 @@ class ChaiBuilder {
       console.error(`Error fetching site ID for hostname ${hostname}: ${siteResult.error}`);
       return notFound();
     }
+    ChaiBuilder.siteId = siteResult.id as string;
     ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
+
+  static getSiteId() {
+    ChaiBuilder.verifyInit();
+    return ChaiBuilder.siteId;
+  }
 
   static getSiteIdByHostname = cache(async (hostname: string) => {
     const supabase = await getSupabaseAdmin();
@@ -98,7 +106,7 @@ class ChaiBuilder {
       async () => await ChaiBuilder.pages?.getSiteSettings(),
       [`website-settings-${ChaiBuilder.hostname}`],
       {
-        tags: [`website-settings-${ChaiBuilder.hostname}`],
+        tags: [`website-settings`, `website-settings-${ChaiBuilder.hostname}`],
       },
     )();
   }

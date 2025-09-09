@@ -27,6 +27,7 @@ export const ImageBlock = (
     height: shouldUseFill ? undefined : parseInt(height),
     width: shouldUseFill ? undefined : parseInt(width),
     style: shouldUseFill ? { objectFit: "cover" } : undefined,
+    unoptimized: true, // Disable Next.js image optimization to avoid issues with external URLs
   });
 
   if (shouldUseFill) {

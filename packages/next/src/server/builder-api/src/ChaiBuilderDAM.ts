@@ -7,7 +7,7 @@ export class ChaiBuilderDAM {
   constructor(
     private readonly supabase: SupabaseClient,
     private readonly appUuid: string,
-    private readonly chaiUser: string
+    private readonly chaiUser: string,
   ) {}
 
   async handle(args: ChaiApiActionArgs) {
@@ -34,11 +34,7 @@ export class ChaiBuilderDAM {
 
       // Optimize image if it's a base64 image
       if (base64File.startsWith("data:image/")) {
-        const {
-          buffer: optimizedBuffer,
-          contentType,
-          extension,
-        } = await this._optimizeImage(base64File);
+        const { buffer: optimizedBuffer, contentType, extension } = await this._optimizeImage(base64File);
 
         // Create full storage path including file name with extension
         const fullPath = `${path}/${actualFileName}.${extension}`;
@@ -64,9 +60,7 @@ export class ChaiBuilderDAM {
 
         // Extract the file extension from the base64 mimetype if possible
         let fileExtension = "bin";
-        const mimeMatch = base64File.match(
-          /^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/
-        );
+        const mimeMatch = base64File.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,/);
         if (mimeMatch) {
           const mimeType = mimeMatch[1];
           // Get extension from mime type
@@ -77,16 +71,12 @@ export class ChaiBuilderDAM {
         // Create full storage path including file name with extension
         const fullPath = `${path}/${actualFileName}.${fileExtension}`;
 
-        const contentType = mimeMatch
-          ? mimeMatch[1]
-          : "application/octet-stream";
+        const contentType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
 
-        const { error: storageError } = await this.supabase.storage
-          .from("dam-assets")
-          .upload(fullPath, buffer, {
-            contentType,
-            upsert: true,
-          });
+        const { error: storageError } = await this.supabase.storage.from("dam-assets").upload(fullPath, buffer, {
+          contentType,
+          upsert: true,
+        });
 
         if (storageError) {
           return { error: storageError.message, url: null };
@@ -119,15 +109,10 @@ export class ChaiBuilderDAM {
       height?: number;
       quality?: number;
       format?: "webp" | "jpeg" | "png";
-    } = {}
+    } = {},
   ): Promise<{ buffer: Buffer; contentType: string; extension: string }> {
     // Default options
-    const {
-      width = 1200,
-      height = 1200,
-      quality = 80,
-      format = "webp",
-    } = options;
+    const { width = 1200, height = 1200, quality = 80, format = "webp" } = options;
 
     try {
       let imageBuffer: Buffer;
@@ -136,7 +121,7 @@ export class ChaiBuilderDAM {
       if (typeof imageInput === "string") {
         const base64Parts = imageInput.split(";base64,");
         const base64Data = base64Parts.length > 1 ? base64Parts[1] : imageInput;
-        imageBuffer = Buffer.from(base64Data, "base64");
+        imageBuffer = Buffer.from(base64Data as string, "base64");
       } else {
         // Handle ArrayBuffer input
         imageBuffer = Buffer.from(imageInput);
@@ -183,8 +168,7 @@ export class ChaiBuilderDAM {
       }
 
       const fileId = crypto.randomUUID();
-      let fileExtension =
-        originalFile.name.split(".").pop()?.toLowerCase() || "";
+      let fileExtension = originalFile.name.split(".").pop()?.toLowerCase() || "";
       let fileName = originalFile.name;
       let fileType = originalFile.type;
       let file = originalFile;
@@ -193,18 +177,10 @@ export class ChaiBuilderDAM {
       if (fileType.startsWith("image/")) {
         try {
           const buffer = await file.arrayBuffer();
-          const {
-            buffer: optimizedBuffer,
-            contentType,
-            extension,
-          } = await this._optimizeImage(buffer);
+          const { buffer: optimizedBuffer, contentType, extension } = await this._optimizeImage(buffer);
 
           // Create new File object with optimized data
-          file = new File(
-            [optimizedBuffer],
-            `${file.name.split(".")[0]}.${extension}`,
-            { type: contentType }
-          );
+          file = new File([optimizedBuffer], `${file.name.split(".")[0]}.${extension}`, { type: contentType });
 
           // Update file metadata
           fileExtension = extension;
@@ -229,15 +205,12 @@ export class ChaiBuilderDAM {
           const buffer = await file.arrayBuffer();
 
           // Use the _optimizeImage function with thumbnail settings
-          const { buffer: thumbnailBuffer } = await this._optimizeImage(
-            buffer,
-            {
-              width: 300,
-              height: 300,
-              quality: 60,
-              format: "webp",
-            }
-          );
+          const { buffer: thumbnailBuffer } = await this._optimizeImage(buffer, {
+            width: 300,
+            height: 300,
+            quality: 60,
+            format: "webp",
+          });
 
           // Create thumbnail path
           const thumbnailName = `thumbnail_${fileName}`;
@@ -255,9 +228,7 @@ export class ChaiBuilderDAM {
             // Get thumbnail URL
             const {
               data: { publicUrl: thumbUrl },
-            } = this.supabase.storage
-              .from("dam-assets")
-              .getPublicUrl(thumbnailPath);
+            } = this.supabase.storage.from("dam-assets").getPublicUrl(thumbnailPath);
 
             thumbnailUrl = thumbUrl;
           } else {
@@ -270,13 +241,12 @@ export class ChaiBuilderDAM {
 
       // Upload file to Supabase Storage
       const buffer = await file.arrayBuffer();
-      const { data: storageData, error: storageError } =
-        await this.supabase.storage
-          .from("dam-assets")
-          .upload(storagePath, buffer, {
-            contentType: fileType,
-            upsert: true,
-          });
+      const { data: storageData, error: storageError } = await this.supabase.storage
+        .from("dam-assets")
+        .upload(storagePath, buffer, {
+          contentType: fileType,
+          upsert: true,
+        });
 
       if (storageError) {
         console.log("storageError", storageError);
@@ -359,9 +329,7 @@ export class ChaiBuilderDAM {
       return { asset: formattedAsset };
     } catch (error) {
       console.error("Error uploading asset:", error);
-      throw error instanceof Error
-        ? error
-        : new Error("An unknown error occurred");
+      throw error instanceof Error ? error : new Error("An unknown error occurred");
     }
   }
 
@@ -386,9 +354,7 @@ export class ChaiBuilderDAM {
       const offset = (page - 1) * limit;
 
       // Start building the query
-      let assetsQuery = this.supabase
-        .from("assets")
-        .select("*, asset_tags(tag)");
+      let assetsQuery = this.supabase.from("assets").select("*, asset_tags(tag)");
 
       // Apply filters
       if (folderId) {
@@ -403,20 +369,16 @@ export class ChaiBuilderDAM {
 
       if (query) {
         assetsQuery = assetsQuery.or(
-          `name.ilike.%${query}%,description.ilike.%${query}%,altText.ilike.%${query}%,asset_tags.tag.ilike.%${query}%`
+          `name.ilike.%${query}%,description.ilike.%${query}%,altText.ilike.%${query}%,asset_tags.tag.ilike.%${query}%`,
         );
       }
 
       // Get total count
-      const { count: totalCount } = await this.supabase
-        .from("assets")
-        .select("*", { count: "exact", head: true });
+      const { count: totalCount } = await this.supabase.from("assets").select("*", { count: "exact", head: true });
 
       // Apply sorting
       const validSortFields = ["name", "size", "createdAt"];
-      const validSortField = validSortFields.includes(sortField)
-        ? sortField
-        : "created_at";
+      const validSortField = validSortFields.includes(sortField) ? sortField : "created_at";
       const validSortOrder = sortOrder === "asc" ? "asc" : "desc";
 
       assetsQuery = assetsQuery.order(validSortField, {
@@ -434,9 +396,7 @@ export class ChaiBuilderDAM {
       }
 
       // Get folders
-      const { data: foldersData, error: foldersError } = await this.supabase
-        .from("folders")
-        .select("*");
+      const { data: foldersData, error: foldersError } = await this.supabase.from("folders").select("*");
 
       if (foldersError) {
         throw new Error(foldersError.message);

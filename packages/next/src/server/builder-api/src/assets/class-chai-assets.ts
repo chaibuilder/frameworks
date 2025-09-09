@@ -4,7 +4,6 @@ import { AssetUploaderInterface, SupabaseStorageUploader } from "./class-chai-up
 
 type ChaiAsset = any;
 
-const supabase = (async () => await getSupabaseAdmin()) as any;
 export class ChaiAssets {
   private uploader: AssetUploaderInterface;
 
@@ -65,6 +64,7 @@ export class ChaiAssets {
         updatedAt: new Date().toISOString(),
       };
 
+      const supabase = await getSupabaseAdmin();
       // Insert into app_assets table
       const { data, error } = await supabase.from("app_assets").insert(assetData).select("*").single();
 
@@ -96,6 +96,7 @@ export class ChaiAssets {
 
   async getAsset({ id }: { id: string }): Promise<ChaiAsset | { error: string }> {
     try {
+      const supabase = await getSupabaseAdmin();
       const { data, error } = await supabase.from("app_assets").select("*").eq("id", id).eq("app", this.appId).single();
 
       if (error) {
@@ -131,7 +132,7 @@ export class ChaiAssets {
   > {
     try {
       const offset = (page - 1) * limit;
-
+      const supabase = await getSupabaseAdmin();
       // Build the query
       let assetsQuery = supabase
         .from("app_assets")
@@ -167,6 +168,7 @@ export class ChaiAssets {
 
   async deleteAsset({ id }: { id: string }): Promise<{ success: boolean } | { error: string }> {
     try {
+      const supabase = await getSupabaseAdmin();
       // Delete from the database
       const { error } = await supabase.from("app_assets").delete().eq("id", id);
 
@@ -191,6 +193,7 @@ export class ChaiAssets {
     description?: string;
   }): Promise<ChaiAsset | { error: string }> {
     try {
+      const supabase = await getSupabaseAdmin();
       // Get current asset
       const { data: currentAsset, error: fetchError } = await supabase
         .from("app_assets")

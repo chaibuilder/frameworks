@@ -2,6 +2,7 @@ import { ChaiBuilderPages, ChaiBuilderPagesBackend } from "@chaibuilder/pages/se
 import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { ChaiBuilder } from "./chai-builder";
 import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
@@ -33,6 +34,8 @@ export const builderApiHandler = (apiKey?: string) => {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
       const backend = apiKey ? new ChaiBuilderPagesBackend(apiKeyToUse) : new ChaiBuilderSupabaseBackend(apiKeyToUse);
+      ChaiBuilder.init(apiKeyToUse, true);
+      // register global data providers
       const chaiBuilderPages = new ChaiBuilderPages(backend);
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);

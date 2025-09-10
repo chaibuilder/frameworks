@@ -107,9 +107,9 @@ class ChaiBuilder {
     ChaiBuilder.verifyInit();
     return await unstable_cache(
       async () => await ChaiBuilder.pages?.getSiteSettings(),
-      [`website-settings-${ChaiBuilder.hostname}`],
+      [`website-settings-${ChaiBuilder.getSiteId()}`],
       {
-        tags: [`website-settings`, `website-settings-${ChaiBuilder.hostname}`],
+        tags: [`website-settings`, `website-settings-${ChaiBuilder.getSiteId()}`],
       },
     )();
   }

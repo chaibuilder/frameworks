@@ -70,7 +70,7 @@ class ChaiBuilder {
     const { data, error } = await supabase
       .from("app_domains")
       .select("app")
-      .or(`domain.eq.${hostname},subdomain.eq.${hostname}`)
+      .or(`domain.eq.${hostname.replace("www.", "")},subdomain.eq.${hostname}`)
       .single();
     if (error) {
       return { error: error.message };

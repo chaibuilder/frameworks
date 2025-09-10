@@ -30,7 +30,7 @@ export const FontsAndStyles = async (props: { page?: ChaiBuilderPage }) => {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <style id="theme-variables" dangerouslySetInnerHTML={{ __html: themeCssVariables }} />
       {fontUrls.map((fontUrl: string) => (
-        <link key={fontUrl} rel="stylesheet" href={fontUrl} />
+        <link key={fontUrl} rel="stylesheet" href={fontUrl} crossOrigin="" />
       ))}
       {customFontFace && <style id="custom-font-face" dangerouslySetInnerHTML={{ __html: customFontFace }} />}
       {styles ? <style id="page-styles">{styles}</style> : null}

@@ -79,6 +79,7 @@ export const askAiForContent = async (
     if (Array.isArray(blocks) && blocks.every((block) => block._id)) {
       return { blocks };
     }
+    console.error("Invalid blocks from AI", blocks, text, finishReason);
     return { error: "Something went wrong. Please try again." };
   } catch (e: unknown) {
     return { error: (e as Error).message };

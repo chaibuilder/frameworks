@@ -14,7 +14,7 @@ export class ChaiBuilderWebsite {
   constructor(
     private supabase: SupabaseClient,
     private appUuid: string,
-    private chaiUser: string
+    private chaiUser: string,
   ) {}
 
   private generateDeterministicUuid(seed: string): string {
@@ -26,8 +26,7 @@ export class ChaiBuilderWebsite {
       hash.substring(0, 8),
       hash.substring(8, 12),
       "4" + hash.substring(13, 16), // Version 4
-      ((parseInt(hash.substring(16, 17), 16) & 0x3) | 0x8).toString(16) +
-        hash.substring(17, 20), // Variant bits
+      ((parseInt(hash.substring(16, 17), 16) & 0x3) | 0x8).toString(16) + hash.substring(17, 20), // Variant bits
       hash.substring(20, 32),
     ].join("-");
 
@@ -59,7 +58,7 @@ export class ChaiBuilderWebsite {
   async getWebsiteSettings(draft: boolean) {
     const { data, error } = await this.supabase
       .from(draft ? CHAI_APPS_TABLE_NAME : CHAI_APPS_ONLINE_TABLE_NAME)
-      .select("theme,fallbackLang,languages")
+      .select("theme,fallbackLang,languages,settings")
       .eq("id", this.appUuid)
       .single();
 

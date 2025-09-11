@@ -4,7 +4,8 @@ import { z } from "zod";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
-const apiKey = process.env.CHAI_AI_API_KEY!;
+const apiKey = process.env.CHAIBUILDER_AI_API_KEY!;
+const aiModel = process.env.CHAIBUILDER_AI_MODEL || "gpt-4o-mini";
 
 /**
  * Data type for GenerateSeoFieldAction
@@ -13,30 +14,18 @@ type GenerateSeoFieldActionData = {
   pageContext: string;
   dynamic: boolean;
   pageContent: string;
-  field:
-    | "title"
-    | "description"
-    | "ogTitle"
-    | "ogDescription"
-    | "searchTitle"
-    | "searchDescription"
-    | "jsonLD";
+  field: "title" | "description" | "ogTitle" | "ogDescription" | "searchTitle" | "searchDescription" | "jsonLD";
   lang: string;
   keyword?: string;
 };
 
 const fieldRules = {
   title: "Generate title for the following page. Max length: 60 characters",
-  description:
-    "Generate description for the following page. Max length: 160 characters",
-  ogTitle:
-    "Generate og title for the following page. Max length: 60 characters",
-  ogDescription:
-    "Generate og description for the following page. Max length: 160 characters",
-  searchTitle:
-    "Generate search title for the following page. Max length: 60 characters",
-  searchDescription:
-    "Generate search description for the following page. Max length: 160 characters",
+  description: "Generate description for the following page. Max length: 160 characters",
+  ogTitle: "Generate og title for the following page. Max length: 60 characters",
+  ogDescription: "Generate og description for the following page. Max length: 160 characters",
+  searchTitle: "Generate search title for the following page. Max length: 60 characters",
+  searchDescription: "Generate search description for the following page. Max length: 160 characters",
   jsonLD: "Generate json ld for the following page. Return only json ld",
 };
 
@@ -47,10 +36,7 @@ type GenerateSeoFieldActionResponse = {
 /**
  * Action to generate SEO fields for a page
  */
-export class GenerateSeoFieldAction extends BaseAction<
-  GenerateSeoFieldActionData,
-  GenerateSeoFieldActionResponse
-> {
+export class GenerateSeoFieldAction extends BaseAction<GenerateSeoFieldActionData, GenerateSeoFieldActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */
@@ -59,15 +45,7 @@ export class GenerateSeoFieldAction extends BaseAction<
       pageContext: z.string(),
       dynamic: z.boolean(),
       pageContent: z.string(),
-      field: z.enum([
-        "title",
-        "description",
-        "ogTitle",
-        "ogDescription",
-        "searchTitle",
-        "searchDescription",
-        "jsonLD",
-      ]),
+      field: z.enum(["title", "description", "ogTitle", "ogDescription", "searchTitle", "searchDescription", "jsonLD"]),
       lang: z.string().nonempty(),
       keyword: z.string().optional(),
     });
@@ -76,14 +54,12 @@ export class GenerateSeoFieldAction extends BaseAction<
   /**
    * Execute the duplicate page action
    */
-  async execute(
-    data: GenerateSeoFieldActionData
-  ): Promise<GenerateSeoFieldActionResponse> {
+  async execute(data: GenerateSeoFieldActionData): Promise<GenerateSeoFieldActionResponse> {
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
     const openai = createOpenAI({ apiKey });
-    const model = openai("gpt-4o");
+    const model = openai(aiModel);
     const response = await generateText({
       model,
       system: `You are a SEO expert. Follow the instructions carefully. 

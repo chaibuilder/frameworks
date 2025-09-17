@@ -4,8 +4,8 @@ import ChaiBuilder from "../../server";
 import { getFontHref, getThemeCustomFontFace } from "../../server/styles-helper";
 import { ChaiBuilderPage } from "../../types";
 
-export const FontsAndStyles = async (props: { page?: ChaiBuilderPage }) => {
-  const { page } = props;
+export const FontsAndStyles = async (props: { page?: ChaiBuilderPage; googleFonts?: boolean }) => {
+  const { page, googleFonts } = props;
   const siteSettings = await ChaiBuilder.getSiteSettings();
 
   if (!!get(siteSettings, "error")) {
@@ -23,15 +23,17 @@ export const FontsAndStyles = async (props: { page?: ChaiBuilderPage }) => {
   const styles = page ? await ChaiBuilder.getPageStyles(page.blocks) : null;
   return (
     <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      {fontUrls.map((fontUrl: string) => (
-        <link key={fontUrl} rel="preload" href={fontUrl} as="style" crossOrigin="" />
-      ))}
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      {googleFonts ? <link rel="preconnect" href="https://fonts.googleapis.com" /> : null}
+      {googleFonts ? <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" /> : null}
+      {googleFonts
+        ? fontUrls.map((fontUrl: string) => (
+            <link key={fontUrl} rel="preload" href={fontUrl} as="style" crossOrigin="" />
+          ))
+        : null}
+      {googleFonts
+        ? fontUrls.map((fontUrl: string) => <link key={fontUrl} rel="stylesheet" href={fontUrl} crossOrigin="" />)
+        : null}
       <style id="theme-variables" dangerouslySetInnerHTML={{ __html: themeCssVariables }} />
-      {fontUrls.map((fontUrl: string) => (
-        <link key={fontUrl} rel="stylesheet" href={fontUrl} crossOrigin="" />
-      ))}
       {customFontFace && <style id="custom-font-face" dangerouslySetInnerHTML={{ __html: customFontFace }} />}
       {styles ? <style id="page-styles">{styles}</style> : null}
     </>

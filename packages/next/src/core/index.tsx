@@ -21,6 +21,7 @@ type ChaiBuilderProps = {
   apiUrl?: string;
   getPreviewUrl?: (slug: string) => string;
   getLiveUrl?: (slug: string) => string;
+  hasReactQueryProvider?: boolean;
 } & Pick<
   ChaiBuilderEditorProps,
   | "onError"
@@ -46,8 +47,10 @@ export default (props: ChaiBuilderProps) => {
     };
     initSupabase();
   }, []);
+
   return (
     <ChaiBuilder
+      hasReactQueryProvider={props.hasReactQueryProvider ?? false}
       supabaseInstance={supabaseClient}
       autoSaveSupport={false}
       apiUrl={builderApiUrl}

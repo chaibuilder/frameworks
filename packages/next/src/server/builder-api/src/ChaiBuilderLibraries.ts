@@ -10,17 +10,14 @@ export class ChaiBuilderLibraries {
   constructor(
     private supabase: SupabaseClient,
     private appUuid: string,
-    private chaiUser: string
+    private chaiUser: string,
   ) {
     this.dam = new ChaiBuilderDAM(supabase, appUuid, chaiUser);
   }
 
   async getLibraryGroups() {
     const library = await this.getSiteLibrary();
-    const { data, error } = await this.supabase
-      .from("library_items")
-      .select("group")
-      .eq("library", library.id);
+    const { data, error } = await this.supabase.from("library_items").select("group").eq("library", library.id);
 
     if (error) {
       console.error("Error fetching library groups:", error);
@@ -101,8 +98,10 @@ export class ChaiBuilderLibraries {
   }
 
   async getTemplatesByType(data: { pageType: string; library: string }) {
-    const { data: sharedLibraries, error: sharedLibrariesError } =
-      await this.supabase.from("libraries").select("id").eq("type", "shared");
+    const { data: sharedLibraries, error: sharedLibrariesError } = await this.supabase
+      .from("libraries")
+      .select("id")
+      .eq("type", "shared");
 
     if (sharedLibrariesError) {
       console.error("Error fetching shared libraries:", sharedLibrariesError);
@@ -138,11 +137,22 @@ export class ChaiBuilderLibraries {
   }
 
   async getLibraries() {
+    // get the client id from the apps table
+    const { data: app, error: appError } = await this.supabase
+      .from("apps")
+      .select("client")
+      .eq("id", this.appUuid)
+      .single();
+    if (appError) {
+      console.error("Error fetching app:", appError);
+      throw appError;
+    }
+    const clientId = app.client;
     // Fetch libraries that are either global (app is null) or belong to the current app
     const { data, error } = await this.supabase
       .from("libraries")
       .select("createdAt,id,name,type")
-      .or(`app.eq.${this.appUuid},type.eq.shared`);
+      .eq("client", clientId);
 
     if (error) {
       console.error("Error fetching libraries:", error);
@@ -196,10 +206,7 @@ export class ChaiBuilderLibraries {
 
   async deleteLibraryItem(data: { id: string }) {
     const { id } = data;
-    const { error } = await this.supabase
-      .from("library_items")
-      .delete()
-      .eq("id", id);
+    const { error } = await this.supabase.from("library_items").delete().eq("id", id);
 
     if (error) {
       throw apiError("DELETE_LIBRARY_ITEM_FAILED", error);
@@ -275,7 +282,7 @@ export class ChaiBuilderLibraries {
       pageType: string;
       previewImage?: string;
     },
-    previewImage?: string
+    previewImage?: string,
   ) {
     const { pageId, description, name, pageType } = data;
 
@@ -313,10 +320,7 @@ export class ChaiBuilderLibraries {
 
   async unmarkAsTemplate(data: { id: string }) {
     const { id } = data;
-    const { error } = await this.supabase
-      .from("library_templates")
-      .delete()
-      .eq("pageId", id);
+    const { error } = await this.supabase.from("library_templates").delete().eq("pageId", id);
 
     if (error) {
       throw apiError("DELETE_FAILED", error);

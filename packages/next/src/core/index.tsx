@@ -22,7 +22,7 @@ type ChaiBuilderProps = {
   getPreviewUrl?: (slug: string) => string;
   getLiveUrl?: (slug: string) => string;
   hasReactQueryProvider?: boolean;
-  getAccessToken?: () => string;
+  getAccessToken?: () => Promise<string>;
 } & Pick<
   ChaiBuilderEditorProps,
   | "onError"

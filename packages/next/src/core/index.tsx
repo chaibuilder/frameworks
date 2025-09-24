@@ -22,13 +22,14 @@ type ChaiBuilderProps = {
   getPreviewUrl?: (slug: string) => string;
   getLiveUrl?: (slug: string) => string;
   hasReactQueryProvider?: boolean;
+  getAccessToken?: () => string;
 } & Pick<
   ChaiBuilderEditorProps,
   | "onError"
   | "translations"
   | "locale"
   | "htmlDir"
-  | "autoSaveSupport"
+  | "autoSave"
   | "autoSaveInterval"
   | "fallbackLang"
   | "languages"
@@ -50,9 +51,13 @@ export default (props: ChaiBuilderProps) => {
 
   return (
     <ChaiBuilder
+      getAccessToken={() => {
+        return supabaseClient.auth.session()?.access_token;
+      }}
+      autoSave={true}
+      autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}
       supabaseInstance={supabaseClient}
-      autoSaveSupport={false}
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}

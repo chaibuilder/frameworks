@@ -55,14 +55,6 @@ export default (props: ChaiBuilderProps) => {
 
   return (
     <ChaiBuilder
-      getAccessToken={async () => {
-        try {
-          const data = await supabaseClient?.auth.getSession();
-          return data?.data.session?.access_token ?? "";
-        } catch (error) {
-          return "";
-        }
-      }}
       autoSave={true}
       autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}

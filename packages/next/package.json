@@ -1,6 +1,6 @@
 {
   "name": "chai-next",
-  "version": "0.0.40-beta",
+  "version": "0.0.41-beta",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",

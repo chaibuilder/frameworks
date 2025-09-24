@@ -1,5 +1,5 @@
-import { supabase } from "@/app/supabase";
 import { NextResponse } from "next/server";
+import { getSupabaseAdmin } from "../../../supabase";
 import { decodedApiKey } from "../lib";
 import { ChaiBuilderUsers } from "./ChaiBuilderUsers";
 
@@ -18,7 +18,7 @@ export const POST = async (req: Request) => {
   }
 
   const { action, data } = await req.json();
-
+  const supabase = await getSupabaseAdmin();
   const users = new ChaiBuilderUsers(supabase, appId);
 
   if (action === "LOGIN") {

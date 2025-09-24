@@ -57,6 +57,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@3.4.17)
+      '@tanstack/react-query':
+        specifier: 5.90.2
+        version: 5.90.2(react@19.1.1)
       chai-next:
         specifier: workspace:*
         version: link:../../packages/next
@@ -1723,8 +1726,8 @@ packages:
     resolution: {integrity: sha512-Id9EJjS4NWGn9V0pZRCk8YpM2PVEK8/a/BtTbgEW5L7wPI/APmZ9vGtCTM3HyTEBrfnvWmDlb0T5CfpozywKyA==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@types/react': 19.0.8
-      '@types/react-dom': 19.0.3
+      '@types/react': '>=16.0.0'
+      '@types/react-dom': '>=16.0.0'
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
       styled-components: '>=5.0.0'

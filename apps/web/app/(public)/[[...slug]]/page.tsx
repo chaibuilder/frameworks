@@ -1,5 +1,5 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { FontsAndStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
+import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
 import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: Promise<{ hostname: str
   return (
     <>
       <head>
-        <FontsAndStyles page={page} />
+        <ChaiPageStyles page={page} />
       </head>
       <body className={`font-body antialiased`}>
         <PreviewBanner slug={slug} show={isEnabled} />

@@ -49,11 +49,19 @@ export default (props: ChaiBuilderProps) => {
     initSupabase();
   }, []);
 
-  console.log("supabaseClient", supabaseClient, props);
+  if (!supabaseClient) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <ChaiBuilder
-      getAccessToken={() => {
-        return supabaseClient?.auth.session()?.access_token;
+      getAccessToken={async () => {
+        try {
+          const data = await supabaseClient?.auth.getSession();
+          return data?.data.session?.access_token ?? "";
+        } catch (error) {
+          return "";
+        }
       }}
       autoSave={true}
       autoSaveInterval={20}

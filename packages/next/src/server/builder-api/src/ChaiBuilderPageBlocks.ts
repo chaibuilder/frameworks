@@ -81,7 +81,7 @@ export class ChaiBuilderPageBlocks {
       if (partialBlockId === "") continue;
       let partialBlocks = await this.getPartialBlock(partialBlockId, draft);
 
-      if (partialBlock._parent && partialBlocks?.length > 0) {
+      if (partialBlocks?.length > 0) {
         partialBlocks = partialBlocks.map((block) => {
           if (isEmpty(block._parent)) block._parent = partialBlock._parent;
           if (has(block, "_show")) block._show = partialBlock._show;

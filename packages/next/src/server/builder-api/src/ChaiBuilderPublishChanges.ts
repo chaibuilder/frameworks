@@ -1,14 +1,6 @@
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { SupabaseClient } from "@supabase/supabase-js";
-import {
-  compact,
-  flattenDeep,
-  get,
-  isEmpty,
-  omit,
-  startsWith,
-  uniq,
-} from "lodash";
+import { compact, flattenDeep, get, isEmpty, omit, startsWith, uniq } from "lodash";
 import {
   CHAI_APPS_ONLINE_TABLE_NAME,
   CHAI_APPS_TABLE_NAME,
@@ -22,7 +14,7 @@ class ChaiBuilderPublishChanges {
   constructor(
     private supabase: SupabaseClient,
     private appUuid: string,
-    private chaiUser: string
+    private chaiUser: string,
   ) {}
 
   async publishChanges(ids: string[] = []) {
@@ -36,7 +28,7 @@ class ChaiBuilderPublishChanges {
           return this.publishTheme();
         }
         return this.publishPage(id);
-      })
+      }),
     );
     await this.clearChanges(ids);
     return { tags: uniq(flattenDeep(responses)) };
@@ -44,10 +36,7 @@ class ChaiBuilderPublishChanges {
 
   async publishTheme() {
     const app = await this.cloneApp();
-    const { error } = await this.supabase
-      .from(CHAI_APPS_ONLINE_TABLE_NAME)
-      .delete()
-      .eq("id", this.appUuid);
+    const { error } = await this.supabase.from(CHAI_APPS_ONLINE_TABLE_NAME).delete().eq("id", this.appUuid);
 
     if (error) {
       throw apiError("ERROR_PUBLISHING_THEME", error);
@@ -70,14 +59,10 @@ class ChaiBuilderPublishChanges {
       throw apiError("ERROR_PUBLISHING_THEME", updateError);
     }
 
-    return ["site-settings"];
+    return [`website-settings-${this.appUuid}`];
   }
   async cloneApp() {
-    const { data, error } = await this.supabase
-      .from(CHAI_APPS_TABLE_NAME)
-      .select("*")
-      .eq("id", this.appUuid)
-      .single();
+    const { data, error } = await this.supabase.from(CHAI_APPS_TABLE_NAME).select("*").eq("id", this.appUuid).single();
 
     if (error) {
       throw apiError("SITE_NOT_FOUND", error);
@@ -114,10 +99,14 @@ class ChaiBuilderPublishChanges {
     const links = this.getLinks(page.blocks);
     await this.addOnlinePage(page, partialBlocks, links);
 
+    console.log("Partial Blocks: ", partialBlocks);
+    console.log("Links: ", links);
+    const tags = [`page-${page.primaryPage ?? page.id}`];
     if (isEmpty(page.slug)) {
-      return await this.getPartialBlockUsage(page.primaryPage ?? page.id);
+      tags.push(...(await this.getPartialBlockUsage(page.primaryPage ?? page.id)));
     }
-    return [`page-${page.primaryPage ?? page.id}`];
+    console.log("Tags: ", tags);
+    return tags;
   }
 
   async createRevision(pageId: string) {
@@ -132,12 +121,10 @@ class ChaiBuilderPublishChanges {
       return false;
     }
 
-    const { error: revisionError } = await this.supabase
-      .from(CHAI_PAGES_REVISIONS_TABLE_NAME)
-      .insert({
-        ...page,
-        type: "published",
-      });
+    const { error: revisionError } = await this.supabase.from(CHAI_PAGES_REVISIONS_TABLE_NAME).insert({
+      ...page,
+      type: "published",
+    });
 
     if (revisionError) {
       throw apiError("ERROR_CREATING_REVISION", revisionError);
@@ -149,10 +136,7 @@ class ChaiBuilderPublishChanges {
   async addOnlinePage(page: any, partialBlocks: string, links: string) {
     //delete all pages from the online table with the same page id
     await this.createRevision(page.id);
-    await this.supabase
-      .from(CHAI_ONLINE_PAGES_TABLE_NAME)
-      .delete()
-      .eq("id", page.id);
+    await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("id", page.id);
 
     const { data, error } = await this.supabase
       .from(CHAI_ONLINE_PAGES_TABLE_NAME)
@@ -176,30 +160,20 @@ class ChaiBuilderPublishChanges {
   getPartialBlocks(blocks: ChaiBlock[]) {
     return compact(
       blocks
-        .filter(
-          (block) =>
-            block._type === "GlobalBlock" || block._type === "PartialBlock"
-        )
-        .map((block) =>
-          get(block, "partialBlockId", get(block, "globalBlock", false))
-        )
+        .filter((block) => block._type === "GlobalBlock" || block._type === "PartialBlock")
+        .map((block) => get(block, "partialBlockId", get(block, "globalBlock", false))),
     ).join("|");
   }
 
   getLinks(blocks: ChaiBlock[]) {
     return compact(
       blocks
-        .filter(
-          (block) =>
-            block._type === "Link" &&
-            get(block, "link.type", false) === "pageType"
-        )
+        .filter((block) => block._type === "Link" && get(block, "link.type", false) === "pageType")
         .map((block) => {
           const href = get(block, "link.href", "");
-          if (startsWith(href, "pageType:"))
-            return get(href.split(":"), "2", "");
+          if (startsWith(href, "pageType:")) return get(href.split(":"), "2", "");
           return "";
-        })
+        }),
     ).join("|");
   }
 

@@ -8,7 +8,7 @@ const queryClient = new QueryClient();
 export default function Page() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChaiBuilder hasReactQueryProvider apiUrl="/builder/api" />
+      <ChaiBuilder hasReactQueryProvider apiUrl="/api" />
     </QueryClientProvider>
   );
 }

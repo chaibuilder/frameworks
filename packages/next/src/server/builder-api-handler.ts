@@ -62,6 +62,10 @@ export const builderApiHandler = (apiKey?: string) => {
       }
 
       const tags = get(response, "tags", []);
+      if (tags.length > 0) {
+        console.log("Site Id", apiKeyToUse);
+        console.log("Revalidating tags", tags);
+      }
       for (const tag of tags) {
         revalidateTag(tag);
       }

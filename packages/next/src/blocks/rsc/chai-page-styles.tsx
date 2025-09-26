@@ -14,6 +14,7 @@ export const ChaiPageStyles = async (props: { page?: ChaiBuilderPage }) => {
   const theme = get(siteSettings, "theme", {});
   const themeCssVariables = getChaiThemeCssVariables(theme);
   const styles = page ? await ChaiBuilder.getPageStyles(page.blocks) : null;
+  console.log("Styles: ", styles);
   return (
     <>
       <style id="theme-variables" dangerouslySetInnerHTML={{ __html: themeCssVariables }} />

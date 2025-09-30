@@ -93,16 +93,16 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     // First optimization attempt with standard settings
     const optimizedBuffer = optimize
       ? await sharp(buffer)
-          .webp({ quality: 80 })
-          .resize({ width: Math.min(imageInfo.width || 1200, 1200) })
+          .webp({ quality: 100 })
+          .resize({ width: Math.min(imageInfo.width || 2000, 2000) })
           .toBuffer()
-      : buffer;
+      : await sharp(buffer).webp({ quality: 100 }).toBuffer();
 
     // Get metadata from optimized image
     const optimizedInfo = await sharp(optimizedBuffer).metadata();
 
     // If still too large, further optimize
-    if (optimize && optimizedBuffer.length > 100 * 1024) {
+    if (optimize && optimizedBuffer.length > 120 * 1024) {
       return await this.furtherOptimizeImage(buffer, imageInfo, optimizedBuffer.length);
     }
 
@@ -117,13 +117,13 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     optimizedBuffer: Buffer;
     optimizedInfo: sharp.Metadata;
   }> {
-    // Calculate necessary compression level to get under 100kb
-    const compressionLevel = Math.floor(70 * ((100 * 1024) / currentSize));
+    // Calculate necessary compression level to get under 120kb
+    const compressionLevel = Math.floor(90 * ((120 * 1024) / currentSize));
 
     // Further optimize with adjusted quality
     const furtherOptimizedBuffer = await sharp(buffer)
       .webp({ quality: compressionLevel })
-      .resize({ width: Math.min(imageInfo.width || 1200, 1200) })
+      .resize({ width: Math.min(imageInfo.width || 2000, 2000) })
       .toBuffer();
 
     // Get metadata from further optimized image
@@ -146,8 +146,9 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     folderId?: string | null,
   ): Promise<{ url: string; thumbnailUrl: string }> {
     const supabase = await getSupabaseAdmin();
-    const originalFileName = name;
-    const fileName = `${kebabCase(originalFileName)}`;
+    const parts = name.split(".");
+    const originalFileName = parts.length > 1 ? parts.slice(0, -1).join(".") : name;
+    const fileName = `${kebabCase(originalFileName)}.webp`;
     const thumbnailName = `${fileName}_thumbnail.webp`;
 
     const baseFolder = this.appId;

@@ -18,13 +18,9 @@ export class ChaiAssets {
     if (isEmpty(url)) {
       return "";
     }
-    // Use URL API to append params, regardless of existing query
     const urlObj = new URL(url);
-    const sanitizedUpdatedAt = (updatedAt ?? "").replace(/[^a-z0-9]/gi, "").toLowerCase();
-    urlObj.searchParams.set("cid", sanitizedUpdatedAt);
-
-    // Remove dummy base if not needed
-    // Remove the dummy base for relative URLs
+    const timestamp = new Date(updatedAt).getTime();
+    urlObj.searchParams.set("t", timestamp.toString());
     return `${urlObj.origin}${urlObj.pathname}${urlObj.search}${urlObj.hash}`;
   }
 

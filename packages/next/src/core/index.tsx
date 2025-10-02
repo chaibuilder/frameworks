@@ -1,5 +1,6 @@
 "use client";
 import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
+import { SupabaseClient } from "@supabase/supabase-js";
 import { startsWith } from "lodash";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
@@ -16,13 +17,27 @@ export const ChaiBuilder: any = dynamic(() => import("@chaibuilder/pages"), {
   ssr: false,
 });
 
+type ChaiWebSocketClient = SupabaseClient;
+type LoggedInUser = {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  metadata?: Record<string, any>;
+};
+
 type ChaiBuilderProps = {
-  logo?: React.FC;
+  hasReactQueryProvider?: boolean;
+  topLeftCorner?: React.FC;
   apiUrl?: string;
+  usersApiUrl?: string;
+  assetsApiUrl?: string;
   getPreviewUrl?: (slug: string) => string;
   getLiveUrl?: (slug: string) => string;
-  hasReactQueryProvider?: boolean;
-  getAccessToken?: () => Promise<string>;
+  onLogout?: () => void;
+  getAccessToken: () => Promise<string>;
+  currentUser: LoggedInUser | null;
+  websocket?: ChaiWebSocketClient;
 } & Pick<
   ChaiBuilderEditorProps,
   | "onError"

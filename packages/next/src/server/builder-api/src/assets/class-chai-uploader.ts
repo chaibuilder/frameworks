@@ -22,6 +22,7 @@ export type AssetUploadResponse = {
 const BUCKET_NAME = "dam-assets";
 export interface AssetUploaderInterface {
   upload(args: AssetUploaderArgs): Promise<AssetUploadResponse>;
+  uploadSvg(args: AssetUploaderArgs): Promise<AssetUploadResponse>;
 }
 
 export class SupabaseStorageUploader implements AssetUploaderInterface {
@@ -53,6 +54,38 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
       };
     } catch (error) {
       console.error("Upload error:", error);
+      throw error;
+    }
+  }
+
+  async uploadSvg({ file, folderId, name }: AssetUploaderArgs): Promise<AssetUploadResponse> {
+    try {
+      const buffer = this.getBufferFromBase64(file);
+
+      // Get SVG dimensions if possible
+      let width: number | undefined;
+      let height: number | undefined;
+      try {
+        const metadata = await sharp(buffer).metadata();
+        width = metadata.width;
+        height = metadata.height;
+      } catch {
+        // If sharp can't read SVG metadata, continue without dimensions
+      }
+
+      // Upload SVG directly without optimization
+      const { url, thumbnailUrl } = await this.uploadSvgToSupabase(buffer, name, folderId);
+
+      return {
+        url,
+        thumbnailUrl,
+        size: buffer.length,
+        width,
+        height,
+        mimeType: "image/svg+xml",
+      };
+    } catch (error) {
+      console.error("SVG upload error:", error);
       throw error;
     }
   }
@@ -190,6 +223,44 @@ export class SupabaseStorageUploader implements AssetUploaderInterface {
     } catch (error) {
       console.error("Supabase upload error:", error);
       throw new Error(`Failed to upload to Supabase: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  }
+
+  private async uploadSvgToSupabase(
+    svgBuffer: Buffer,
+    name: string,
+    folderId?: string | null,
+  ): Promise<{ url: string; thumbnailUrl: string }> {
+    const supabase = await getSupabaseAdmin();
+    const parts = name.split(".");
+    const originalFileName = parts.length > 1 ? parts.slice(0, -1).join(".") : name;
+    const fileName = `${kebabCase(originalFileName)}.svg`;
+
+    const baseFolder = this.appId;
+    const folderPath = folderId ? `${baseFolder}/${folderId}` : baseFolder;
+    const filePath = `${folderPath}/${fileName}`;
+
+    try {
+      // Upload SVG file
+      const { data: fileData, error: fileError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(filePath, svgBuffer, {
+          contentType: "image/svg+xml",
+          upsert: true,
+        });
+
+      if (fileError) throw fileError;
+
+      // Get public URL
+      const {
+        data: { publicUrl: url },
+      } = supabase.storage.from(BUCKET_NAME).getPublicUrl(filePath);
+
+      // For SVG, use the same URL as thumbnail since it's vector
+      return { url, thumbnailUrl: url };
+    } catch (error) {
+      console.error("Supabase SVG upload error:", error);
+      throw new Error(`Failed to upload SVG to Supabase: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   }
 }

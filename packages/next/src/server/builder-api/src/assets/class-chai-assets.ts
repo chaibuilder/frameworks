@@ -36,13 +36,22 @@ export class ChaiAssets {
     optimize?: boolean;
   }): Promise<any | { error: string }> {
     try {
-      // First upload the file to storage using the existing uploader
-      const uploadedAsset = await this.uploader.upload({
-        file,
-        folderId,
-        name,
-        optimize,
-      });
+      // Check if the file is an SVG
+      const isSvg = name.toLowerCase().endsWith(".svg") || file.includes("data:image/svg+xml");
+
+      // Upload using appropriate method
+      const uploadedAsset = isSvg
+        ? await this.uploader.uploadSvg({
+            file,
+            folderId,
+            name,
+          })
+        : await this.uploader.upload({
+            file,
+            folderId,
+            name,
+            optimize,
+          });
 
       // Prepare the asset data for Supabase
       const assetData = {
@@ -211,12 +220,21 @@ export class ChaiAssets {
 
       // Handle file update if provided
       if (file) {
-        // Re-upload the file
-        const uploadedAsset = await this.uploader.upload({
-          file,
-          folderId: currentAsset.folderId,
-          name: currentAsset.name,
-        });
+        // Check if the file is an SVG to skip optimization
+        const isSvg = currentAsset.format?.toLowerCase() === "svg" || file.includes("data:image/svg+xml");
+
+        // Re-upload the file using appropriate method
+        const uploadedAsset = isSvg
+          ? await this.uploader.uploadSvg({
+              file,
+              folderId: currentAsset.folderId,
+              name: currentAsset.name,
+            })
+          : await this.uploader.upload({
+              file,
+              folderId: currentAsset.folderId,
+              name: currentAsset.name,
+            });
 
         // Update asset information
         updateData.url = uploadedAsset.url;

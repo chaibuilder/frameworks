@@ -50,7 +50,7 @@ export class ChaiAssets {
             file,
             folderId,
             name,
-            optimize,
+            optimize: optimize ?? true,
           });
 
       // Prepare the asset data for Supabase

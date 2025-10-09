@@ -11,7 +11,7 @@
     "build": "tsup  --dts --format esm,cjs"
   },
   "bin": {
-    "chai-tailwind": "./scripts/chai-tailwind.cjs"
+    "chai-tailwind": "scripts/chai-tailwind.cjs"
   },
   "keywords": [
     "chai-builder",

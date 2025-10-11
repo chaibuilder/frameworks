@@ -1,4 +1,4 @@
-import { ChaiBuilderPages, ChaiBuilderPagesBackend } from "@chaibuilder/pages/server";
+import { ChaiBuilderPages } from "@chaibuilder/pages/server";
 import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
@@ -33,7 +33,7 @@ export const builderApiHandler = (apiKey?: string) => {
     try {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
-      const backend = apiKey ? new ChaiBuilderPagesBackend(apiKeyToUse) : new ChaiBuilderSupabaseBackend(apiKeyToUse);
+      const backend = new ChaiBuilderSupabaseBackend(apiKeyToUse);
       ChaiBuilder.setSiteId(apiKeyToUse);
       // register global data providers
       const chaiBuilderPages = new ChaiBuilderPages(backend);

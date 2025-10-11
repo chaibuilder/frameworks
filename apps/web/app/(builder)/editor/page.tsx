@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChaiBuilder, { getSupabaseClient } from "chai-next";
 import "chai-next/builder-styles";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LoginScreen } from "./login";
 
 type LoggedInUser = {
@@ -17,7 +17,7 @@ type LoggedInUser = {
 const supabase = getSupabaseClient();
 const queryClient = new QueryClient();
 
-export default function Editor({ domain, websiteId }: { domain?: string; websiteId?: string }) {
+export default function Editor() {
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
   const [user, setUser] = useState<LoggedInUser | null>(null);
 
@@ -82,10 +82,6 @@ export default function Editor({ domain, websiteId }: { domain?: string; website
     return session?.access_token as string;
   }, []);
 
-  // Memoize props to prevent unnecessary re-renders when tab visibility changes
-  // ChaiBuilderPages has a useEffect that depends on props, so stable references are critical
-  const features = useMemo(() => ({ sharedJsonLD: true }), []);
-  const themePresets = useMemo(() => [], []);
   const getPreviewUrl = useCallback((slug: string) => `/pages${slug}`, []);
   const getLiveUrl = useCallback((slug: string) => `/pages${slug}`, []);
 

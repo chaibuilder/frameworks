@@ -110,6 +110,9 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
       }
       if (action === "GET_ROLE_AND_PERMISSIONS") {
         const { data: userData, error } = await supabase.auth.admin.getUserById(userId as string);
+        if (error) {
+          return { error: error.message, status: 400 };
+        }
         return {
           id: userData.user?.id,
           email: userData.user?.email,

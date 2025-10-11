@@ -30,7 +30,7 @@
   "private": false,
   "dependencies": {
     "@ai-sdk/openai": "^2.0.18",
-    "@chaibuilder/pages": "0.15.6",
+    "@chaibuilder/pages": "0.15.7",
     "@chaibuilder/sdk": "3.0.10",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.50.3",

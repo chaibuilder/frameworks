@@ -3,7 +3,6 @@ import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { startsWith } from "lodash";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import "../../styles";
 import { getSupabaseClient } from "./supabase";
 
@@ -53,18 +52,12 @@ type ChaiBuilderProps = {
 
 const API_URL = "builder/api";
 
+const client = getSupabaseClient();
+
 export default (props: ChaiBuilderProps) => {
   const builderApiUrl = props.apiUrl ?? API_URL;
-  const [supabaseClient, setSupabaseClient] = useState<any>(null);
-  useEffect(() => {
-    const initSupabase = async () => {
-      const client = await getSupabaseClient();
-      setSupabaseClient(client);
-    };
-    initSupabase();
-  }, []);
 
-  if (!supabaseClient) {
+  if (!client) {
     return <div>Loading...</div>;
   }
 
@@ -73,7 +66,7 @@ export default (props: ChaiBuilderProps) => {
       autoSave={true}
       autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}
-      supabaseInstance={supabaseClient}
+      supabaseInstance={client}
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}

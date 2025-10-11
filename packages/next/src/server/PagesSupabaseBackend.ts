@@ -109,13 +109,9 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         };
       }
       if (action === "GET_ROLE_AND_PERMISSIONS") {
-        const { data: userData, error } = await supabase.auth.admin.getUserById(userId as string);
-        if (error) {
-          return { error: error.message, status: 400 };
-        }
         return {
-          id: userData.user?.id,
-          email: userData.user?.email,
+          id: "suraj",
+          email: "suraj@chaibuilder.com",
           role: "admin",
           permissions: null,
           status: 200,
@@ -156,7 +152,6 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         // Fallback to the original implementation if action not found in registry
         const backend = new SupabaseChaiBuilderBackEnd(supabase, this.appId, userId ?? "");
         const response = await backend.handle({ action, data } as any);
-        if (action === "GET_WEBSITE_PAGES") console.log("Response from backend:", action, response);
         if (response.status !== 200) {
           return { ...response.data, status: response.status };
         }

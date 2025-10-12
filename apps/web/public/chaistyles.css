@@ -1065,9 +1065,17 @@ body {
   border-bottom-width: 1px;
 }
 
+.border-destructive {
+  border-color: hsl(var(--destructive));
+}
+
 .border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
+}
+
+.border-input {
+  border-color: hsl(var(--input));
 }
 
 .border-transparent {
@@ -1076,14 +1084,6 @@ body {
 
 .border-white\/\[0\.08\] {
   border-color: rgb(255 255 255 / 0.08);
-}
-
-.border-destructive {
-  border-color: hsl(var(--destructive));
-}
-
-.border-input {
-  border-color: hsl(var(--input));
 }
 
 .bg-\[\#323238\] {
@@ -1500,12 +1500,12 @@ body {
   background-color: hsl(var(--primary) / 0.8);
 }
 
-.hover\:bg-secondary\/80:hover {
-  background-color: hsl(var(--secondary) / 0.8);
-}
-
 .hover\:bg-primary\/90:hover {
   background-color: hsl(var(--primary) / 0.9);
+}
+
+.hover\:bg-secondary\/80:hover {
+  background-color: hsl(var(--secondary) / 0.8);
 }
 
 .hover\:underline:hover {

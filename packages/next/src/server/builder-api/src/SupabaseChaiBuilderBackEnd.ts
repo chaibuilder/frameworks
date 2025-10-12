@@ -39,8 +39,6 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
 
   //@ts-ignore
   async handle(args: ChaiApiActionArgs): TChaiBackendResponse<any> {
-    console.log("args", args.action);
-
     switch (args.action) {
       case "UPSERT_LIBRARY_ITEM":
         const libraryBlock = await this.libraries.upsertLibraryItem(

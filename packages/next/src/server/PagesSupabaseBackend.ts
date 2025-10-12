@@ -144,6 +144,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         // If action is registered in the new system, use it
         // Set the context on the action handler
         actionHandler.setContext({ appId: this.appId, userId });
+
         // Execute the action
         const result = await actionHandler.execute(data);
         return result;

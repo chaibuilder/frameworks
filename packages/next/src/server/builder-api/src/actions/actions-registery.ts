@@ -1,6 +1,7 @@
 import { get } from "lodash";
 import { ChaiAction } from "./chai-action-interface";
 import { DuplicatePageAction } from "./duplicate-page";
+import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetRevisionPageAction } from "./get-revision-page";
@@ -20,6 +21,7 @@ class ActionsRegistry {
     this.register("DUPLICATE_PAGE", new DuplicatePageAction());
     this.register("UPDATE_PAGE_METADATA", new UpdatePageMetadataAction());
     this.register("GENERATE_SEO_FIELD", new GenerateSeoFieldAction());
+    this.register("GENERATE_HTML_FROM_PROMPT", new GenerateHtmlFromPromptAction());
     this.register("GET_REVISION_PAGE", new GetRevisionPageAction());
     this.register("UPDATE_PAGE", new UpdatePageAction());
     this.register("GET_COMPARE_DATA", new GetCompareDataAction());
@@ -59,9 +61,7 @@ class ActionsRegistry {
 }
 
 // Export a function to get an action by name
-export const getChaiAction = (
-  action: string
-): ChaiAction<any, any> | undefined => {
+export const getChaiAction = (action: string): ChaiAction<any, any> | undefined => {
   return ActionsRegistry.getInstance().getAction(action);
 };
 

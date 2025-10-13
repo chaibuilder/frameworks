@@ -63,6 +63,8 @@ CRITICAL REQUIREMENTS:
 8. Do NOT include <!DOCTYPE>, <html>, <head>, or <body> tags - only the content HTML
 9. Use proper contrast ratios for accessibility
 10. Keep the code clean, well-structured, and semantic
+11. Think about UI randomly. Do not generate the same layout every time.
+12. For accordion style ui, use html details and summary tags. eg: accordions, mobile menu etc.
 
 Examples of chai-name usage:
 - Navigation wrapper: chai-name="Navigation"

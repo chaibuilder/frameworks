@@ -30,8 +30,8 @@
   "private": false,
   "dependencies": {
     "@ai-sdk/openai": "^2.0.18",
-    "@chaibuilder/pages": "0.15.7",
-    "@chaibuilder/sdk": "3.0.10",
+    "@chaibuilder/pages": "0.15.13",
+    "@chaibuilder/sdk": "3.0.18",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.50.3",
     "@tailwindcss/aspect-ratio": "^0.4.2",

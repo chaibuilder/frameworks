@@ -1,11 +1,10 @@
 import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
 import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder, { registerChaiGlobalDataProvider } from "chai-next/server";
+import ChaiBuilder from "chai-next/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 loadWebBlocks();
-registerChaiGlobalDataProvider(console.log as any); //TODO: replace with your own global data provider
 
 export const dynamic = "force-static";
 

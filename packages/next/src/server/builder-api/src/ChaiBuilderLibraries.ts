@@ -57,12 +57,12 @@ export class ChaiBuilderLibraries {
         .from("library_items")
         .update({
           name,
-          preview: previewImageUrl,
           blocks,
           library: library.id,
           description,
           group,
           user: this.chaiUser,
+          ...(previewImageUrl ? { preview: previewImageUrl } : {}),
         })
         .eq("id", id)
         .select("*")
@@ -79,12 +79,12 @@ export class ChaiBuilderLibraries {
         .insert({
           id: uuid,
           name,
-          preview: previewImageUrl,
           blocks,
           library: library.id,
           description,
           group,
           user: this.chaiUser,
+          ...(previewImageUrl ? { preview: previewImageUrl } : {}),
         })
         .select("*")
         .single();

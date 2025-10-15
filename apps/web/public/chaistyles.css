@@ -869,18 +869,6 @@ body {
   z-index: 50;
 }
 
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-
-.col-span-3 {
-  grid-column: span 3 / span 3;
-}
-
-.m-20 {
-  margin: 5rem;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -889,11 +877,6 @@ body {
 .my-6 {
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
-}
-
-.my-32 {
-  margin-top: 8rem;
-  margin-bottom: 8rem;
 }
 
 .mb-2 {
@@ -930,10 +913,6 @@ body {
 
 .table {
   display: table;
-}
-
-.grid {
-  display: grid;
 }
 
 .hidden {
@@ -1026,32 +1005,12 @@ body {
   animation: scroll 60s linear infinite;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
-
 .resize {
   resize: both;
 }
 
-.list-none {
-  list-style-type: none;
-}
-
-.grid-cols-12 {
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-}
-
-.grid-cols-5 {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
 .items-center {
   align-items: center;
-}
-
-.items-stretch {
-  align-items: stretch;
 }
 
 .justify-center {
@@ -1066,10 +1025,6 @@ body {
   gap: 0.75rem;
 }
 
-.gap-16 {
-  gap: 4rem;
-}
-
 .space-x-1 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.25rem * var(--tw-space-x-reverse));
@@ -1080,12 +1035,6 @@ body {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
-}
-
-.space-y-16 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(4rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(4rem * var(--tw-space-y-reverse));
 }
 
 .overflow-hidden {
@@ -1191,10 +1140,6 @@ body {
   background-color: rgb(255 255 255 / 0.3);
 }
 
-.bg-foreground {
-  background-color: hsl(var(--foreground));
-}
-
 .bg-gradient-to-b {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }
@@ -1245,14 +1190,6 @@ body {
   padding: 2rem;
 }
 
-.p-20 {
-  padding: 5rem;
-}
-
-.p-24 {
-  padding: 6rem;
-}
-
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1291,21 +1228,6 @@ body {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.px-12 {
-  padding-left: 3rem;
-  padding-right: 3rem;
-}
-
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
 }
 
 .pb-2 {
@@ -1361,36 +1283,6 @@ body {
   line-height: 1rem;
 }
 
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
-}
-
-.text-6xl {
-  font-size: 3.75rem;
-  line-height: 1;
-}
-
-.text-8xl {
-  font-size: 6rem;
-  line-height: 1;
-}
-
-.text-9xl {
-  font-size: 8rem;
-  line-height: 1;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
 .font-bold {
   font-weight: 700;
 }
@@ -1401,14 +1293,6 @@ body {
 
 .font-semibold {
   font-weight: 600;
-}
-
-.font-black {
-  font-weight: 900;
-}
-
-.font-extrabold {
-  font-weight: 800;
 }
 
 .tracking-tight {
@@ -1476,10 +1360,6 @@ body {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.text-foreground\/70 {
-  color: hsl(var(--foreground) / 0.7);
 }
 
 .antialiased {
@@ -1550,10 +1430,6 @@ body {
   transition-duration: 200ms;
 }
 
-.duration-300 {
-  transition-duration: 300ms;
-}
-
 .will-change-transform {
   will-change: transform;
 }
@@ -1574,10 +1450,6 @@ body {
 
 .duration-200 {
   animation-duration: 200ms;
-}
-
-.duration-300 {
-  animation-duration: 300ms;
 }
 
 .\@container {
@@ -1602,10 +1474,6 @@ body {
   animation-duration: 200ms;
 }
 
-.duration-300 {
-  animation-duration: 300ms;
-}
-
 .w-\[inherit\] {
   width: inherit;
 }
@@ -1617,14 +1485,6 @@ body {
 .\[mask-image\:linear-gradient\(to_bottom\2c transparent\2c white\2c transparent\)\] {
   -webkit-mask-image: linear-gradient(to bottom,transparent,white,transparent);
           mask-image: linear-gradient(to bottom,transparent,white,transparent);
-}
-
-.marker\:hidden *::marker {
-  display: none;
-}
-
-.marker\:hidden::marker {
-  display: none;
 }
 
 .hover\:bg-destructive\/80:hover {
@@ -1667,12 +1527,6 @@ body {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
-.focus\:ring-4:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
 .focus\:ring-blue-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));
@@ -1680,10 +1534,6 @@ body {
 
 .focus\:ring-ring:focus {
   --tw-ring-color: hsl(var(--ring));
-}
-
-.focus\:ring-primary\/50:focus {
-  --tw-ring-color: hsl(var(--primary) / 0.5);
 }
 
 .focus\:ring-offset-2:focus {

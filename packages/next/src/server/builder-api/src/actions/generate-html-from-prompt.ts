@@ -72,9 +72,11 @@ Examples of chai-name usage:
 - Hero section: chai-name="Hero Section"
 - Content wrapper: chai-name="Main Content"
 - Footer: chai-name="Site Footer"
-- Button group: chai-name="Action Buttons"
-- Card container: chai-name="Feature Cards"
-- Form wrapper: chai-name="Contact Form"
+
+HTML Tags (EXTREMELY IMPORTANT):
+- for navbar, always create a mobile menu with details and summary tags. Createa proper mobile menu with hamburger icon and  dropdown style menu items.
+- for accordion style ui, use html details and summary tags.
+- For nested menu, use html details and summary tags with dropdown style menu items.
 
 Shadcn/ui Classes (EXTREMELY IMPORTANT):
 - NEVER use hardcoded color classes like bg-blue-500, text-red-600, border-green-400, etc.
@@ -89,7 +91,7 @@ Shadcn/ui Classes (EXTREMELY IMPORTANT):
 - For borders use: border-border, border-input
 
 IMAGE USAGE RULES:
-- Use royalty-free images from Unsplash or other royalty-free image sources with absolute URLs
+- Use royalty-free images from Unsplash or picsum photos
 - Choose images that are relevant to the content context
 - Always include descriptive alt text for accessibility
 - Use appropriate image dimensions (e.g., w=1200 for hero images, w=800 for cards, w=400 for thumbnails)

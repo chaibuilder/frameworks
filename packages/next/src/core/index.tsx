@@ -55,7 +55,12 @@ const API_URL = "builder/api";
 
 const client = getSupabaseClient();
 registerChaiAddBlockTab("generate-html-from-prompt", {
-  tab: () => "Gen AI",
+  tab: () => (
+    <span>
+      Gen AI <sup className="text-xs text-gray-500">beta</sup>
+    </span>
+  ),
+  // @ts-ignore types issue
   tabContent: ChaiBuilderGenerateHtmlFromPrompt,
 });
 

@@ -1,4 +1,4 @@
-import { getBlocksFromHTML, useAddBlock, useChaiFetch } from "@chaibuilder/pages";
+import { getBlocksFromHTML, useAddBlock, useBuilderFetch } from "@chaibuilder/pages";
 import { useEffect, useState } from "react";
 
 const PROCESSING_MESSAGES = [
@@ -24,7 +24,7 @@ export const ChaiBuilderGenerateHtmlFromPrompt = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [processingMessage, setProcessingMessage] = useState("");
-  const chaiFetch = useChaiFetch();
+  const fetch = useBuilderFetch();
   const { addPredefinedBlock } = useAddBlock();
 
   useEffect(() => {
@@ -49,14 +49,11 @@ export const ChaiBuilderGenerateHtmlFromPrompt = ({
       setError("Please enter a prompt");
       return;
     }
-
     setLoading(true);
     setError(null);
 
     try {
-      const response = await chaiFetch({
-        url: "/api",
-        method: "POST",
+      const response = await fetch({
         body: {
           action: "GENERATE_HTML_FROM_PROMPT",
           data: { prompt },

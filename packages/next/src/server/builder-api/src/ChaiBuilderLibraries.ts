@@ -17,7 +17,10 @@ export class ChaiBuilderLibraries {
 
   async getLibraryGroups() {
     const library = await this.getSiteLibrary();
-    const { data, error } = await this.supabase.from("library_items").select("group").eq("library", library.id);
+    if (!library) {
+      return [];
+    }
+    const { data, error } = await this.supabase.from("library_items").select("group").eq("library", library?.id);
 
     if (error) {
       console.error("Error fetching library groups:", error);
@@ -41,6 +44,9 @@ export class ChaiBuilderLibraries {
     const { name, group, blocks, description, previewImage, id } = data;
     let previewImageUrl = null;
     const library = await this.getSiteLibrary();
+    if (!library) {
+      return apiError("GET_SITE_LIBRARY_FAILED", "Library not found");
+    }
     if (previewImage) {
       const uploadedImage = await this.dam.uploadAssetToStorage({
         base64File: previewImage,
@@ -126,7 +132,7 @@ export class ChaiBuilderLibraries {
       .from("libraries")
       .select("createdAt,id,name,type")
       .eq("app", this.appUuid)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error("Error fetching site library:", error);
@@ -137,6 +143,7 @@ export class ChaiBuilderLibraries {
   }
 
   async getLibraries() {
+    const siteLibrary = await this.getSiteLibrary();
     // get the client id from the apps table
     const { data: app, error: appError } = await this.supabase
       .from("apps")
@@ -159,7 +166,10 @@ export class ChaiBuilderLibraries {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map((lib) => {
+      // Ensure the site library is always included
+      return { ...lib, isSiteLibrary: lib.id === siteLibrary?.id };
+    });
   }
 
   async getLibraryItems({ id }: { id: string }) {
@@ -291,7 +301,7 @@ export class ChaiBuilderLibraries {
     if (previewImage) {
       const uploadedImage = await this.dam.uploadAssetToStorage({
         base64File: previewImage,
-        path: "library-previews/" + library.id,
+        path: "library-previews/" + library?.id,
       });
       if (uploadedImage.url) {
         previewImageUrl = uploadedImage.url;

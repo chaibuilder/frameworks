@@ -13,6 +13,7 @@ const aiModel = process.env.CHAIBUILDER_AI_MODEL || "gpt-4o-mini";
 type GenerateHtmlFromPromptActionData = {
   prompt: string;
   context?: string;
+  image?: string; // Base64 encoded image
 };
 
 type GenerateHtmlFromPromptActionResponse = {
@@ -33,6 +34,7 @@ export class GenerateHtmlFromPromptAction extends BaseAction<
     return z.object({
       prompt: z.string().min(1, "Prompt is required"),
       context: z.string().optional(),
+      image: z.string().optional(),
     });
   }
 
@@ -100,12 +102,34 @@ The final output should be clean, semantic HTML that works across all devices an
 
 ${data.context ? `Additional Context: ${data.context}` : ""}`;
 
-      const response = await generateText({
-        model,
-        system: systemPrompt,
-        prompt: data.prompt,
-        temperature: 0.7,
-      });
+      // Use Vercel AI SDK's message format
+      const response = data.image
+        ? await generateText({
+            model,
+            system: systemPrompt,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "text",
+                    text: data.prompt,
+                  },
+                  {
+                    type: "image",
+                    image: data.image,
+                  },
+                ],
+              },
+            ],
+            temperature: 0.7,
+          })
+        : await generateText({
+            model,
+            system: systemPrompt,
+            prompt: data.prompt,
+            temperature: 0.7,
+          });
 
       // Clean up the response to remove any markdown code blocks if present
       let html = response.text.trim();

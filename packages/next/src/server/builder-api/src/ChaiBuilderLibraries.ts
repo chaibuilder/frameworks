@@ -311,7 +311,7 @@ export class ChaiBuilderLibraries {
     const { data: template, error } = await this.supabase
       .from("library_templates")
       .insert({
-        library: library.id,
+        library: library?.id,
         user: this.chaiUser,
         pageId: pageId,
         description: description,

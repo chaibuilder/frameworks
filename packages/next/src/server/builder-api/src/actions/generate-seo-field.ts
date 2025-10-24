@@ -1,11 +1,9 @@
-import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { z } from "zod";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
-const apiKey = process.env.CHAIBUILDER_AI_API_KEY!;
-const aiModel = process.env.CHAIBUILDER_AI_MODEL || "gpt-4o-mini";
+const aiModel = "anthropic/claude-haiku-4.5";
 
 /**
  * Data type for GenerateSeoFieldAction
@@ -58,10 +56,8 @@ export class GenerateSeoFieldAction extends BaseAction<GenerateSeoFieldActionDat
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
-    const openai = createOpenAI({ apiKey });
-    const model = openai(aiModel);
     const response = await generateText({
-      model,
+      model: aiModel,
       system: `You are a SEO expert. Follow the instructions carefully. 
       Return plain string values except for json ld. For JSONLD, remove \`\`\`json\`\`\` and \`\`\`\`\` and return only valid JSON.
       Instructions: ${fieldRules[data.field]}

@@ -32,7 +32,7 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
     this.publisher = new ChaiBuilderPublishChanges(supabase, appUuid, chaiUser);
     this.website = new ChaiBuilderWebsite(supabase, appUuid, chaiUser);
     this.revisions = new ChaiPageRevisions(supabase, appUuid, chaiUser);
-    this.ai = new ChaiBuilderAI(aiApiKey, aiModel);
+    this.ai = new ChaiBuilderAI();
     this.libraries = new ChaiBuilderLibraries(supabase, appUuid, chaiUser);
     this.dam = new ChaiBuilderDAM(supabase, appUuid, chaiUser);
   }
@@ -58,7 +58,7 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
         const siteLibrary = await this.libraries.getSiteLibrary();
         const templates = await this.libraries.getTemplatesByType({
           ...args.data,
-          library: siteLibrary.id,
+          library: siteLibrary?.id,
         });
         return { status: 200, data: templates };
       case "GET_ASSETS":

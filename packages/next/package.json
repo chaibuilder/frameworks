@@ -1,6 +1,6 @@
 {
   "name": "chai-next",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -29,9 +29,8 @@
   },
   "private": false,
   "dependencies": {
-    "@ai-sdk/openai": "^2.0.18",
-    "@chaibuilder/pages": "0.15.16",
-    "@chaibuilder/sdk": "3.0.19",
+    "@chaibuilder/pages": "0.15.17",
+    "@chaibuilder/sdk": "3.0.20",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.50.3",
     "@tailwindcss/aspect-ratio": "^0.4.2",
@@ -41,6 +40,7 @@
     "ai": "^5.0.20",
     "chalk": "^5.4.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "lodash": "4.17.20",
     "postcss": "8.5.6",
     "raw-loader": "^4.0.2",

@@ -1,35 +1,21 @@
-import { createOpenAI } from "@ai-sdk/openai";
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { apiError } from "../lib.js";
 import { askAiForContent, askAiForStyles, AskAiResponse } from "./index.js";
 
 export class ChaiBuilderAI {
-  private apiKey: string;
-  private model?: any;
+  private model: string;
   private pageAiContext: string = "";
 
-  constructor(apiKey: string, model: string = "gpt-4o-mini") {
-    this.apiKey = apiKey;
-
-    if (!apiKey) {
-      return;
-    }
-
-    const openai = createOpenAI({ apiKey: this.apiKey });
-    this.model = openai(model);
+  constructor() {
+    this.model = `deepseek/deepseek-v3.1`;
   }
 
-  set(key: "apiKey" | "pageAiContext", value: string) {
+  set(key: "pageAiContext", value: string) {
     this[key] = value;
   }
 
   get(key: "pageAiContext", defaultValue?: string) {
     return this[key] || defaultValue;
-  }
-
-  setModel(model: string) {
-    const openai = createOpenAI({ apiKey: this.apiKey });
-    this.model = openai(model);
   }
 
   async askAi({

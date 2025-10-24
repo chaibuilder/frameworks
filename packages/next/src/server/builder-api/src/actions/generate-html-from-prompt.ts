@@ -1,11 +1,10 @@
-import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
+import "dotenv/config";
 import { z } from "zod";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
-const apiKey = process.env.CHAIBUILDER_AI_API_KEY!;
-const aiModel = process.env.CHAIBUILDER_AI_MODEL || "gpt-4o-mini";
+const aiModel = "anthropic/claude-haiku-4.5";
 
 /**
  * Data type for GenerateHtmlFromPromptAction
@@ -47,9 +46,6 @@ export class GenerateHtmlFromPromptAction extends BaseAction<
     }
 
     try {
-      const openai = createOpenAI({ apiKey });
-      const model = openai(aiModel);
-
       const systemPrompt = `You are an expert HTML/CSS developer specializing in Tailwind CSS and shadcn/ui design patterns.
 
 Create pure HTML code only. Make it fully responsive using Tailwind CSS v3 classes exclusively - no custom CSS or classes allowed. Implement container queries (@container) where appropriate for enhanced responsive behavior.
@@ -105,7 +101,7 @@ ${data.context ? `Additional Context: ${data.context}` : ""}`;
       // Use Vercel AI SDK's message format
       const response = data.image
         ? await generateText({
-            model,
+            model: aiModel,
             system: systemPrompt,
             messages: [
               {
@@ -125,7 +121,7 @@ ${data.context ? `Additional Context: ${data.context}` : ""}`;
             temperature: 0.7,
           })
         : await generateText({
-            model,
+            model: aiModel,
             system: systemPrompt,
             prompt: data.prompt,
             temperature: 0.7,

@@ -17,7 +17,7 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
   ],
-  safelist: ["w-[inherit]", "h-[inherit]", "animate-scroll"],
+  safelist: ["w-[inherit]", "h-[inherit]", "animate-scroll", "grid-cols-5"],
   theme: {
     extend: {
       ...(getChaiBuilderTheme() as Partial<CustomThemeConfig>),

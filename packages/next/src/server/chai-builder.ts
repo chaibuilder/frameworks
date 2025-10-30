@@ -53,7 +53,7 @@ class ChaiBuilder {
       return notFound();
     }
     ChaiBuilder.siteId = siteResult.id as string;
-    ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderSupabaseBackend(siteResult.id as string));
+    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderSupabaseBackend(siteResult.id as string) });
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
 

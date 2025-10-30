@@ -37,7 +37,7 @@ class ChaiBuilder {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
     ChaiBuilder.siteId = apiKey;
-    ChaiBuilder.pages = new ChaiBuilderPages(new ChaiBuilderPagesBackend(apiKey));
+    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderPagesBackend(apiKey) });
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
 

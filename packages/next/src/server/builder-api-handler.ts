@@ -79,7 +79,7 @@ export const builderApiHandler = (apiKey?: string) => {
       // register global data providers
       //@ts-expect-error
       const ai = new ChaiFrameworkAIChatHandler({ onFinish: logAiRequest });
-      const chaiBuilderPages = new ChaiBuilderPages({ backend, ai });
+      const chaiBuilderPages = new ChaiBuilderPages({ backend });
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
       // Check for `authorization` header

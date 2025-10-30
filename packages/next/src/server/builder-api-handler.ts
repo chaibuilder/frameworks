@@ -3,6 +3,7 @@ import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { ChaiBuilder } from "./chai-builder";
+import { ChaiFrameworkAIChatHandler } from "./class-ai-handler";
 import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
@@ -28,15 +29,57 @@ const getAppUuidFromRoute = async (req: NextRequest): Promise<string> => {
   throw new Error("Unable to extract app UUID from route");
 };
 
+const logAiRequest = ({ totalUsage }: any) => {
+  console.log("Ai Request total usage: ", totalUsage);
+};
+
+async function handleAskAiRequest(ai: ChaiFrameworkAIChatHandler, requestBody: any): Promise<NextResponse> {
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const result = await ai.handleRequest(requestBody.data);
+
+        if (!result?.textStream) {
+          controller.enqueue(encoder.encode("Error: No streaming response available"));
+          controller.close();
+          return;
+        }
+
+        // Stream the AI response chunks
+        for await (const chunk of result.textStream) {
+          if (chunk) {
+            controller.enqueue(encoder.encode(chunk));
+          }
+        }
+
+        controller.close();
+      } catch (error) {
+        controller.enqueue(encoder.encode(`Error: ${error instanceof Error ? error.message : "Unknown error"}`));
+        controller.close();
+      }
+    },
+  });
+
+  return new NextResponse(stream, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache",
+    },
+  });
+}
+
 export const builderApiHandler = (apiKey?: string) => {
-  return async (req: NextRequest) => {
+  return async (req: NextRequest, response: NextResponse) => {
     try {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
       const backend = new ChaiBuilderSupabaseBackend(apiKeyToUse);
       ChaiBuilder.setSiteId(apiKeyToUse);
       // register global data providers
-      const chaiBuilderPages = new ChaiBuilderPages(backend);
+      //@ts-expect-error
+      const ai = new ChaiFrameworkAIChatHandler({ onFinish: logAiRequest });
+      const chaiBuilderPages = new ChaiBuilderPages({ backend, ai });
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
       // Check for `authorization` header
@@ -50,12 +93,17 @@ export const builderApiHandler = (apiKey?: string) => {
         const supabaseUser = await supabase.auth.getUser(authTokenOrUserId);
         if (supabaseUser.error) {
           // If the token is invalid or expired, return a 401 response
-          return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
+          return NextResponse.json({ error: "Invalid or expired token sss" }, { status: 401 });
         }
         authTokenOrUserId = supabaseUser.data.user?.id || "";
       }
 
-      const response = await chaiBuilderPages.handle(requestBody, authTokenOrUserId);
+      let response = null;
+      if (requestBody.action === "ASK_AI") {
+        return await handleAskAiRequest(ai, requestBody);
+      } else {
+        response = await chaiBuilderPages.handle(requestBody, authTokenOrUserId, {} as any);
+      }
 
       if (has(response, "error")) {
         return NextResponse.json(response, { status: response.status });
@@ -71,6 +119,7 @@ export const builderApiHandler = (apiKey?: string) => {
       }
       return NextResponse.json(response);
     } catch (error) {
+      console.log("AI Error", error);
       // * On error, throw if firebase auth error, else 500
       if (error instanceof Error) {
         return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });

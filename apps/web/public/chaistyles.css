@@ -837,6 +837,10 @@ body {
   }
 }
 
+.visible {
+  visibility: visible;
+}
+
 .static {
   position: static;
 }
@@ -859,6 +863,10 @@ body {
 
 .top-0 {
   top: 0px;
+}
+
+.right-1 {
+  right: 0.25rem;
 }
 
 .z-20 {
@@ -915,6 +923,10 @@ body {
   display: table;
 }
 
+.grid {
+  display: grid;
+}
+
 .hidden {
   display: none;
 }
@@ -941,6 +953,10 @@ body {
 
 .h-full {
   height: 100%;
+}
+
+.h-6 {
+  height: 1.5rem;
 }
 
 .min-h-screen {
@@ -979,6 +995,14 @@ body {
   width: 100%;
 }
 
+.w-6 {
+  width: 1.5rem;
+}
+
+.min-w-64 {
+  min-width: 16rem;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
@@ -1007,6 +1031,10 @@ body {
 
 .resize {
   resize: both;
+}
+
+.list-none {
+  list-style-type: none;
 }
 
 .grid-cols-5 {
@@ -1090,6 +1118,10 @@ body {
   border-color: rgb(255 255 255 / 0.08);
 }
 
+.border-border {
+  border-color: hsl(var(--border));
+}
+
 .bg-\[\#323238\] {
   --tw-bg-opacity: 1;
   background-color: rgb(50 50 56 / var(--tw-bg-opacity, 1));
@@ -1142,6 +1174,22 @@ body {
 
 .bg-white\/30 {
   background-color: rgb(255 255 255 / 0.3);
+}
+
+.bg-accent {
+  background-color: hsl(var(--accent));
+}
+
+.bg-background {
+  background-color: hsl(var(--background));
+}
+
+.bg-card {
+  background-color: hsl(var(--card));
+}
+
+.bg-foreground {
+  background-color: hsl(var(--foreground));
 }
 
 .bg-gradient-to-b {
@@ -1232,6 +1280,11 @@ body {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .pb-2 {
@@ -1366,6 +1419,26 @@ body {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.text-accent-foreground {
+  color: hsl(var(--accent-foreground));
+}
+
+.text-card-foreground {
+  color: hsl(var(--card-foreground));
+}
+
+.text-foreground\/80 {
+  color: hsl(var(--foreground) / 0.8);
+}
+
+.text-muted {
+  color: hsl(var(--muted));
+}
+
+.text-primary {
+  color: hsl(var(--primary));
+}
+
 .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1400,6 +1473,10 @@ body {
 
 .outline {
   outline-style: solid;
+}
+
+.ring-ring {
+  --tw-ring-color: hsl(var(--ring));
 }
 
 .filter {
@@ -1510,6 +1587,22 @@ body {
 
 .hover\:bg-secondary\/80:hover {
   background-color: hsl(var(--secondary) / 0.8);
+}
+
+.hover\:bg-accent:hover {
+  background-color: hsl(var(--accent));
+}
+
+.hover\:text-accent-foreground:hover {
+  color: hsl(var(--accent-foreground));
+}
+
+.hover\:text-foreground:hover {
+  color: hsl(var(--foreground));
+}
+
+.hover\:text-primary-foreground:hover {
+  color: hsl(var(--primary-foreground));
 }
 
 .hover\:underline:hover {

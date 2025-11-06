@@ -1,10 +1,9 @@
 "use client";
-import { ChaiBuilderEditorProps, registerChaiAddBlockTab } from "@chaibuilder/pages";
+import { ChaiBuilderEditorProps } from "@chaibuilder/pages";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { startsWith } from "lodash";
 import dynamic from "next/dynamic";
 import "../../styles";
-import { ChaiBuilderGenerateHtmlFromPrompt } from "./ChaiBuilderGenerateHtmlFromPrompt";
 import { getSupabaseClient } from "./supabase";
 
 // Only re-export specific items from @chaibuilder/pages to avoid interface conflicts
@@ -54,15 +53,6 @@ type ChaiBuilderProps = {
 const API_URL = "builder/api";
 
 const client = getSupabaseClient();
-registerChaiAddBlockTab("generate-html-from-prompt", {
-  tab: () => (
-    <span>
-      Gen AI <sup className="text-xs text-gray-500">beta</sup>
-    </span>
-  ),
-  // @ts-ignore types issue
-  tabContent: ChaiBuilderGenerateHtmlFromPrompt,
-});
 
 export default (props: ChaiBuilderProps) => {
   const builderApiUrl = props.apiUrl ?? API_URL;

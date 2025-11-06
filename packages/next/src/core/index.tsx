@@ -48,6 +48,7 @@ type ChaiBuilderProps = {
   | "fallbackLang"
   | "languages"
   | "themePresets"
+  | "flags"
 >;
 
 const API_URL = "builder/api";
@@ -63,6 +64,7 @@ export default (props: ChaiBuilderProps) => {
 
   return (
     <ChaiBuilder
+      flags={{ useClipboard: false }}
       autoSave={true}
       autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}

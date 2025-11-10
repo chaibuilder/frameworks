@@ -64,7 +64,7 @@ export default (props: ChaiBuilderProps) => {
 
   return (
     <ChaiBuilder
-      flags={{ useClipboard: false }}
+      flags={props.flags ? props.flags : { useClipboard: false }}
       autoSave={true}
       autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}

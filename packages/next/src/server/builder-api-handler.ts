@@ -84,7 +84,6 @@ export const builderApiHandler = (apiKey?: string) => {
       if (checkAuth && !authorization) {
         return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
       }
-      // let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
       if (checkAuth) {
         const supabase = await getSupabaseAdmin();
         const supabaseUser = await supabase.auth.getUser(authTokenOrUserId);

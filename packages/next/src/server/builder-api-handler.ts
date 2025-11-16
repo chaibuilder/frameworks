@@ -29,10 +29,6 @@ const getAppUuidFromRoute = async (req: NextRequest): Promise<string> => {
   throw new Error("Unable to extract app UUID from route");
 };
 
-const logAiRequest = ({ totalUsage }: any) => {
-  console.log("Ai Request total usage: ", totalUsage);
-};
-
 async function handleAskAiRequest(ai: ChaiFrameworkAIChatHandler, requestBody: any): Promise<NextResponse> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -77,17 +73,18 @@ export const builderApiHandler = (apiKey?: string) => {
       const backend = new ChaiBuilderSupabaseBackend(apiKeyToUse);
       ChaiBuilder.setSiteId(apiKeyToUse);
       // register global data providers
-      //@ts-expect-error
-      const ai = new ChaiFrameworkAIChatHandler({ onFinish: logAiRequest });
+      const authorization = req.headers.get("authorization");
+      let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
+
+      const ai = new ChaiFrameworkAIChatHandler({ authTokenOrUserId });
       const chaiBuilderPages = new ChaiBuilderPages({ backend });
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
       // Check for `authorization` header
-      const authorization = req.headers.get("authorization");
       if (checkAuth && !authorization) {
         return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
       }
-      let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
+      // let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
       if (checkAuth) {
         const supabase = await getSupabaseAdmin();
         const supabaseUser = await supabase.auth.getUser(authTokenOrUserId);

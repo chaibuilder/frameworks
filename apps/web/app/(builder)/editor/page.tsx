@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChaiBuilder, { getSupabaseClient } from "chai-next";
 import "chai-next/builder-styles";
+
 import { useCallback, useEffect, useState } from "react";
 import { LoginScreen } from "./login";
 

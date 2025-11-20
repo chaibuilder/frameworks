@@ -185,11 +185,11 @@ importers:
   packages/next:
     dependencies:
       '@chaibuilder/pages':
-        specifier: 0.16.9
-        version: 0.16.9(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.18)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
+        specifier: 0.16.11
+        version: 0.16.11(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
       '@chaibuilder/sdk':
-        specifier: 3.1.18
-        version: 3.1.18(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
+        specifier: 3.1.19
+        version: 3.1.19(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
       '@supabase/ssr':
         specifier: 0.6.1
         version: 0.6.1(@supabase/supabase-js@2.50.3)
@@ -233,10 +233,10 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2(webpack@5.102.1)
       react:
-        specifier: ^19.2
+        specifier: ^19
         version: 19.2.0
       react-dom:
-        specifier: ^19.2
+        specifier: ^19
         version: 19.2.0(react@19.2.0)
       sharp:
         specifier: 0.34.3
@@ -370,12 +370,12 @@ packages:
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
     dev: false
 
-  /@chaibuilder/pages@0.16.9(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.18)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
-    resolution: {integrity: sha512-ZMsRJ2oH9ap8jGOucEmeArJ4YCMbxByhLpp1mZkSPI2DX9zR5AKSA+7eZMmqn0wQMvLvK1pUEhq0EM62JEm03w==}
+  /@chaibuilder/pages@0.16.11(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
+    resolution: {integrity: sha512-2LxI0dMkp+Rg2iX1719gTwQTtYPUw1CiV8r/3GvAFeMDGWjKB4bQzg2OMTHP1U83rzbNWxnaP7cBxmnjwbLTIw==}
     engines: {node: '>=21.0.0', pnpm: '>=8.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
-      '@chaibuilder/sdk': 3.1.18
+      '@chaibuilder/sdk': 3.1.19
       '@types/react': '*'
       '@types/react-dom': '*'
       jotai: 2.14.0
@@ -388,7 +388,7 @@ packages:
         optional: true
     dependencies:
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
-      '@chaibuilder/sdk': 3.1.18(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
+      '@chaibuilder/sdk': 3.1.19(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
       '@mhsdesign/jit-browser-tailwindcss': 0.4.2
       '@radix-ui/react-collapsible': 1.1.12(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
@@ -474,8 +474,8 @@ packages:
       tailwind-merge: 2.6.0
     dev: false
 
-  /@chaibuilder/sdk@3.1.18(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2):
-    resolution: {integrity: sha512-L9NsdmYaNzWA4KcUd7FPhS+15jYblPPn81yZR3mQdTSxGTtOnIlIyUAy66zlPpifArj3lMlmu455BDVnydTqdw==}
+  /@chaibuilder/sdk@3.1.19(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2):
+    resolution: {integrity: sha512-Ss7VyggdhWNhUeYPOvw0/zCzYb0qHafnhxVq0vQABGpgX05mDQ/6J8HNNkNlmK1cYZhcJDrKh0rQAEvMXocw+g==}
     engines: {node: '>=21.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
@@ -511,9 +511,9 @@ packages:
       '@radix-ui/react-popover': 1.1.15(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-scroll-area': 1.2.10(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-select': 2.2.6(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
-      '@radix-ui/react-separator': 1.1.7(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
+      '@radix-ui/react-separator': 1.1.8(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-slider': 1.3.6(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
-      '@radix-ui/react-slot': 1.2.3(@types/react@19.0.8)(react@19.2.0)
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.0.8)(react@19.2.0)
       '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-tabs': 1.1.13(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-toast': 1.2.15(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
@@ -646,6 +646,7 @@ packages:
     cpu: [ppc64]
     os: [aix]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/android-arm64@0.21.5:
@@ -663,6 +664,7 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/android-arm@0.21.5:
@@ -680,6 +682,7 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/android-x64@0.21.5:
@@ -697,6 +700,7 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/darwin-arm64@0.21.5:
@@ -714,6 +718,7 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/darwin-x64@0.21.5:
@@ -731,6 +736,7 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/freebsd-arm64@0.21.5:
@@ -748,6 +754,7 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/freebsd-x64@0.21.5:
@@ -765,6 +772,7 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-arm64@0.21.5:
@@ -782,6 +790,7 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-arm@0.21.5:
@@ -799,6 +808,7 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-ia32@0.21.5:
@@ -816,6 +826,7 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-loong64@0.21.5:
@@ -833,6 +844,7 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-mips64el@0.21.5:
@@ -850,6 +862,7 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-ppc64@0.21.5:
@@ -867,6 +880,7 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-riscv64@0.21.5:
@@ -884,6 +898,7 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-s390x@0.21.5:
@@ -901,6 +916,7 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/linux-x64@0.21.5:
@@ -918,6 +934,7 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/netbsd-arm64@0.25.11:
@@ -926,6 +943,7 @@ packages:
     cpu: [arm64]
     os: [netbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/netbsd-x64@0.21.5:
@@ -943,6 +961,7 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/openbsd-arm64@0.25.11:
@@ -951,6 +970,7 @@ packages:
     cpu: [arm64]
     os: [openbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/openbsd-x64@0.21.5:
@@ -968,6 +988,7 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/openharmony-arm64@0.25.11:
@@ -976,6 +997,7 @@ packages:
     cpu: [arm64]
     os: [openharmony]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/sunos-x64@0.21.5:
@@ -993,6 +1015,7 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-arm64@0.21.5:
@@ -1010,6 +1033,7 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-ia32@0.21.5:
@@ -1027,6 +1051,7 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@esbuild/win32-x64@0.21.5:
@@ -1044,6 +1069,7 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
+    dev: true
     optional: true
 
   /@eslint-community/eslint-utils@4.9.0(eslint@9.38.0):
@@ -2762,26 +2788,6 @@ packages:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       react-remove-scroll: 2.7.1(@types/react@19.0.8)(react@19.2.0)
-    dev: false
-
-  /@radix-ui/react-separator@1.1.7(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0):
-    resolution: {integrity: sha512-0HEb8R9E8A+jZjvmFCy/J4xhbXy3TV+9XSnGJ3KvTtjlIUy/YQ/p6UYZvi7YbeoeXdyU9+Y3scizK6hkY37baA==}
-    peerDependencies:
-      '@types/react': '*'
-      '@types/react-dom': '*'
-      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-    dependencies:
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
-      '@types/react': 19.0.8
-      '@types/react-dom': 19.0.3(@types/react@19.0.8)
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
     dev: false
 
   /@radix-ui/react-separator@1.1.8(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0):
@@ -5267,7 +5273,7 @@ packages:
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.8)(react@19.2.0)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-id': 1.1.1(@types/react@19.0.8)(react@19.2.0)
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
+      '@radix-ui/react-primitive': 2.1.4(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
     transitivePeerDependencies:
@@ -6142,6 +6148,7 @@ packages:
       '@esbuild/win32-arm64': 0.25.11
       '@esbuild/win32-ia32': 0.25.11
       '@esbuild/win32-x64': 0.25.11
+    dev: true
 
   /escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
@@ -9153,7 +9160,7 @@ packages:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.102.1(esbuild@0.25.11)
+      webpack: 5.102.1
 
   /rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
@@ -10432,7 +10439,7 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /terser-webpack-plugin@5.3.14(esbuild@0.25.11)(webpack@5.102.1):
+  /terser-webpack-plugin@5.3.14(webpack@5.102.1):
     resolution: {integrity: sha512-vkZjpUjb6OMS7dhV+tILUW6BhpDR7P2L/aQSAv+Uwk+m8KATX9EccViHTJR2qDtACKPIYndLGCyl3FMo+r2LMw==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -10449,12 +10456,11 @@ packages:
         optional: true
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
-      esbuild: 0.25.11
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.44.0
-      webpack: 5.102.1(esbuild@0.25.11)
+      webpack: 5.102.1
 
   /terser@5.44.0:
     resolution: {integrity: sha512-nIVck8DK+GM/0Frwd+nIhZ84pR/BX7rmXMfYwyg+Sri5oGVE99/E3KvXqpC2xHFxyqXyGHTKBSioxxplrO4I4w==}
@@ -11196,7 +11202,7 @@ packages:
     resolution: {integrity: sha512-yd1RBzSGanHkitROoPFd6qsrxt+oFhg/129YzheDGqeustzX0vTZJZsSsQjVQC4yzBQ56K55XU8gaNCtIzOnTg==}
     engines: {node: '>=10.13.0'}
 
-  /webpack@5.102.1(esbuild@0.25.11):
+  /webpack@5.102.1:
     resolution: {integrity: sha512-7h/weGm9d/ywQ6qzJ+Xy+r9n/3qgp/thalBbpOi5i223dPXKi04IBtqPN9nTd+jBc7QKfvDbaBnFipYp4sJAUQ==}
     engines: {node: '>=10.13.0'}
     hasBin: true
@@ -11228,7 +11234,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.14(esbuild@0.25.11)(webpack@5.102.1)
+      terser-webpack-plugin: 5.3.14(webpack@5.102.1)
       watchpack: 2.4.4
       webpack-sources: 3.3.3
     transitivePeerDependencies:

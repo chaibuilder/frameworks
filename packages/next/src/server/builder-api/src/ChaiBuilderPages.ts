@@ -349,6 +349,39 @@ export class ChaiBuilderPages {
   }
 
   /**
+   * Recursively deletes all children of a parent page
+   * @param parentId - The ID of the parent page
+   * @param deletedIds - Array to collect deleted page IDs
+   */
+  private async deleteChildrenRecursive(parentId: string, deletedIds: string[] = []) {
+    const { data: childPages } = await this.supabase
+      .from(CHAI_PAGES_TABLE_NAME)
+      .select("id")
+      .eq("parent", parentId)
+      .eq("app", this.appUuid);
+
+    for (const childPage of childPages || []) {
+      await this.deleteChildrenRecursive(childPage.id, deletedIds);
+      await this.deleteLanguagePages(childPage.id);
+      await this.chaiLibraries.unmarkAsTemplate({ id: childPage.id });
+      await this.revisions.deleteRevisions({ id: childPage.id });
+      await this.supabase
+        .from(CHAI_PAGES_TABLE_NAME)
+        .delete()
+        .eq("id", childPage.id);
+      await this.supabase
+        .from(CHAI_ONLINE_PAGES_TABLE_NAME)
+        .delete()
+        .eq("id", childPage.id);
+      await this.supabase
+        .from(CHAI_ONLINE_PAGES_TABLE_NAME)
+        .delete()
+        .eq("primaryPage", childPage.id);
+      deletedIds.push(childPage.id);
+    }
+  }
+
+  /**
    * Deletes a page and its associated data
    * @param id - The ID of the page to delete
    * @returns Object containing tags for cache invalidation and deleted page data
@@ -380,44 +413,71 @@ export class ChaiBuilderPages {
       throw apiError("ERROR_DELETING_PAGE", deletedPageError);
     }
 
-    // Handle language page deletion
-    if (pageType === "language") {
-      const primaryPage = await this.getPrimaryPage(id);
-      const { error } = await this.supabase
-        .from(CHAI_PAGES_TABLE_NAME)
-        .delete()
-        .eq("id", id);
-      if (error) {
-        throw apiError("ERROR_DELETING_PAGE", error);
-      }
-      return { tags: [`page-${primaryPage}`] };
-    }
-
-    // Handle primary and global page deletion
-    // Delete all nested child pages recursively
-    const deletedChildPageIds: string[] = [];
-    const deleteChildren = async (parentId: string) => {
+    // Helper to collect child page IDs recursively
+    const collectChildPageIds = async (parentId: string): Promise<string[]> => {
       const { data: childPages } = await this.supabase
         .from(CHAI_PAGES_TABLE_NAME)
         .select("id")
         .eq("parent", parentId)
         .eq("app", this.appUuid);
-
-      for (const childPage of childPages || []) {
-        await deleteChildren(childPage.id);
-        await this.deleteLanguagePages(childPage.id);
-        await this.chaiLibraries.unmarkAsTemplate({ id: childPage.id });
-        await this.revisions.deleteRevisions({ id: childPage.id });
-        await this.supabase.from(CHAI_PAGES_TABLE_NAME).delete().eq("id", childPage.id);
-        await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("id", childPage.id);
-        await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("primaryPage", childPage.id);
-        deletedChildPageIds.push(childPage.id);
+      const ids: string[] = [];
+      for (const child of childPages || []) {
+        ids.push(child.id);
+        const nestedIds = await collectChildPageIds(child.id);
+        ids.push(...nestedIds);
       }
+      return ids;
     };
-    await deleteChildren(id);
 
-    await this.deleteLanguagePages(id); // Delete associated language pages
+    // Handle secondary language page deletion (only that page + its children)
+    if (pageType === "language") {
+      const primaryPage = await this.getPrimaryPage(id);
+      const deletedChildPageIds: string[] = [];
 
+      // Delete nested children recursively
+      await this.deleteChildrenRecursive(id, deletedChildPageIds);
+
+      // Delete the language page itself
+      await this.deleteLanguagePages(id);
+      const { error } = await this.supabase.from(CHAI_PAGES_TABLE_NAME).delete().eq("id", id);
+      await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("id", id);
+      await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("primaryPage", id);
+
+      if (error) {
+        throw apiError("ERROR_DELETING_PAGE", error);
+      }
+      return {
+        tags: [
+          `page-${primaryPage}`,
+          `page-${id}`,
+          ...deletedChildPageIds.map((cid) => `page-${cid}`),
+        ],
+        deletedNestedChildren: deletedChildPageIds.length,
+        totalDeleted: 1 + deletedChildPageIds.length,
+      };
+    }
+
+    // Handle primary page deletion (delete language variants + all nested children)
+    // Get all language variants
+    const { data: languagePages } = await this.supabase
+      .from(CHAI_PAGES_TABLE_NAME)
+      .select("id, lang, name")
+      .eq("primaryPage", id)
+      .eq("app", this.appUuid);
+
+    // Track language page IDs and all deleted children
+    const languagePageIds = (languagePages || []).map((lp) => lp.id);
+    const deletedChildPageIds: string[] = [];
+
+    // Delete nested children of primary page recursively
+    await this.deleteChildrenRecursive(id, deletedChildPageIds);
+
+    // Delete nested children of each language variant
+    for (const langPage of languagePages || []) {
+      await this.deleteChildrenRecursive(langPage.id, deletedChildPageIds);
+    }
+
+    await this.deleteLanguagePages(id); // Delete language variants
     await this.chaiLibraries.unmarkAsTemplate({ id });
 
     await this.revisions.deleteRevisions({ id });
@@ -444,22 +504,29 @@ export class ChaiBuilderPages {
 
     if (pageType === "partial") {
       const pagesUsingPartial = await this.pageBlocks.getPartialBlockUsage(id);
-      return { 
+      return {
         tags: [
           ...pagesUsingPartial.map((page) => `page-${page}`),
-          ...deletedChildPageIds.map((childId) => `page-${childId}`)
-        ] 
+          ...languagePageIds.map((langId) => `page-${langId}`),
+          ...deletedChildPageIds.map((childId) => `page-${childId}`),
+        ],
+        deletedLanguagePages: languagePageIds.length,
+        deletedNestedChildren: deletedChildPageIds.length,
+        totalDeleted: languagePageIds.length + deletedChildPageIds.length,
       };
     }
 
     // Return tags for cache invalidation and deleted page data
-    // Include tags for parent page and all deleted child pages
     return {
       tags: [
         `page-${id}`,
-        ...deletedChildPageIds.map((childId) => `page-${childId}`)
+        ...languagePageIds.map((langId) => `page-${langId}`),
+        ...deletedChildPageIds.map((childId) => `page-${childId}`),
       ],
       page: deletedPageData,
+      deletedLanguagePages: languagePageIds.length,
+      deletedNestedChildren: deletedChildPageIds.length,
+      totalDeleted: 1 + languagePageIds.length + deletedChildPageIds.length,
     };
   }
 
@@ -482,6 +549,20 @@ export class ChaiBuilderPages {
     if (currentEditor !== this.chaiUser) {
       return { code: "PAGE_LOCKED", editor: currentEditor };
     }
+
+    // Get all language pages for this primary page
+    const { data: languagePages } = await this.supabase
+      .from(CHAI_PAGES_TABLE_NAME)
+      .select("id")
+      .eq("primaryPage", id)
+      .eq("app", this.appUuid);
+
+    // Delete children of each language page recursively
+    for (const langPage of languagePages || []) {
+      await this.deleteChildrenRecursive(langPage.id, []);
+    }
+
+    // Delete the language pages themselves
     await this.supabase
       .from(CHAI_PAGES_TABLE_NAME)
       .delete()

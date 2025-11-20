@@ -394,6 +394,28 @@ export class ChaiBuilderPages {
     }
 
     // Handle primary and global page deletion
+    // Delete all nested child pages recursively
+    const deletedChildPageIds: string[] = [];
+    const deleteChildren = async (parentId: string) => {
+      const { data: childPages } = await this.supabase
+        .from(CHAI_PAGES_TABLE_NAME)
+        .select("id")
+        .eq("parent", parentId)
+        .eq("app", this.appUuid);
+
+      for (const childPage of childPages || []) {
+        await deleteChildren(childPage.id);
+        await this.deleteLanguagePages(childPage.id);
+        await this.chaiLibraries.unmarkAsTemplate({ id: childPage.id });
+        await this.revisions.deleteRevisions({ id: childPage.id });
+        await this.supabase.from(CHAI_PAGES_TABLE_NAME).delete().eq("id", childPage.id);
+        await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("id", childPage.id);
+        await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("primaryPage", childPage.id);
+        deletedChildPageIds.push(childPage.id);
+      }
+    };
+    await deleteChildren(id);
+
     await this.deleteLanguagePages(id); // Delete associated language pages
 
     await this.chaiLibraries.unmarkAsTemplate({ id });
@@ -422,12 +444,21 @@ export class ChaiBuilderPages {
 
     if (pageType === "partial") {
       const pagesUsingPartial = await this.pageBlocks.getPartialBlockUsage(id);
-      return { tags: [...pagesUsingPartial.map((page) => `page-${page}`)] };
+      return { 
+        tags: [
+          ...pagesUsingPartial.map((page) => `page-${page}`),
+          ...deletedChildPageIds.map((childId) => `page-${childId}`)
+        ] 
+      };
     }
 
     // Return tags for cache invalidation and deleted page data
+    // Include tags for parent page and all deleted child pages
     return {
-      tags: [`page-${id}`],
+      tags: [
+        `page-${id}`,
+        ...deletedChildPageIds.map((childId) => `page-${childId}`)
+      ],
       page: deletedPageData,
     };
   }

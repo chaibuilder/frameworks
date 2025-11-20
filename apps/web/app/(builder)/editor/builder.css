@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* #TODO: Remove this once we have a better way to handle pointer-events */
 body {
   pointer-events: all !important;
 }

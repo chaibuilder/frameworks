@@ -1,5 +1,4 @@
 import { builderApiHandler } from "./builder-api-handler";
-import { ChaiAiPageGenerator } from "./chai-ai-page-generator";
 import { ChaiBuilder } from "./chai-builder";
 
 export {
@@ -10,6 +9,6 @@ export {
 } from "@chaibuilder/pages/server";
 
 export { getSupabaseAdmin } from "./supabase";
-export { builderApiHandler, ChaiAiPageGenerator };
+export { builderApiHandler };
 
 export default ChaiBuilder;

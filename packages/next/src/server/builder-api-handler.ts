@@ -1,9 +1,9 @@
-import { ChaiBuilderPages } from "@chaibuilder/pages/server";
+import { ChaiAIChatHandler, ChaiBuilderPages } from "@chaibuilder/pages/server";
 import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { ChaiBuilder } from "./chai-builder";
-import { ChaiFrameworkAIChatHandler } from "./class-ai-handler";
+import { logAiRequest, logAiRequestError } from "./log-ai-request";
 import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
@@ -29,12 +29,14 @@ const getAppUuidFromRoute = async (req: NextRequest): Promise<string> => {
   throw new Error("Unable to extract app UUID from route");
 };
 
-async function handleAskAiRequest(ai: ChaiFrameworkAIChatHandler, requestBody: any): Promise<NextResponse> {
+async function handleAskAiRequest(ai: ChaiAIChatHandler, requestBody: any): Promise<NextResponse> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const result = await ai.handleRequest(requestBody.data);
+        console.log("Add", requestBody);
+
+        const result = await ai.handleRequest(requestBody);
 
         if (!result?.textStream) {
           controller.enqueue(encoder.encode("Error: No streaming response available"));
@@ -76,7 +78,6 @@ export const builderApiHandler = (apiKey?: string) => {
       const authorization = req.headers.get("authorization");
       let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
 
-      const ai = new ChaiFrameworkAIChatHandler({ authTokenOrUserId });
       const chaiBuilderPages = new ChaiBuilderPages({ backend });
       const requestBody = await req.json();
       const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
@@ -96,7 +97,26 @@ export const builderApiHandler = (apiKey?: string) => {
 
       let response = null;
       if (requestBody.action === "ASK_AI") {
-        return await handleAskAiRequest(ai, requestBody);
+        const ai = new ChaiAIChatHandler({
+          // @ts-ignore
+          onFinish: (arg: any) => {
+            logAiRequest({
+              arg,
+              prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
+              userId: authTokenOrUserId,
+              startTime: new Date().getTime(),
+            });
+          },
+          onError: (error) =>
+            logAiRequestError({
+              error,
+              userId: authTokenOrUserId,
+              startTime: new Date().getTime(),
+              model: "google/gemini-2.5-flash",
+              prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
+            }),
+        });
+        return await handleAskAiRequest(ai, requestBody.data);
       } else {
         response = await chaiBuilderPages.handle(requestBody, authTokenOrUserId, {} as any);
       }

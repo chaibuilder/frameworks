@@ -185,8 +185,8 @@ importers:
   packages/next:
     dependencies:
       '@chaibuilder/pages':
-        specifier: 0.16.11
-        version: 0.16.11(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
+        specifier: 0.16.13
+        version: 0.16.13(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
       '@chaibuilder/sdk':
         specifier: 3.1.19
         version: 3.1.19(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
@@ -370,8 +370,8 @@ packages:
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
     dev: false
 
-  /@chaibuilder/pages@0.16.11(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
-    resolution: {integrity: sha512-2LxI0dMkp+Rg2iX1719gTwQTtYPUw1CiV8r/3GvAFeMDGWjKB4bQzg2OMTHP1U83rzbNWxnaP7cBxmnjwbLTIw==}
+  /@chaibuilder/pages@0.16.13(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.19)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
+    resolution: {integrity: sha512-Fjfv1GA4tDvzJQIoCaSt23SjZ903paaRWk2tgDhdoHUinPl+3+EaqclUkD3mEhhk6/IVIqpaZcjG+p0YjmE3dQ==}
     engines: {node: '>=21.0.0', pnpm: '>=8.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0

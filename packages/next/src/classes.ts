@@ -1,6 +1,4 @@
 export const classes: string[] = [
-  "![-:\\\\\\\\\\\\\\\\w]",
-  "![-:\\\\\\\\w]",
   "!bg-gray-200",
   "!bg-gray-300",
   "!border-0",
@@ -1564,5 +1562,5 @@ export const classes: string[] = [
   "z-auto",
   "zoom-in",
   "zoom-in-95",
-  "zoom-out"
+  "zoom-out",
 ];

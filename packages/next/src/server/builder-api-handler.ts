@@ -97,6 +97,7 @@ export const builderApiHandler = (apiKey?: string) => {
 
       let response = null;
       if (requestBody.action === "ASK_AI") {
+        const startTime = new Date().getTime();
         const ai = new ChaiAIChatHandler({
           // @ts-ignore
           onFinish: (arg: any) => {
@@ -104,15 +105,16 @@ export const builderApiHandler = (apiKey?: string) => {
               arg,
               prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
               userId: authTokenOrUserId,
-              startTime: new Date().getTime(),
+              model: requestBody.data.model,
+              startTime,
             });
           },
           onError: (error) =>
             logAiRequestError({
               error,
               userId: authTokenOrUserId,
-              startTime: new Date().getTime(),
-              model: "google/gemini-2.5-flash",
+              startTime: startTime,
+              model: requestBody.data.model,
               prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
             }),
         });

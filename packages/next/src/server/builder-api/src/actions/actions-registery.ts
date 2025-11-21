@@ -1,5 +1,6 @@
 import { get } from "lodash";
 import { ChaiAction } from "./chai-action-interface";
+import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
 import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
@@ -18,6 +19,7 @@ class ActionsRegistry {
 
   private constructor() {
     // Register all actions
+    this.register("DELETE_PAGE", new DeletePageAction());
     this.register("DUPLICATE_PAGE", new DuplicatePageAction());
     this.register("UPDATE_PAGE_METADATA", new UpdatePageMetadataAction());
     this.register("GENERATE_SEO_FIELD", new GenerateSeoFieldAction());

@@ -103,5 +103,8 @@ export async function logAiRequest({
     user: userId,
     client: process?.env?.CHAIBUILDER_CLIENT_ID || "",
   };
-  await supabase.from("ai_logs").insert(payload);
+  const { data, error } = await supabase.from("ai_logs").insert(payload);
+  if (error) {
+    console.error("Error logging AI request:", error);
+  }
 }

@@ -101,22 +101,31 @@ export const builderApiHandler = (apiKey?: string) => {
         const ai = new ChaiAIChatHandler({
           // @ts-ignore
           onFinish: (arg: any) => {
-            logAiRequest({
-              arg,
-              prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
-              userId: authTokenOrUserId,
-              model: requestBody.data.model,
-              startTime,
-            });
+            try {
+              logAiRequest({
+                arg,
+                prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
+                userId: authTokenOrUserId,
+                model: requestBody.data.model,
+                startTime,
+              });
+            } catch (e) {
+              console.error("Error logging AI request:", e);
+            }
           },
-          onError: (error) =>
-            logAiRequestError({
-              error,
-              userId: authTokenOrUserId,
-              startTime: startTime,
-              model: requestBody.data.model,
-              prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
-            }),
+          onError: (error) => {
+            try {
+              logAiRequestError({
+                error,
+                userId: authTokenOrUserId,
+                startTime: startTime,
+                model: requestBody.data.model,
+                prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
+              });
+            } catch (e) {
+              console.error("Error logging AI request error:", e);
+            }
+          },
         });
         return await handleAskAiRequest(ai, requestBody.data);
       } else {

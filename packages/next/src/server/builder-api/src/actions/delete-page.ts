@@ -109,9 +109,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
    * Perform Deletion With Ids
    */
   private async performDeletionWithIds(ids: string[]): Promise<any> {
-    // I want all or nothing meanse if any one fails then all should fail
     const reverseIds = reverse(ids);
-    console.log(reverseIds);
     const { error } = await this.supabase.from("library_templates").delete().in("pageId", reverseIds);
     if (error) {
       throw apiError("DELETE_FAILED", error);

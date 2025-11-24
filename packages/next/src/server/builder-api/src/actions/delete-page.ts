@@ -81,7 +81,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
   /**
    * Main delete page logic
    */
-  private async deletePage(id: string): Promise<any> {
+  public async deletePage(id: string): Promise<any> {
     // Check if page is currently being edited by another user
     const currentEditor = await this.getCurrentEditor(id);
     if (currentEditor && currentEditor !== this.userId) {
@@ -108,7 +108,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
   /**
    * Perform Deletion With Ids
    */
-  private async performDeletionWithIds(ids: string[]): Promise<any> {
+  public async performDeletionWithIds(ids: string[]): Promise<any> {
     const reverseIds = reverse(ids);
     const { error } = await this.supabase.from("library_templates").delete().in("pageId", reverseIds);
     if (error) {
@@ -144,7 +144,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
   /**
    * Delete a partial page (global/form) using tree data
    */
-  private async deletePartialPageWithTree(id: string, partialNode: PageTreeNode, pagesTree: any): Promise<any> {
+  public async deletePartialPageWithTree(id: string, partialNode: PageTreeNode, pagesTree: any): Promise<any> {
     const isPrimaryPartial = partialNode.primaryPage === null;
 
     if (isPrimaryPartial) {
@@ -157,13 +157,13 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
 
       return {
         tags: [`page-${id}`, ...languageVariantIds.map((id: string) => `page-${id}`)],
-        totalToDelete: 1 + languageVariantIds.length,
+        totalDeleted: 1 + languageVariantIds.length,
       };
     } else {
       await this.performDeletionWithIds([id]);
       return {
         tags: [`page-${id}`],
-        totalToDelete: 1,
+        totalDeleted: 1,
       };
     }
   }
@@ -171,7 +171,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
   /**
    * Delete a language page using tree data
    */
-  private async deleteLanguagePageWithTree(id: string, langNode: any, pagesTree: any): Promise<any> {
+  public async deleteLanguagePageWithTree(id: string, langNode: any, pagesTree: any): Promise<any> {
     const primaryPageId = langNode.primaryPage;
     const primaryNode = this.pageTreeBuilder!.findPageInPrimaryTree(primaryPageId, pagesTree.primaryTree);
 
@@ -212,14 +212,14 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
     await this.performDeletionWithIds([id, ...allNestedLanguageIds]);
     return {
       tags: [`page-${id}`, ...allNestedLanguageIds.map((id) => `page-${id}`)],
-      totalToDelete: 1 + allNestedLanguageIds.length,
+      totalDeleted: 1 + allNestedLanguageIds.length,
     };
   }
 
   /**
    * Delete a primary page using tree data
    */
-  private async deletePrimaryPageWithTree(id: string, pagesTree: any): Promise<any> {
+  public async deletePrimaryPageWithTree(id: string, pagesTree: any): Promise<any> {
     const primaryNode = this.pageTreeBuilder!.findPageInPrimaryTree(id, pagesTree.primaryTree);
 
     if (!primaryNode) {
@@ -240,14 +240,14 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
     await this.performDeletionWithIds([id, ...allLanguagePageIds]);
     return {
       tags: [`page-${id}`, ...allLanguagePageIds.map((id) => `page-${id}`)],
-      totalToDelete: 1 + allLanguagePageIds.length,
+      totalDeleted: 1 + allLanguagePageIds.length,
     };
   }
 
   /**
    * Get current editor for a page
    */
-  private async getCurrentEditor(id: string): Promise<string | null> {
+  public async getCurrentEditor(id: string): Promise<string | null> {
     const { data: pageData } = await this.supabase
       .from(CHAI_PAGES_TABLE_NAME)
       .select("currentEditor")

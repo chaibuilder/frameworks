@@ -1,5 +1,5 @@
 import { ChaiBlock } from "@chaibuilder/pages/runtime";
-import { ChaiBuilderPages, ChaiBuilderPagesBackend, ChaiPageProps } from "@chaibuilder/pages/server";
+import { ChaiBuilderPages, ChaiPageProps } from "@chaibuilder/pages/server";
 import { has } from "lodash";
 import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
@@ -37,7 +37,7 @@ class ChaiBuilder {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
     ChaiBuilder.siteId = apiKey;
-    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderPagesBackend(apiKey) });
+    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderSupabaseBackend(apiKey) });
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
 
@@ -71,12 +71,9 @@ class ChaiBuilder {
       .from("app_domains")
       .select("app")
       .or(`domain.eq.${hostname.replace("www.", "")},subdomain.eq.${hostname}`)
-      .single();
-    if (error) {
-      return { error: error.message };
-    }
+      .maybeSingle();
     if (!data) {
-      return { error: `No app found for hostname ${hostname}` };
+      return { error: "No app found for hostname" };
     }
     return { id: data.app };
   });
@@ -84,6 +81,8 @@ class ChaiBuilder {
   static async loadSiteSettings(draftMode: boolean) {
     ChaiBuilder.verifyInit();
     const siteSettings = await ChaiBuilder.getSiteSettings();
+    console.log("Site Settings", siteSettings);
+
     ChaiBuilder.pages?.setFallbackLang(siteSettings?.fallbackLang);
     ChaiBuilder.pages?.setDraftMode(draftMode);
   }
@@ -108,9 +107,7 @@ class ChaiBuilder {
     return await unstable_cache(
       async () => await ChaiBuilder.pages?.getSiteSettings(),
       [`website-settings-${ChaiBuilder.getSiteId()}`],
-      {
-        tags: [`website-settings`, `website-settings-${ChaiBuilder.getSiteId()}`],
-      },
+      { tags: [`website-settings`, `website-settings-${ChaiBuilder.getSiteId()}`] },
     )();
   }
 

@@ -83,8 +83,8 @@ export default function Editor() {
     return session?.access_token as string;
   }, []);
 
-  const getPreviewUrl = useCallback((slug: string) => `/pages${slug}`, []);
-  const getLiveUrl = useCallback((slug: string) => `/pages${slug}`, []);
+  const getPreviewUrl = useCallback((slug: string) => `/api/preview?slug=${slug}`, []);
+  const getLiveUrl = useCallback((slug: string) => `/api/preview?disable=true&slug=${slug}`, []);
 
   if (isLoggedIn === null) {
     return null;

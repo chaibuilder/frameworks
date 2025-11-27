@@ -3,72 +3,16 @@ import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { ChaiBuilder } from "./chai-builder";
+import { getAppUuidFromRoute } from "./getAppUuidFromRoute";
+import { handleAskAiRequest } from "./handleAskAiRequest";
 import { logAiRequest, logAiRequestError } from "./log-ai-request";
 import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
 const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
 
-const getAppUuidFromRoute = async (req: NextRequest): Promise<string> => {
-  // Extract UUID from route format: [uuid]/builder/api
-  const url = new URL(req.url);
-  const pathSegments = url.pathname.split("/").filter((segment) => segment !== "");
-
-  // Find the index of 'builder' in the path segments
-  const builderIndex = pathSegments.findIndex((segment) => segment === "builder");
-
-  if (pathSegments.length > 0) {
-    // The UUID should be the segment before 'builder'
-    const uuid = pathSegments[0];
-    if (uuid) {
-      return uuid;
-    }
-  }
-
-  // Fallback: throw an error if UUID cannot be extracted
-  throw new Error("Unable to extract app UUID from route");
-};
-
-async function handleAskAiRequest(ai: ChaiAIChatHandler, requestBody: any): Promise<NextResponse> {
-  const encoder = new TextEncoder();
-  const stream = new ReadableStream({
-    async start(controller) {
-      try {
-        console.log("Add", requestBody);
-
-        const result = await ai.handleRequest(requestBody);
-
-        if (!result?.textStream) {
-          controller.enqueue(encoder.encode("Error: No streaming response available"));
-          controller.close();
-          return;
-        }
-
-        // Stream the AI response chunks
-        for await (const chunk of result.textStream) {
-          if (chunk) {
-            controller.enqueue(encoder.encode(chunk));
-          }
-        }
-
-        controller.close();
-      } catch (error) {
-        controller.enqueue(encoder.encode(`Error: ${error instanceof Error ? error.message : "Unknown error"}`));
-        controller.close();
-      }
-    },
-  });
-
-  return new NextResponse(stream, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-cache",
-    },
-  });
-}
-
 export const builderApiHandler = (apiKey?: string) => {
-  return async (req: NextRequest, response: NextResponse) => {
+  return async (req: NextRequest) => {
     try {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);

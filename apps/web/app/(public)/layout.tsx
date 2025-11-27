@@ -1,8 +1,5 @@
-import ChaiBuilder from "chai-next/server";
 import type { Metadata } from "next";
 import "./public.css";
-
-ChaiBuilder.init(process.env.CHAIBUILDER_API_KEY!);
 
 export const metadata: Metadata = {
   title: "Chai Builder",

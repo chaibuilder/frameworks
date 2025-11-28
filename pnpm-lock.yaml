@@ -185,11 +185,11 @@ importers:
   packages/next:
     dependencies:
       '@chaibuilder/pages':
-        specifier: 0.16.19
-        version: 0.16.19(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.20)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
+        specifier: 0.16.21
+        version: 0.16.21(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.25)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5)
       '@chaibuilder/sdk':
-        specifier: 3.1.20
-        version: 3.1.20(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
+        specifier: 3.1.25
+        version: 3.1.25(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
       '@supabase/ssr':
         specifier: 0.6.1
         version: 0.6.1(@supabase/supabase-js@2.50.3)
@@ -370,12 +370,12 @@ packages:
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
     dev: false
 
-  /@chaibuilder/pages@0.16.19(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.20)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
-    resolution: {integrity: sha512-lixp3S1m/rZrHQTSaSYYGbC1HAYWR3S4u8X06BDiv9YWqKWhjFNyP0Ie7o4F+8ST14l5yy+DW1rFZO1BMvuZnA==}
+  /@chaibuilder/pages@0.16.21(@chaibuilder/runtime@2.2.0)(@chaibuilder/sdk@3.1.25)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(micromark@4.0.2)(react-dom@19.2.0)(react-konva@19.2.0)(react@19.2.0)(styled-components@6.1.19)(tailwindcss@3.4.18)(unified@11.0.5):
+    resolution: {integrity: sha512-z0AH5mp7tvbHY1hSp8AH+kyuDKkWt4cHSlkvoprhWnsrmbna1xLLFkkOVVSILmbYNmw32zAzhQB7OUa3M7GC3g==}
     engines: {node: '>=21.0.0', pnpm: '>=8.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0
-      '@chaibuilder/sdk': 3.1.20
+      '@chaibuilder/sdk': 3.1.25
       '@types/react': '*'
       '@types/react-dom': '*'
       jotai: 2.14.0
@@ -388,7 +388,7 @@ packages:
         optional: true
     dependencies:
       '@chaibuilder/runtime': 2.2.0(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
-      '@chaibuilder/sdk': 3.1.20(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
+      '@chaibuilder/sdk': 3.1.25(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2)
       '@mhsdesign/jit-browser-tailwindcss': 0.4.2
       '@radix-ui/react-collapsible': 1.1.12(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.0.3)(@types/react@19.0.8)(react-dom@19.2.0)(react@19.2.0)
@@ -474,8 +474,8 @@ packages:
       tailwind-merge: 2.6.0
     dev: false
 
-  /@chaibuilder/sdk@3.1.20(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2):
-    resolution: {integrity: sha512-s65frL33VJDeMBYTtKY+god8wc0Yx8MTslFmR0lyGvyKFqsc6ve6RM0qke3cPOcrz2rAYNAFZroKQLL22xo3Cg==}
+  /@chaibuilder/sdk@3.1.25(@chaibuilder/runtime@2.2.0)(@tiptap/core@2.26.4)(@types/node@22.18.12)(@types/react-dom@19.0.3)(@types/react@19.0.8)(jotai@2.14.0)(react-dom@19.2.0)(react@19.2.0)(tailwindcss@3.4.18)(typescript@5.8.2):
+    resolution: {integrity: sha512-UowVfqQk3yFCG97WcHpV6qx2oz6A2Rp7gSpwBeZRxlwAXpb2K0AAxjIPVS6ty4BmqpptEnsho3r9gN0SKIfVyw==}
     engines: {node: '>=21.0.0'}
     peerDependencies:
       '@chaibuilder/runtime': 2.2.0

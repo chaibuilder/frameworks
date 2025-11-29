@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { apiError } from "../lib";
 import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
 
@@ -22,7 +21,6 @@ export interface PageTreeNode {
 export interface PageTreeResult {
   primaryTree: PageTreeNode[];
   languageTree: any[];
-  partialTree: PageTreeNode[];
   totalPrimaryPages: number;
   totalLanguagePages: number;
 }
@@ -62,9 +60,8 @@ export class PageTreeBuilder {
     }
 
     // Separate primary and language pages
-    const primaryPages = pages?.filter((page: any) => page.primaryPage === null && !isEmpty(page.slug)) || [];
-    const languagePages = pages?.filter((page: any) => page.primaryPage !== null && !isEmpty(page.slug)) || [];
-    const partialPages = pages?.filter((page: any) => isEmpty(page.slug)) || [];
+    const primaryPages = pages?.filter((page: any) => page.primaryPage === null) || [];
+    const languagePages = pages?.filter((page: any) => page.primaryPage !== null) || [];
 
     // Build Primary Language Pages Tree
     const primaryTree = this.buildPrimaryTree(primaryPages);
@@ -80,17 +77,9 @@ export class PageTreeBuilder {
       console.log(JSON.stringify(languageTree, null, 2));
     }
 
-    // Build Partial Pages Tree
-    const partialTree = this.buildPartialTree(partialPages);
-    if (this.enableLogging) {
-      console.log("\n=== PARTIAL PAGES TREE ===");
-      console.log(JSON.stringify(partialTree, null, 2));
-    }
-
     return {
       primaryTree,
       languageTree,
-      partialTree,
       totalPrimaryPages: primaryPages.length,
       totalLanguagePages: languagePages.length,
     };
@@ -196,52 +185,6 @@ export class PageTreeBuilder {
   }
 
   /**
-   * Build a hierarchical tree structure from partial pages (globals/forms)
-   * @param partialPages - Array of partial page objects
-   * @returns Array of root PageTreeNode objects
-   */
-  buildPartialTree(partialPages: any[]): PageTreeNode[] {
-    const pageMap = new Map<string, PageTreeNode>();
-
-    // Create nodes for all pages
-    partialPages.forEach((page) => {
-      pageMap.set(page.id, {
-        id: page.id,
-        pageType: page.pageType,
-        primaryPage: page.primaryPage,
-        parent: page.parent,
-        name: page.name,
-        slug: page.slug,
-        children: [],
-      });
-    });
-
-    const rootNodes: PageTreeNode[] = [];
-
-    // Build parent-child relationships
-    partialPages.forEach((page) => {
-      const node = pageMap.get(page.id);
-      if (!node) return;
-
-      if (page.parent === null) {
-        // This is a root node
-        rootNodes.push(node);
-      } else {
-        // This is a child node
-        const parentNode = pageMap.get(page.parent);
-        if (parentNode) {
-          parentNode.children.push(node);
-        } else {
-          // Parent not found, treat as root
-          rootNodes.push(node);
-        }
-      }
-    });
-
-    return rootNodes;
-  }
-
-  /**
    * Find a page in the primary tree by ID
    * @param id - Page ID to search for
    * @param primaryTree - The primary pages tree to search in
@@ -275,26 +218,6 @@ export class PageTreeBuilder {
       // Search in children recursively
       if (node.children && node.children.length > 0) {
         const found = this.findPageInLanguageTree(id, node.children);
-        if (found) return found;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Find a page in the partial tree by ID
-   * @param id - Page ID to search for
-   * @param partialTree - The partial pages tree to search in
-   * @returns PageTreeNode if found, null otherwise
-   */
-  findPageInPartialTree(id: string, partialTree: PageTreeNode[]): PageTreeNode | null {
-    for (const node of partialTree) {
-      if (node.id === id) {
-        return node;
-      }
-      // Search in children recursively
-      if (node.children && node.children.length > 0) {
-        const found = this.findPageInPartialTree(id, node.children);
         if (found) return found;
       }
     }

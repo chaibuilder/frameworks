@@ -65,7 +65,7 @@ describe("DeletePageAction", () => {
       deletePageAction["pageTreeBuilder"] = builder;
 
       const primaryTree = builder.buildPrimaryTree(mockPages);
-      const pagesTree = { primaryTree, languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -128,7 +128,7 @@ describe("DeletePageAction", () => {
       deletePageAction["pageTreeBuilder"] = builder;
 
       const primaryTree = builder.buildPrimaryTree(mockPages);
-      const pagesTree = { primaryTree, languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -156,7 +156,7 @@ describe("DeletePageAction", () => {
       deletePageAction["pageTreeBuilder"] = builder;
 
       const primaryTree = builder.buildPrimaryTree(mockPages);
-      const pagesTree = { primaryTree, languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -165,57 +165,6 @@ describe("DeletePageAction", () => {
     });
   });
 
-  describe("deletePartialPageWithTree", () => {
-    it("should delete primary partial page with its language variants", async () => {
-      const mockPages = [
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null, currentEditor: null },
-        { id: "partial-lang-1", name: "Encabezado", slug: "", pageType: "global", primaryPage: "partial-1", parent: null, currentEditor: null },
-        { id: "partial-lang-2", name: "En-tête", slug: "", pageType: "global", primaryPage: "partial-1", parent: null, currentEditor: null },
-      ];
-
-      // Setup action with supabase and context
-      deletePageAction["supabase"] = createSupabaseAdminMock({
-        library_templates: () => ({ data: null, error: null }),
-        app_pages_revisions: () => ({ data: null, error: null }),
-        app_pages_online: () => ({ data: null, error: null }),
-      });
-      deletePageAction["appId"] = mockAppId;
-      deletePageAction["pageTreeBuilder"] = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
-
-      const partialNode = mockPages[0] as any;
-      const pagesTree = { partialTree: mockPages, primaryTree: [], languageTree: [] };
-      
-      const result = await deletePageAction.deletePartialPageWithTree("partial-1", partialNode, pagesTree);
-      
-      expect(result.tags).toContain("page-partial-1");
-      expect(result.tags).toContain("page-partial-lang-1");
-      expect(result.tags).toContain("page-partial-lang-2");
-      expect(result.totalDeleted).toBe(3);
-    });
-
-    it("should delete single language variant partial page", async () => {
-      const mockPages = [
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null, currentEditor: null },
-        { id: "partial-lang-1", name: "Encabezado", slug: "", pageType: "global", primaryPage: "partial-1", parent: null, currentEditor: null },
-      ];
-
-      deletePageAction["supabase"] = createSupabaseAdminMock({
-        library_templates: () => ({ data: null, error: null }),
-        app_pages_revisions: () => ({ data: null, error: null }),
-        app_pages_online: () => ({ data: null, error: null }),
-      });
-      deletePageAction["appId"] = mockAppId;
-      deletePageAction["pageTreeBuilder"] = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
-
-      const langNode = mockPages[1] as any;
-      const pagesTree = { partialTree: mockPages, primaryTree: [], languageTree: [] };
-      
-      const result = await deletePageAction.deletePartialPageWithTree("partial-lang-1", langNode, pagesTree);
-      
-      expect(result.tags).toContain("page-partial-lang-1");
-      expect(result.totalDeleted).toBe(1);
-    });
-  });
 
   describe("deleteLanguagePageWithTree", () => {
     it("should delete language page with nested children and siblings", async () => {
@@ -241,7 +190,7 @@ describe("DeletePageAction", () => {
 
       const primaryTree = builder.buildPrimaryTree(mockPages.slice(0, 2));
       const languageTree = builder.buildLanguageTree(mockPages.slice(2), primaryTree);
-      const pagesTree = { primaryTree, languageTree, partialTree: [] };
+      const pagesTree = { primaryTree, languageTree, totalPrimaryPages: 2, totalLanguagePages: mockPages.slice(2).length };
       
       const result = await deletePageAction.deleteLanguagePageWithTree("lang-1", languageTree[0], pagesTree);
       
@@ -256,7 +205,7 @@ describe("DeletePageAction", () => {
       deletePageAction["appId"] = mockAppId;
       deletePageAction["pageTreeBuilder"] = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
 
-      const pagesTree = { primaryTree: [], languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree: [], languageTree: [], totalPrimaryPages: 0, totalLanguagePages: 0 };
 
       await expect(deletePageAction.deleteLanguagePageWithTree("lang-1", langNode, pagesTree)).rejects.toThrow();
     });
@@ -285,7 +234,7 @@ describe("DeletePageAction", () => {
 
       const primaryTree = builder.buildPrimaryTree(mockPages.slice(0, 3));
       const languageTree = builder.buildLanguageTree(mockPages.slice(3), primaryTree);
-      const pagesTree = { primaryTree, languageTree, partialTree: [] };
+      const pagesTree = { primaryTree, languageTree, totalPrimaryPages: 3, totalLanguagePages: mockPages.slice(3).length };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -309,7 +258,7 @@ describe("DeletePageAction", () => {
       deletePageAction["pageTreeBuilder"] = builder;
 
       const primaryTree = builder.buildPrimaryTree(mockPages);
-      const pagesTree = { primaryTree, languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -322,7 +271,7 @@ describe("DeletePageAction", () => {
       deletePageAction["appId"] = mockAppId;
       deletePageAction["pageTreeBuilder"] = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
 
-      const pagesTree = { primaryTree: [], languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree: [], languageTree: [], totalPrimaryPages: 0, totalLanguagePages: 0 };
 
       await expect(deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree)).rejects.toThrow();
     });
@@ -424,7 +373,7 @@ describe("DeletePageAction", () => {
       deletePageAction["pageTreeBuilder"] = builder;
 
       const primaryTree = builder.buildPrimaryTree(mockPages);
-      const pagesTree = { primaryTree, languageTree: [], partialTree: [] };
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
@@ -452,11 +401,85 @@ describe("DeletePageAction", () => {
 
       const primaryTree = builder.buildPrimaryTree(mockPages.slice(0, 2));
       const languageTree = builder.buildLanguageTree(mockPages.slice(2), primaryTree);
-      const pagesTree = { primaryTree, languageTree, partialTree: [] };
+      const pagesTree = { primaryTree, languageTree, totalPrimaryPages: 2, totalLanguagePages: mockPages.slice(2).length };
       
       const result = await deletePageAction.deletePrimaryPageWithTree("page-1", pagesTree);
       
       expect(result.totalDeleted).toBeGreaterThanOrEqual(4);
+    });
+
+    it("should delete partial pages (globals) as primary pages", async () => {
+      const mockPages = [
+        { id: "global-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null, currentEditor: null, children: [] },
+      ];
+
+      deletePageAction["supabase"] = createSupabaseAdminMock({
+        library_templates: () => ({ data: null, error: null }),
+        app_pages_revisions: () => ({ data: null, error: null }),
+        app_pages_online: () => ({ data: null, error: null }),
+      });
+      deletePageAction["appId"] = mockAppId;
+      const builder = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
+      deletePageAction["pageTreeBuilder"] = builder;
+
+      const primaryTree = builder.buildPrimaryTree(mockPages);
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
+      
+      const result = await deletePageAction.deletePrimaryPageWithTree("global-1", pagesTree);
+      
+      expect(result.tags).toContain("page-global-1");
+      expect(result.totalDeleted).toBe(1);
+    });
+
+    it("should delete partial pages (forms) as primary pages", async () => {
+      const mockPages = [
+        { id: "form-1", name: "Contact Form", slug: "", pageType: "form", primaryPage: null, parent: null, currentEditor: null, children: [] },
+      ];
+
+      deletePageAction["supabase"] = createSupabaseAdminMock({
+        library_templates: () => ({ data: null, error: null }),
+        app_pages_revisions: () => ({ data: null, error: null }),
+        app_pages_online: () => ({ data: null, error: null }),
+      });
+      deletePageAction["appId"] = mockAppId;
+      const builder = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
+      deletePageAction["pageTreeBuilder"] = builder;
+
+      const primaryTree = builder.buildPrimaryTree(mockPages);
+      const pagesTree = { primaryTree, languageTree: [], totalPrimaryPages: mockPages.length, totalLanguagePages: 0 };
+      
+      const result = await deletePageAction.deletePrimaryPageWithTree("form-1", pagesTree);
+      
+      expect(result.tags).toContain("page-form-1");
+      expect(result.totalDeleted).toBe(1);
+    });
+
+    it("should delete partial pages with language variants", async () => {
+      const mockPages = [
+        // Global page (partial)
+        { id: "global-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null, currentEditor: null, children: [] },
+        // Language variants of the global
+        { id: "global-es-1", name: "Cabecera", slug: "", pageType: "global", primaryPage: "global-1", parent: null, currentEditor: null, children: [] },
+        { id: "global-fr-1", name: "En-tête", slug: "", pageType: "global", primaryPage: "global-1", parent: null, currentEditor: null, children: [] },
+      ];
+
+      deletePageAction["supabase"] = createSupabaseAdminMock({
+        library_templates: () => ({ data: null, error: null }),
+        app_pages_revisions: () => ({ data: null, error: null }),
+        app_pages_online: () => ({ data: null, error: null }),
+      });
+      deletePageAction["appId"] = mockAppId;
+      const builder = new PageTreeBuilder(deletePageAction["supabase"], mockAppId);
+      deletePageAction["pageTreeBuilder"] = builder;
+
+      const primaryTree = builder.buildPrimaryTree(mockPages.slice(0, 1));
+      const languageTree = builder.buildLanguageTree(mockPages.slice(1), primaryTree);
+      const pagesTree = { primaryTree, languageTree, totalPrimaryPages: 1, totalLanguagePages: 2 };
+      
+      const result = await deletePageAction.deletePrimaryPageWithTree("global-1", pagesTree);
+      
+      expect(result.tags).toContain("page-global-1");
+      expect(result.totalDeleted).toBe(3); // Global + 2 language variants
     });
   });
 });

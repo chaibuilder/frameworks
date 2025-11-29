@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_ONLINE_PAGES_TABLE_NAME, CHAI_PAGES_REVISIONS_TABLE_NAME, CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
 import { apiError } from "../lib";
-import { PageTreeBuilder, PageTreeNode } from "../utils/page-tree-builder";
+import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -90,11 +90,6 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
 
     const pagesTree = await this.pageTreeBuilder!.getPagesTree();
 
-    const partialPage = this.pageTreeBuilder!.findPageInPartialTree(id, pagesTree.partialTree);
-    if (partialPage) {
-      return await this.deletePartialPageWithTree(id, partialPage, pagesTree);
-    }
-
     const pageInLanguageTree = this.pageTreeBuilder!.findPageInLanguageTree(id, pagesTree.languageTree);
     const isLanguagePage = pageInLanguageTree !== null;
 
@@ -131,40 +126,6 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
       .in("id", reverseIds);
     if (onlinePagesError) {
       throw apiError("DELETE_FAILED", onlinePagesError);
-    }
-    const { error: onlinePagesError2 } = await this.supabase
-      .from(CHAI_ONLINE_PAGES_TABLE_NAME)
-      .delete()
-      .in("primaryPage", reverseIds);
-    if (onlinePagesError2) {
-      throw apiError("DELETE_FAILED", onlinePagesError2);
-    }
-  }
-
-  /**
-   * Delete a partial page (global/form) using tree data
-   */
-  public async deletePartialPageWithTree(id: string, partialNode: PageTreeNode, pagesTree: any): Promise<any> {
-    const isPrimaryPartial = partialNode.primaryPage === null;
-
-    if (isPrimaryPartial) {
-      // Find all language variants of this partial page
-      const languageVariants = pagesTree.partialTree.filter((node: PageTreeNode) => node.primaryPage === id);
-
-      const languageVariantIds = languageVariants.map((variant: PageTreeNode) => variant.id);
-
-      await this.performDeletionWithIds([id, ...languageVariantIds]);
-
-      return {
-        tags: [`page-${id}`, ...languageVariantIds.map((id: string) => `page-${id}`)],
-        totalDeleted: 1 + languageVariantIds.length,
-      };
-    } else {
-      await this.performDeletionWithIds([id]);
-      return {
-        tags: [`page-${id}`],
-        totalDeleted: 1,
-      };
     }
   }
 

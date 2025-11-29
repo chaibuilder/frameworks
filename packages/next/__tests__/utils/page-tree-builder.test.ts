@@ -27,15 +27,13 @@ describe("PageTreeBuilder", () => {
   });
 
   describe("getPagesTree", () => {
-    it("should fetch and build complete page trees with primary, language, and partial pages", async () => {
+    it("should fetch and build complete page trees with primary and language pages", async () => {
       const mockPages = [
         // Primary pages
         { id: "page-1", name: "Home", slug: "/home", pageType: "page", primaryPage: null, parent: null },
         { id: "page-2", name: "About", slug: "/about", pageType: "page", primaryPage: null, parent: "page-1" },
         // Language pages
         { id: "lang-1", name: "Inicio", slug: "/es/home", pageType: "page", primaryPage: "page-1", parent: null },
-        // Partial pages (globals/forms)
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null },
       ];
 
       const mockFrom = vi.fn().mockReturnValue({
@@ -53,9 +51,40 @@ describe("PageTreeBuilder", () => {
       expect(result.primaryTree[0].id).toBe("page-1");
       expect(result.primaryTree[0].children).toHaveLength(1);
       expect(result.languageTree).toHaveLength(1);
-      expect(result.partialTree).toHaveLength(1);
       expect(result.totalPrimaryPages).toBe(2);
       expect(result.totalLanguagePages).toBe(1);
+    });
+
+    it("should include partial pages (globals/forms) in primary tree", async () => {
+      const mockPages = [
+        // Regular primary pages
+        { id: "page-1", name: "Home", slug: "/home", pageType: "page", primaryPage: null, parent: null },
+        // Partial pages (globals/forms) - now treated as primary pages
+        { id: "global-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null },
+        { id: "form-1", name: "Contact Form", slug: "", pageType: "form", primaryPage: null, parent: null },
+      ];
+
+      const mockFrom = vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ data: mockPages, error: null }),
+        }),
+      });
+
+      mockSupabase = { from: mockFrom };
+
+      pageTreeBuilder = new PageTreeBuilder(mockSupabase, mockAppId);
+      const result = await pageTreeBuilder.getPagesTree();
+
+      // All three should be in primary tree since partialTree was removed
+      expect(result.primaryTree).toHaveLength(3);
+      expect(result.totalPrimaryPages).toBe(3);
+      expect(result.totalLanguagePages).toBe(0);
+      
+      // Verify all page types are included
+      const pageTypes = result.primaryTree.map(p => p.pageType);
+      expect(pageTypes).toContain("page");
+      expect(pageTypes).toContain("global");
+      expect(pageTypes).toContain("form");
     });
 
     it("should handle empty pages array", async () => {
@@ -72,7 +101,6 @@ describe("PageTreeBuilder", () => {
 
       expect(result.primaryTree).toHaveLength(0);
       expect(result.languageTree).toHaveLength(0);
-      expect(result.partialTree).toHaveLength(0);
       expect(result.totalPrimaryPages).toBe(0);
       expect(result.totalLanguagePages).toBe(0);
     });
@@ -106,7 +134,6 @@ describe("PageTreeBuilder", () => {
 
       expect(result.primaryTree).toHaveLength(0);
       expect(result.languageTree).toHaveLength(0);
-      expect(result.partialTree).toHaveLength(0);
     });
   });
 
@@ -243,43 +270,6 @@ describe("PageTreeBuilder", () => {
     });
   });
 
-  describe("buildPartialTree", () => {
-    beforeEach(() => {
-      mockSupabase = createSupabaseAdminMock({});
-      pageTreeBuilder = new PageTreeBuilder(mockSupabase, mockAppId);
-    });
-
-    it("should build partial tree with root nodes", () => {
-      const partialPages = [
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null },
-        { id: "partial-2", name: "Footer", slug: "", pageType: "global", primaryPage: null, parent: null },
-      ];
-
-      const tree = pageTreeBuilder.buildPartialTree(partialPages);
-
-      expect(tree).toHaveLength(2);
-      expect(tree[0].id).toBe("partial-1");
-      expect(tree[1].id).toBe("partial-2");
-    });
-
-    it("should handle nested partial pages", () => {
-      const partialPages = [
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null },
-        { id: "partial-2", name: "Nav", slug: "", pageType: "global", primaryPage: null, parent: "partial-1" },
-      ];
-
-      const tree = pageTreeBuilder.buildPartialTree(partialPages);
-
-      expect(tree).toHaveLength(1);
-      expect(tree[0].children).toHaveLength(1);
-    });
-
-    it("should handle empty partial pages array", () => {
-      const tree = pageTreeBuilder.buildPartialTree([]);
-      expect(tree).toHaveLength(0);
-    });
-  });
-
   describe("findPageInPrimaryTree", () => {
     beforeEach(() => {
       mockSupabase = createSupabaseAdminMock({});
@@ -358,31 +348,6 @@ describe("PageTreeBuilder", () => {
       expect(found).toBeNull();
     });
   });
-
-  describe("findPageInPartialTree", () => {
-    beforeEach(() => {
-      mockSupabase = createSupabaseAdminMock({});
-      pageTreeBuilder = new PageTreeBuilder(mockSupabase, mockAppId);
-    });
-
-    it("should find a partial page in the tree", () => {
-      const partialPages = [
-        { id: "partial-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null },
-      ];
-
-      const tree = pageTreeBuilder.buildPartialTree(partialPages);
-      const found = pageTreeBuilder.findPageInPartialTree("partial-1", tree);
-
-      expect(found).toBeDefined();
-      expect(found?.id).toBe("partial-1");
-    });
-
-    it("should return null when page is not found", () => {
-      const found = pageTreeBuilder.findPageInPartialTree("non-existent", []);
-      expect(found).toBeNull();
-    });
-  });
-
   describe("collectNestedChildIds", () => {
     beforeEach(() => {
       mockSupabase = createSupabaseAdminMock({});

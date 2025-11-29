@@ -1,4 +1,3 @@
-import { reverse } from "lodash";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_ONLINE_PAGES_TABLE_NAME, CHAI_PAGES_REVISIONS_TABLE_NAME, CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
@@ -43,7 +42,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
    */
   protected getValidationSchema() {
     return z.object({
-      id: z.string().nonempty("Page ID is required"),
+      id: z.string().min(1, "Page ID is required"),
     });
   }
 
@@ -62,7 +61,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
       this.supabase = await getSupabaseAdmin();
 
       // Initialize PageTreeBuilder
-      this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId);
+      this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, true);
 
       // Execute the delete operation
       return await this.deletePage(data.id);
@@ -91,6 +90,12 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
     const pagesTree = await this.pageTreeBuilder!.getPagesTree();
 
     const pageInLanguageTree = this.pageTreeBuilder!.findPageInLanguageTree(id, pagesTree.languageTree);
+    const pageInPrimaryTree = this.pageTreeBuilder!.findPageInPrimaryTree(id, pagesTree.primaryTree);
+
+    if (!pageInLanguageTree && !pageInPrimaryTree) {
+      throw apiError("ERROR_DELETING_PAGE", "Page not found");
+    }
+
     const isLanguagePage = pageInLanguageTree !== null;
 
     if (isLanguagePage) {
@@ -104,7 +109,7 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
    * Perform Deletion With Ids
    */
   public async performDeletionWithIds(ids: string[]): Promise<any> {
-    const reverseIds = reverse(ids);
+    const reverseIds = [...ids].reverse();
     const { error } = await this.supabase.from("library_templates").delete().in("pageId", reverseIds);
     if (error) {
       throw apiError("DELETE_FAILED", error);
@@ -139,40 +144,11 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
     if (!primaryNode) {
       throw apiError("ERROR_DELETING_PAGE", "Primary page not found");
     }
-
-    const siblingLanguagePages = this.pageTreeBuilder!.findLanguagePagesForPrimary(
-      primaryPageId,
-      pagesTree.languageTree,
-    );
-    const siblingLanguagePageIds: string[] = [];
-
-    siblingLanguagePages.forEach((sibling) => {
-      if (sibling.id !== id) {
-        siblingLanguagePageIds.push(sibling.id);
-        const nestedIds = this.pageTreeBuilder!.collectNestedLanguageIds(sibling);
-        siblingLanguagePageIds.push(...nestedIds);
-      }
-    });
-
-    const nestedPrimaryChildIds = this.pageTreeBuilder!.collectNestedChildIds(primaryNode);
-
-    const nestedLanguagePageIds: string[] = [];
-    for (const primaryChildId of nestedPrimaryChildIds) {
-      const langVariants = this.pageTreeBuilder!.findLanguagePagesForPrimary(primaryChildId, pagesTree.languageTree);
-      langVariants.forEach((variant) => {
-        nestedLanguagePageIds.push(variant.id);
-        const nestedIds = this.pageTreeBuilder!.collectNestedLanguageIds(variant);
-        nestedLanguagePageIds.push(...nestedIds);
-      });
-    }
-    const directNestedLanguageIds = this.pageTreeBuilder!.collectNestedLanguageIds(langNode);
-    const allNestedLanguageIds = [
-      ...new Set([...siblingLanguagePageIds, ...directNestedLanguageIds, ...nestedLanguagePageIds]),
-    ];
+    const allNestedLanguageIds = this.pageTreeBuilder!.collectNestedChildIds(langNode);
 
     await this.performDeletionWithIds([id, ...allNestedLanguageIds]);
     return {
-      tags: [`page-${id}`, ...allNestedLanguageIds.map((id) => `page-${id}`)],
+      tags: [`page-${id}`, ...allNestedLanguageIds.map((pageId) => `page-${pageId}`)],
       totalDeleted: 1 + allNestedLanguageIds.length,
     };
   }
@@ -193,14 +169,14 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
 
     languageVariants.forEach((langVariant) => {
       languagePageIds.push(langVariant.id);
-      const nestedIds = this.pageTreeBuilder!.collectNestedLanguageIds(langVariant);
+      const nestedIds = this.pageTreeBuilder!.collectNestedChildIds(langVariant);
       languagePageIds.push(...nestedIds);
     });
 
     const allLanguagePageIds = [...new Set([...nestedPrimaryChildIds, ...languagePageIds])];
     await this.performDeletionWithIds([id, ...allLanguagePageIds]);
     return {
-      tags: [`page-${id}`, ...allLanguagePageIds.map((id) => `page-${id}`)],
+      tags: [`page-${id}`, ...allLanguagePageIds.map((pageId) => `page-${pageId}`)],
       totalDeleted: 1 + allLanguagePageIds.length,
     };
   }

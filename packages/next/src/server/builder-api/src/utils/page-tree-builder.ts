@@ -1,5 +1,5 @@
-import { apiError } from "../lib";
 import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { apiError } from "../lib";
 
 /**
  * Interface for page tree node
@@ -12,7 +12,6 @@ export interface PageTreeNode {
   name: string;
   slug: string;
   children: PageTreeNode[];
-  languagePages?: PageTreeNode[];
 }
 
 /**
@@ -20,7 +19,7 @@ export interface PageTreeNode {
  */
 export interface PageTreeResult {
   primaryTree: PageTreeNode[];
-  languageTree: any[];
+  languageTree: PageTreeNode[];
   totalPrimaryPages: number;
   totalLanguagePages: number;
 }
@@ -47,12 +46,12 @@ export class PageTreeBuilder {
 
   /**
    * Fetch and build complete page trees
-   * @returns PageTreeResult containing primary, language, and partial trees
+   * @returns PageTreeResult containing primary and language trees
    */
   async getPagesTree(): Promise<PageTreeResult> {
     const { data: pages, error } = await this.supabase
       .from(CHAI_PAGES_TABLE_NAME)
-      .select("id, name , slug, pageType, primaryPage, parent")
+      .select("id, name, slug, pageType, primaryPage, parent, lang")
       .eq("app", this.appId);
 
     if (error) {
@@ -149,36 +148,58 @@ export class PageTreeBuilder {
       languagePagesByPrimary.get(primaryId)!.push(langPage);
     });
 
-    // Build language tree based on primary tree structure
-    const buildLanguageSubtree = (primaryNode: PageTreeNode): any[] => {
+    // Build language tree based on primary tree structure, filtering by language
+    const buildLanguageSubtree = (primaryNode: PageTreeNode, lang: string): any => {
       const languagePagesForThisPrimary = languagePagesByPrimary.get(primaryNode.id) || [];
 
-      return languagePagesForThisPrimary.map((langPage) => {
-        const langNode: any = {
-          id: langPage.id,
-          pageType: langPage.pageType,
-          primaryPage: langPage.primaryPage,
-          parent: langPage.parent,
-          name: langPage.name,
-          slug: langPage.slug,
-          children: [],
-        };
+      // Find the language page for this primary node with the specified language
+      const langPage = languagePagesForThisPrimary.find((page) => page.lang === lang);
 
-        // For each child in the primary tree, find corresponding language pages
-        primaryNode.children.forEach((primaryChild) => {
-          const childLanguagePages = buildLanguageSubtree(primaryChild);
-          langNode.children.push(...childLanguagePages);
-        });
+      if (!langPage) {
+        return null;
+      }
 
-        return langNode;
+      const langNode: any = {
+        id: langPage.id,
+        pageType: langPage.pageType,
+        primaryPage: langPage.primaryPage,
+        parent: langPage.parent,
+        lang: langPage.lang,
+        name: langPage.name,
+        slug: langPage.slug,
+        children: [],
+      };
+
+      // For each child in the primary tree, find corresponding language pages with the same language
+      primaryNode.children.forEach((primaryChild) => {
+        const childLanguageNode = buildLanguageSubtree(primaryChild, lang);
+        if (childLanguageNode) {
+          langNode.children.push(childLanguageNode);
+        }
       });
+
+      return langNode;
     };
 
     // Build the complete language tree
     const languageTree: any[] = [];
-    primaryTree.forEach((primaryRoot) => {
-      const languageVariants = buildLanguageSubtree(primaryRoot);
-      languageTree.push(...languageVariants);
+
+    // Get all unique languages
+    const languages = new Set<string>();
+    languagePages.forEach((page) => {
+      if (page.lang) {
+        languages.add(page.lang);
+      }
+    });
+
+    // Build a separate tree for each language
+    languages.forEach((lang) => {
+      primaryTree.forEach((primaryRoot) => {
+        const languageRootNode = buildLanguageSubtree(primaryRoot, lang);
+        if (languageRootNode) {
+          languageTree.push(languageRootNode);
+        }
+      });
     });
 
     return languageTree;
@@ -250,23 +271,5 @@ export class PageTreeBuilder {
    */
   findLanguagePagesForPrimary(primaryPageId: string, languageTree: any[]): any[] {
     return languageTree.filter((langNode) => langNode.primaryPage === primaryPageId);
-  }
-
-  /**
-   * Collect all nested language page IDs recursively
-   * @param langNode - Language page node to collect children from
-   * @returns Array of nested language page IDs
-   */
-  collectNestedLanguageIds(langNode: any): string[] {
-    const ids: string[] = [];
-
-    for (const child of langNode.children || []) {
-      ids.push(child.id);
-      // Recursively collect from nested children
-      const nestedIds = this.collectNestedLanguageIds(child);
-      ids.push(...nestedIds);
-    }
-
-    return ids;
   }
 }

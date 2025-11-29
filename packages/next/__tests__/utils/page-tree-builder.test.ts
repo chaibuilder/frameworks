@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PageTreeBuilder, PageTreeNode } from "../../src/server/builder-api/src/utils/page-tree-builder";
 import { createSupabaseAdminMock } from "../mocks/supabase-admin.mock";
 
@@ -33,7 +33,7 @@ describe("PageTreeBuilder", () => {
         { id: "page-1", name: "Home", slug: "/home", pageType: "page", primaryPage: null, parent: null },
         { id: "page-2", name: "About", slug: "/about", pageType: "page", primaryPage: null, parent: "page-1" },
         // Language pages
-        { id: "lang-1", name: "Inicio", slug: "/es/home", pageType: "page", primaryPage: "page-1", parent: null },
+        { id: "lang-1", name: "Inicio", slug: "/es/home", pageType: "page", primaryPage: "page-1", lang: "es", parent: null },
       ];
 
       const mockFrom = vi.fn().mockReturnValue({
@@ -79,9 +79,9 @@ describe("PageTreeBuilder", () => {
       expect(result.primaryTree).toHaveLength(3);
       expect(result.totalPrimaryPages).toBe(3);
       expect(result.totalLanguagePages).toBe(0);
-      
+
       // Verify all page types are included
-      const pageTypes = result.primaryTree.map(p => p.pageType);
+      const pageTypes = result.primaryTree.map((p) => p.pageType);
       expect(pageTypes).toContain("page");
       expect(pageTypes).toContain("global");
       expect(pageTypes).toContain("form");
@@ -116,7 +116,7 @@ describe("PageTreeBuilder", () => {
       mockSupabase = { from: mockFrom };
 
       pageTreeBuilder = new PageTreeBuilder(mockSupabase, mockAppId);
-      
+
       await expect(pageTreeBuilder.getPagesTree()).rejects.toThrow();
     });
 
@@ -183,7 +183,7 @@ describe("PageTreeBuilder", () => {
       const tree = pageTreeBuilder.buildPrimaryTree(pages);
 
       expect(tree).toHaveLength(2);
-      expect(tree.find(node => node.id === "page-2")).toBeDefined();
+      expect(tree.find((node) => node.id === "page-2")).toBeDefined();
     });
 
     it("should handle empty pages array", () => {
@@ -219,17 +219,66 @@ describe("PageTreeBuilder", () => {
       ];
 
       const languagePages = [
-        { id: "lang-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null },
-        { id: "lang-2", name: "Acerca de", slug: "/es/about", pageType: "page", primaryPage: "page-2", parent: "lang-1" },
+        {
+          id: "lang-1",
+          name: "Inicio",
+          slug: "/es",
+          pageType: "page",
+          lang: "es",
+          primaryPage: "page-1",
+          parent: null,
+        },
+        {
+          id: "lang-2",
+          name: "Acerca de",
+          slug: "/es/about",
+          pageType: "page",
+          lang: "es",
+          primaryPage: "page-2",
+          parent: null,
+        },
+        //Other Lang Variant
+        {
+          id: "lang-fr-1",
+          name: "Accueil",
+          slug: "/fr",
+          pageType: "page",
+          lang: "fr",
+          primaryPage: "page-1",
+          parent: null,
+        },
+        {
+          id: "lang-fr-2",
+          name: "A propos",
+          slug: "/fr/about",
+          pageType: "page",
+          lang: "fr",
+          primaryPage: "page-2",
+          parent: null,
+        },
       ];
 
       const primaryTree = pageTreeBuilder.buildPrimaryTree(primaryPages);
       const languageTree = pageTreeBuilder.buildLanguageTree(languagePages, primaryTree);
 
-      expect(languageTree).toHaveLength(1);
-      expect(languageTree[0].id).toBe("lang-1");
-      expect(languageTree[0].children).toHaveLength(1);
-      expect(languageTree[0].children[0].id).toBe("lang-2");
+      // Should have 2 separate trees: one for 'es' and one for 'fr'
+      expect(languageTree).toHaveLength(2);
+
+      // Find the Spanish tree
+      const esTree = languageTree.find((node) => node.lang === "es");
+      expect(esTree).toBeDefined();
+      expect(esTree.id).toBe("lang-1");
+      expect(esTree.children).toHaveLength(1);
+      expect(esTree.children[0].id).toBe("lang-2");
+      expect(esTree.children[0].lang).toBe("es");
+
+      // Find the French tree
+      const frTree = languageTree.find((node) => node.lang === "fr");
+      expect(frTree).toBeDefined();
+      expect(frTree.id).toBe("lang-fr-1");
+      expect(frTree.children).toHaveLength(1);
+      expect(frTree.children[0].id).toBe("lang-fr-2");
+      expect(frTree.children[0].lang).toBe("fr");
     });
 
     it("should handle multiple language variants for same primary page", () => {
@@ -238,8 +287,8 @@ describe("PageTreeBuilder", () => {
       ];
 
       const languagePages = [
-        { id: "lang-es", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null },
-        { id: "lang-fr", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", parent: null },
+        { id: "lang-es", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", lang: "es", parent: null },
+        { id: "lang-fr", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", lang: "fr", parent: null },
       ];
 
       const primaryTree = pageTreeBuilder.buildPrimaryTree(primaryPages);
@@ -261,7 +310,7 @@ describe("PageTreeBuilder", () => {
 
     it("should handle empty primary tree", () => {
       const languagePages = [
-        { id: "lang-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null },
+        { id: "lang-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", lang: "es", parent: null },
       ];
 
       const languageTree = pageTreeBuilder.buildLanguageTree(languagePages, []);
@@ -293,7 +342,14 @@ describe("PageTreeBuilder", () => {
       const pages = [
         { id: "page-1", name: "Home", slug: "/", pageType: "page", primaryPage: null, parent: null },
         { id: "page-2", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: "page-1" },
-        { id: "page-3", name: "Details", slug: "/products/details", pageType: "page", primaryPage: null, parent: "page-2" },
+        {
+          id: "page-3",
+          name: "Details",
+          slug: "/products/details",
+          pageType: "page",
+          primaryPage: null,
+          parent: "page-2",
+        },
       ];
 
       const tree = pageTreeBuilder.buildPrimaryTree(pages);
@@ -304,9 +360,7 @@ describe("PageTreeBuilder", () => {
     });
 
     it("should return null when page is not found", () => {
-      const pages = [
-        { id: "page-1", name: "Home", slug: "/", pageType: "page", primaryPage: null, parent: null },
-      ];
+      const pages = [{ id: "page-1", name: "Home", slug: "/", pageType: "page", primaryPage: null, parent: null }];
 
       const tree = pageTreeBuilder.buildPrimaryTree(pages);
       const found = pageTreeBuilder.findPageInPrimaryTree("non-existent", tree);
@@ -332,7 +386,7 @@ describe("PageTreeBuilder", () => {
       ];
 
       const languagePages = [
-        { id: "lang-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null },
+        { id: "lang-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", lang: "es", parent: null },
       ];
 
       const primaryTree = pageTreeBuilder.buildPrimaryTree(primaryPages);
@@ -358,8 +412,22 @@ describe("PageTreeBuilder", () => {
       const pages = [
         { id: "page-1", name: "Home", slug: "/", pageType: "page", primaryPage: null, parent: null },
         { id: "page-2", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: "page-1" },
-        { id: "page-3", name: "Details", slug: "/products/details", pageType: "page", primaryPage: null, parent: "page-2" },
-        { id: "page-4", name: "Reviews", slug: "/products/reviews", pageType: "page", primaryPage: null, parent: "page-2" },
+        {
+          id: "page-3",
+          name: "Details",
+          slug: "/products/details",
+          pageType: "page",
+          primaryPage: null,
+          parent: "page-2",
+        },
+        {
+          id: "page-4",
+          name: "Reviews",
+          slug: "/products/reviews",
+          pageType: "page",
+          primaryPage: null,
+          parent: "page-2",
+        },
       ];
 
       const tree = pageTreeBuilder.buildPrimaryTree(pages);
@@ -414,9 +482,9 @@ describe("PageTreeBuilder", () => {
       ];
 
       const languagePages = [
-        { id: "lang-es", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null },
-        { id: "lang-fr", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", parent: null },
-        { id: "lang-de", name: "Startseite", slug: "/de", pageType: "page", primaryPage: "page-1", parent: null },
+        { id: "lang-es", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", lang: "es", parent: null },
+        { id: "lang-fr", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", lang: "fr", parent: null },
+        { id: "lang-de", name: "Startseite", slug: "/de", pageType: "page", primaryPage: "page-1", lang: "de", parent: null },
       ];
 
       const primaryTree = pageTreeBuilder.buildPrimaryTree(primaryPages);
@@ -429,69 +497,6 @@ describe("PageTreeBuilder", () => {
     it("should return empty array when no language pages exist", () => {
       const variants = pageTreeBuilder.findLanguagePagesForPrimary("page-1", []);
       expect(variants).toHaveLength(0);
-    });
-  });
-
-  describe("collectNestedLanguageIds", () => {
-    beforeEach(() => {
-      mockSupabase = createSupabaseAdminMock({});
-      pageTreeBuilder = new PageTreeBuilder(mockSupabase, mockAppId);
-    });
-
-    it("should collect all nested language page IDs", () => {
-      const langNode = {
-        id: "lang-1",
-        name: "Inicio",
-        slug: "/es",
-        pageType: "page",
-        primaryPage: "page-1",
-        parent: null,
-        children: [
-          {
-            id: "lang-2",
-            name: "Productos",
-            slug: "/es/productos",
-            pageType: "page",
-            primaryPage: "page-2",
-            parent: "lang-1",
-            children: [],
-          },
-        ],
-      };
-
-      const ids = pageTreeBuilder.collectNestedLanguageIds(langNode);
-
-      expect(ids).toHaveLength(1);
-      expect(ids).toContain("lang-2");
-    });
-
-    it("should return empty array for node without children", () => {
-      const langNode = {
-        id: "lang-1",
-        name: "Inicio",
-        slug: "/es",
-        pageType: "page",
-        primaryPage: "page-1",
-        parent: null,
-        children: [],
-      };
-
-      const ids = pageTreeBuilder.collectNestedLanguageIds(langNode);
-      expect(ids).toHaveLength(0);
-    });
-
-    it("should handle node without children property", () => {
-      const langNode = {
-        id: "lang-1",
-        name: "Inicio",
-        slug: "/es",
-        pageType: "page",
-        primaryPage: "page-1",
-        parent: null,
-      };
-
-      const ids = pageTreeBuilder.collectNestedLanguageIds(langNode);
-      expect(ids).toHaveLength(0);
     });
   });
 });

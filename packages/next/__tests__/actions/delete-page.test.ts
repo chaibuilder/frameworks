@@ -1,8 +1,8 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
-import { DeletePageAction } from "../../src/server/builder-api/src/actions/delete-page";
-import { createSupabaseAdminMock } from "../mocks/supabase-admin.mock";
-import { PageTreeBuilder } from "../../src/server/builder-api/src/utils/page-tree-builder";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ActionError } from "../../src/server/builder-api/src/actions/action-error";
+import { DeletePageAction } from "../../src/server/builder-api/src/actions/delete-page";
+import { PageTreeBuilder } from "../../src/server/builder-api/src/utils/page-tree-builder";
+import { createSupabaseAdminMock } from "../mocks/supabase-admin.mock";
 
 // Mock the getSupabaseAdmin function
 vi.mock("../../src/server/supabase", () => ({
@@ -173,10 +173,10 @@ describe("DeletePageAction", () => {
         { id: "page-1", name: "Home", slug: "/home", pageType: "page", primaryPage: null, parent: null, currentEditor: null, children: [{ id: "page-2" }] },
         { id: "page-2", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: "page-1", currentEditor: null, children: [] },
         // Language pages
-        { id: "lang-1", name: "Inicio", slug: "/es/home", pageType: "page", primaryPage: "page-1", parent: null, currentEditor: null, children: [{ id: "lang-2" }] },
-        { id: "lang-2", name: "Productos", slug: "/es/products", pageType: "page", primaryPage: "page-2", parent: "lang-1", currentEditor: null, children: [] },
+        { id: "lang-1", name: "Inicio", slug: "/es/home", pageType: "page", primaryPage: "page-1", parent: null, lang: "es", currentEditor: null, children: [] },
+        { id: "lang-2", name: "Productos", slug: "/es/products", pageType: "page", primaryPage: "page-2", parent: "lang-1", lang: "es", currentEditor: null, children: [] },
         // Another language variant
-        { id: "lang-fr-1", name: "Accueil", slug: "/fr/home", pageType: "page", primaryPage: "page-1", parent: null, currentEditor: null, children: [] },
+        { id: "lang-fr-1", name: "Accueil", slug: "/fr/home", pageType: "page", primaryPage: "page-1", parent: null, lang: "fr", currentEditor: null, children: [] },
       ];
 
       deletePageAction["supabase"] = createSupabaseAdminMock({
@@ -384,10 +384,10 @@ describe("DeletePageAction", () => {
       const mockPages = [
         { id: "page-1", name: "Home", slug: "/", pageType: "page", primaryPage: null, parent: null, currentEditor: null, children: [{ id: "page-2" }] },
         { id: "page-2", name: "About", slug: "/about", pageType: "page", primaryPage: null, parent: "page-1", currentEditor: null, children: [] },
-        { id: "lang-es-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", parent: null, currentEditor: null, children: [{ id: "lang-es-2" }] },
-        { id: "lang-es-2", name: "Acerca", slug: "/es/about", pageType: "page", primaryPage: "page-2", parent: "lang-es-1", currentEditor: null, children: [] },
-        { id: "lang-fr-1", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", parent: null, currentEditor: null, children: [{ id: "lang-fr-2" }] },
-        { id: "lang-fr-2", name: "À propos", slug: "/fr/about", pageType: "page", primaryPage: "page-2", parent: "lang-fr-1", currentEditor: null, children: [] },
+        { id: "lang-es-1", name: "Inicio", slug: "/es", pageType: "page", primaryPage: "page-1", lang: "es", parent: null, currentEditor: null, children: [] },
+        { id: "lang-es-2", name: "Acerca", slug: "/es/about", pageType: "page", primaryPage: "page-2", lang: "es", parent: null, currentEditor: null, children: [] },
+        { id: "lang-fr-1", name: "Accueil", slug: "/fr", pageType: "page", primaryPage: "page-1", lang: "fr", parent: null, currentEditor: null, children: [] },
+        { id: "lang-fr-2", name: "À propos", slug: "/fr/about", pageType: "page", primaryPage: "page-2", lang: "fr", parent: null, currentEditor: null, children: [] },
       ];
 
       deletePageAction["supabase"] = createSupabaseAdminMock({
@@ -459,8 +459,8 @@ describe("DeletePageAction", () => {
         // Global page (partial)
         { id: "global-1", name: "Header", slug: "", pageType: "global", primaryPage: null, parent: null, currentEditor: null, children: [] },
         // Language variants of the global
-        { id: "global-es-1", name: "Cabecera", slug: "", pageType: "global", primaryPage: "global-1", parent: null, currentEditor: null, children: [] },
-        { id: "global-fr-1", name: "En-tête", slug: "", pageType: "global", primaryPage: "global-1", parent: null, currentEditor: null, children: [] },
+        { id: "global-es-1", name: "Cabecera", slug: "", pageType: "global", primaryPage: "global-1", lang: "es", parent: null, currentEditor: null, children: [] },
+        { id: "global-fr-1", name: "En-tête", slug: "", pageType: "global", primaryPage: "global-1", lang: "fr", parent: null, currentEditor: null, children: [] },
       ];
 
       deletePageAction["supabase"] = createSupabaseAdminMock({

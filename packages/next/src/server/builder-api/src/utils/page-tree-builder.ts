@@ -11,6 +11,7 @@ export interface PageTreeNode {
   parent: string | null;
   name: string;
   slug: string;
+  dynamic?: boolean;
   children: PageTreeNode[];
 }
 
@@ -51,7 +52,7 @@ export class PageTreeBuilder {
   async getPagesTree(): Promise<PageTreeResult> {
     const { data: pages, error } = await this.supabase
       .from(CHAI_PAGES_TABLE_NAME)
-      .select("id, name, slug, pageType, primaryPage, parent, lang")
+      .select("id, name, slug, pageType, primaryPage, parent, lang, dynamic")
       .eq("app", this.appId);
 
     if (error) {
@@ -100,6 +101,7 @@ export class PageTreeBuilder {
         primaryPage: page.primaryPage,
         parent: page.parent,
         name: page.name,
+        dynamic: page.dynamic,
         slug: page.slug,
         children: [],
       });
@@ -167,6 +169,7 @@ export class PageTreeBuilder {
         lang: langPage.lang,
         name: langPage.name,
         slug: langPage.slug,
+        dynamic: langPage.dynamic,
         children: [],
       };
 
@@ -246,6 +249,35 @@ export class PageTreeBuilder {
   }
 
   /**
+   * Calculate new slug based on parent path
+   * @param newParentId - New parent page ID (null for root level)
+   * @param currentSlug - Current slug of the page
+   * @param primaryTree - The primary pages tree
+   * @returns New slug based on parent path
+   */
+  calculateSlugFromParent(newParentId: string | null, currentSlug: string, primaryTree: PageTreeNode[]): string {
+    if (!newParentId) {
+      // Moving to root level - extract just the last segment
+      const segments = currentSlug.split('/').filter(Boolean);
+      return '/' + (segments[segments.length - 1] || '');
+    }
+
+    // Find the new parent in the tree
+    const parentNode = this.findPageInPrimaryTree(newParentId, primaryTree);
+    if (!parentNode) {
+      throw new Error('Parent page not found in tree');
+    }
+
+    // Get the last segment of current slug (the page's own slug part)
+    const segments = currentSlug.split('/').filter(Boolean);
+    const ownSlugSegment = segments[segments.length - 1] || '';
+
+    // Combine parent slug with own segment
+    const parentSlug = parentNode.slug.endsWith('/') ? parentNode.slug.slice(0, -1) : parentNode.slug;
+    return `${parentSlug}/${ownSlugSegment}`;
+  }
+
+  /**
    * Collect all nested child IDs from a tree node
    * @param node - The node to collect children from
    * @returns Array of child IDs
@@ -270,6 +302,83 @@ export class PageTreeBuilder {
    * @returns Array of language page nodes
    */
   findLanguagePagesForPrimary(primaryPageId: string, languageTree: any[]): any[] {
-    return languageTree.filter((langNode) => langNode.primaryPage === primaryPageId);
+    const results: any[] = [];
+
+    const searchTree = (nodes: any[]) => {
+      for (const node of nodes) {
+        if (node.primaryPage === primaryPageId) {
+          results.push(node);
+        }
+        // Recursively search children
+        if (node.children && node.children.length > 0) {
+          searchTree(node.children);
+        }
+      }
+    };
+
+    searchTree(languageTree);
+    return results;
+  }
+
+  /**
+   * Collect all nested children with their IDs and slugs for slug updates
+   * @param node - The node to collect children from
+   * @param oldParentSlug - The old parent slug to replace
+   * @param newParentSlug - The new parent slug
+   * @returns Array of objects with id, oldSlug, and newSlug
+   */
+  collectNestedChildSlugs(
+    node: PageTreeNode,
+    oldParentSlug: string,
+    newParentSlug: string,
+  ): Array<{ id: string; oldSlug: string; newSlug: string }> {
+    const slugUpdates: Array<{ id: string; oldSlug: string; newSlug: string }> = [];
+
+    const processChildren = (children: PageTreeNode[], parentOldSlug: string, parentNewSlug: string) => {
+      for (const child of children) {
+        const newChildSlug = this.generateNewChildSlug(child.slug, parentOldSlug, parentNewSlug);
+        
+        slugUpdates.push({
+          id: child.id,
+          oldSlug: child.slug,
+          newSlug: newChildSlug,
+        });
+
+        // Recursively process nested children
+        if (child.children && child.children.length > 0) {
+          processChildren(child.children, child.slug, newChildSlug);
+        }
+      }
+    };
+
+    processChildren(node.children, oldParentSlug, newParentSlug);
+    return slugUpdates;
+  }
+
+  /**
+   * Generate new slug for child page based on parent slug change
+   * @param currentChildSlug - Current child slug
+   * @param oldParentSlug - Old parent slug
+   * @param newParentSlug - New parent slug
+   * @returns New child slug
+   */
+  private generateNewChildSlug(currentChildSlug: string, oldParentSlug: string, newParentSlug: string): string {
+    // Dynamic page - child slug is same as parent
+    if (currentChildSlug === oldParentSlug) {
+      return newParentSlug;
+    }
+
+    // If child slug starts with old parent slug + "/", replace it
+    if (currentChildSlug.startsWith(oldParentSlug + "/")) {
+      return currentChildSlug.replace(oldParentSlug + "/", newParentSlug + "/");
+    }
+
+    // If child slug starts with old parent slug (without trailing slash)
+    if (currentChildSlug.startsWith(oldParentSlug) && currentChildSlug !== oldParentSlug) {
+      return currentChildSlug.replace(oldParentSlug, newParentSlug);
+    }
+
+    // For other cases, construct new slug by replacing the parent part
+    return `${newParentSlug}/${currentChildSlug.split("/").pop()}`;
   }
 }

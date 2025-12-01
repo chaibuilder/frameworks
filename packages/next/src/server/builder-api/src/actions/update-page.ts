@@ -2,6 +2,8 @@ import { ChaiBlock } from "@chaibuilder/sdk";
 import { keys, pick } from "lodash";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../../../supabase";
+import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 import { SlugChangeHandler } from "./slug-change-handler";
@@ -40,6 +42,11 @@ type UpdatePageActionResponse = {
  * Action to update a page
  */
 export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePageActionResponse> {
+  private supabase: any;
+  private appId: string = "";
+  private pageTreeBuilder?: PageTreeBuilder;
+  private slugChangeHandler?: SlugChangeHandler;
+
   /**
    * Define the validation schema for update page action
    */
@@ -66,14 +73,35 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
    */
   async execute(data: UpdatePageActionData): Promise<UpdatePageActionResponse> {
     this.validateContext();
+    this.appId = this.context!.appId;
 
     try {
+      this.supabase = await getSupabaseAdmin();
       const filteredData = this.extractAllowedPageFields(data);
 
-      // Handle slug changes if detected
-      await this.handleSlugChangeIfNeeded(data.id, filteredData);
+      // Initialize SlugChangeHandler
+      this.slugChangeHandler = new SlugChangeHandler(this.appId, this.supabase);
 
-      await this.updatePageInDatabase(data.id, filteredData);
+      // Check if slug or parent is being changed
+      const isSlugChanged = await this.slugChangeHandler.isSlugChanged(data.id, filteredData.slug);
+      const isParentChanged = await this.slugChangeHandler.isParentChanged(data.id, filteredData.parent);
+
+      if (isParentChanged && filteredData.parent !== undefined) {
+        // Parent change takes priority (it also updates slugs)
+        // This handles both parent-only changes and parent+slug changes
+        this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, false);
+        this.slugChangeHandler.setPageTreeBuilder(this.pageTreeBuilder);
+        await this.handleParentChangeWithHandler(data.id, filteredData);
+      } else if (isSlugChanged && filteredData.slug) {
+        // Slug change only (no parent change)
+        this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, false);
+        this.slugChangeHandler.setPageTreeBuilder(this.pageTreeBuilder);
+        await this.handleSlugChangeWithHandler(data.id, filteredData);
+      } else {
+        // Simple update without slug or parent change
+        await this.updatePageInDatabase(data.id, filteredData);
+      }
+
       return await this.buildResponse(data.id, filteredData);
     } catch (error) {
       return this.handleExecutionError(error);
@@ -109,26 +137,33 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
   }
 
   /**
-   * Handle slug changes if detected in the update data
+   * Handle slug change using SlugChangeHandler
    */
-  private async handleSlugChangeIfNeeded(pageId: string, filteredData: Partial<UpdatePageActionData>): Promise<void> {
-    if (!filteredData.slug) {
-      return;
-    }
+  private async handleSlugChangeWithHandler(
+    pageId: string,
+    filteredData: Partial<UpdatePageActionData>,
+  ): Promise<void> {
+    // Get slug updates from handler
+    const slugUpdates = await this.slugChangeHandler!.handleSlugChangeWithTree(pageId, filteredData);
 
-    const slugHandler = new SlugChangeHandler(this.context!.appId);
+    // Batch update all slugs
+    const changes = this.determineChangeTypes(filteredData);
+    await this.slugChangeHandler!.batchUpdateSlugs(slugUpdates, filteredData, pageId, changes);
+  }
 
-    // Check if slug has actually changed
-    const hasChanged = await slugHandler.hasSlugChanged(pageId, filteredData.slug);
-    if (!hasChanged) {
-      return;
-    }
+  /**
+   * Handle parent change using SlugChangeHandler
+   */
+  private async handleParentChangeWithHandler(
+    pageId: string,
+    filteredData: Partial<UpdatePageActionData>,
+  ): Promise<void> {
+    // Get slug updates from handler
+    const slugUpdates = await this.slugChangeHandler!.handleParentChangeWithTree(pageId, filteredData);
 
-    // Validate that the new slug is available
-    await slugHandler.validateSlugAvailability(filteredData.slug, pageId);
-
-    // Handle the slug change process
-    await slugHandler.handleSlugChange(pageId, filteredData.slug);
+    // Batch update all slugs
+    const changes = this.determineChangeTypes(filteredData);
+    await this.slugChangeHandler!.batchUpdateSlugs(slugUpdates, filteredData, pageId, changes);
   }
 
   /**
@@ -149,19 +184,18 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
   }
 
   /**
-   * Update the page in the database
+   * Update the page in the database (simple update without slug change)
    */
   private async updatePageInDatabase(pageId: string, filteredData: Partial<UpdatePageActionData>): Promise<void> {
     const changes = this.determineChangeTypes(filteredData);
-    const supabase = await getSupabaseAdmin();
-    const { error } = await supabase
-      .from("app_pages")
+    const { error } = await this.supabase
+      .from(CHAI_PAGES_TABLE_NAME)
       .update({
         ...filteredData,
         changes,
         lastSaved: "now()",
       })
-      .eq("app", this.context!.appId)
+      .eq("app", this.appId)
       .eq("id", pageId);
 
     if (error) {
@@ -181,9 +215,8 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
    * Fetch the updated page data from database
    */
   private async fetchUpdatedPageData(pageId: string): Promise<any> {
-    const supabase = await getSupabaseAdmin();
-    const { data: updatedPage, error: updatedPageError } = await supabase
-      .from("app_pages")
+    const { data: updatedPage, error: updatedPageError } = await this.supabase
+      .from(CHAI_PAGES_TABLE_NAME)
       .select("id, slug, lang, pageType, name, online, parent, seo, tracking")
       .eq("id", pageId)
       .single();

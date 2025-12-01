@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ActionError } from "../../src/server/builder-api/src/actions/action-error";
 import { UpdatePageAction } from "../../src/server/builder-api/src/actions/update-page";
-import { PageTreeBuilder } from "../../src/server/builder-api/src/utils/page-tree-builder";
 import { createSupabaseAdminMock } from "../mocks/supabase-admin.mock";
 
 // Mock the getSupabaseAdmin function
@@ -534,6 +533,179 @@ describe("UpdatePageAction", () => {
         id: "non-existent", 
         slug: "/new-slug"
       })).rejects.toThrow();
+    });
+  });
+
+  describe("Dynamic Pages", () => {
+    it("should update slug for dynamic page", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Product Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-1", 
+        slug: "/items/[slug]"
+      });
+      
+      expect(tracker.slugs).toContain("/items/[slug]");
+    });
+
+    it("should update dynamic page with child having same slug as parent", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Product Details", slug: "/products", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-1", 
+        slug: "/items"
+      });
+      
+      // Parent should change to /items
+      expect(tracker.slugs).toContain("/items");
+      // Dynamic child should also change to /items (same as parent)
+      expect(tracker.slugs).toContain("/items");
+    });
+
+    it("should allow same slug for dynamic and non-dynamic pages", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Product Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      // Should allow changing dynamic page to have same slug as its parent
+      await updatePageAction.execute({ 
+        id: "page-2", 
+        slug: "/products"
+      });
+      
+      expect(tracker.slugs).toContain("/products");
+    });
+
+    it("should update dynamic page when parent changes", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Services", slug: "/services", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-3", name: "Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-3", 
+        parent: "page-2"  // Moving from Products to Services
+      });
+      
+      expect(tracker.slugs).toContain("/services/[id]");
+    });
+
+    it("should update dynamic page and its nested children when parent changes", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Services", slug: "/services", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-3", name: "Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+        { id: "page-4", name: "Reviews", slug: "/products/[id]/reviews", pageType: "page", primaryPage: null, parent: "page-3", lang: "", dynamic: false },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-3", 
+        parent: "page-2"  // Moving from Products to Services
+      });
+      
+      expect(tracker.slugs).toContain("/services/[id]");
+      expect(tracker.slugs).toContain("/services/[id]/reviews");
+    });
+
+    it("should handle language variants of dynamic pages", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Product Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+        { id: "lang-1", name: "Productos", slug: "/es/products", pageType: "page", primaryPage: "page-1", parent: null, lang: "es", dynamic: false },
+        { id: "lang-2", name: "Detalles del Producto", slug: "/es/products/[id]", pageType: "page", primaryPage: "page-2", parent: "lang-1", lang: "es", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-2", 
+        slug: "/products/[slug]"
+      });
+      
+      expect(tracker.slugs).toContain("/products/[slug]");
+      expect(tracker.slugs).toContain("/es/products/[slug]");
+    });
+
+    it("should update language variant dynamic page when primary parent changes", async () => {
+      const mockPages = [
+        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-2", name: "Services", slug: "/services", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
+        { id: "page-3", name: "Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
+        { id: "lang-1", name: "Productos", slug: "/es/products", pageType: "page", primaryPage: "page-1", parent: null, lang: "es", dynamic: false },
+        { id: "lang-2", name: "Servicios", slug: "/es/services", pageType: "page", primaryPage: "page-2", parent: null, lang: "es", dynamic: false },
+        { id: "lang-3", name: "Detalles", slug: "/es/products/[id]", pageType: "page", primaryPage: "page-3", parent: "lang-1", lang: "es", dynamic: true },
+      ];
+
+      const tracker = { slugs: [] as string[] };
+      
+      mockSupabase = {
+        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
+      };
+
+      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
+
+      await updatePageAction.execute({ 
+        id: "page-3", 
+        parent: "page-2"  // Moving dynamic page from Products to Services
+      });
+      
+      // Primary dynamic page should update
+      expect(tracker.slugs).toContain("/services/[id]");
+      // Language variant dynamic page should also update with language prefix preserved
+      expect(tracker.slugs).toContain("/es/services/[id]");
     });
   });
 });

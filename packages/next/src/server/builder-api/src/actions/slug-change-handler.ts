@@ -24,7 +24,7 @@ export class SlugChangeHandler {
     // Helper function to recursively check all nodes in a tree
     const hasConflict = (nodes: any[]): boolean => {
       for (const node of nodes) {
-        // Check current node - use == for dynamic comparison to handle undefined
+        // Check current node - use nullish coalescing (??) to handle undefined, and strict equality (===) for comparison
         const nodeIsDynamic = node.dynamic ?? false;
         if (node.slug === newSlug && node.id !== pageId && nodeIsDynamic === isDynamic) {
           return true;
@@ -103,12 +103,10 @@ export class SlugChangeHandler {
 
     // Find the page in the tree (no DB query needed)
     let currentPageNode = this.pageTreeBuilder.findPageInPrimaryTree(pageId, pagesTree.primaryTree);
-    let isLanguagePage = false;
 
     if (!currentPageNode) {
       // Try to find in language tree
       currentPageNode = this.pageTreeBuilder.findPageInLanguageTree(pageId, pagesTree.languageTree);
-      isLanguagePage = true;
 
       if (!currentPageNode) {
         throw new ActionError("Page not found in tree", "PAGE_NOT_FOUND_IN_TREE");
@@ -122,16 +120,9 @@ export class SlugChangeHandler {
     this.validateSlugAvailabilityInTree(newSlug, pageId, isDynamic, pagesTree);
 
     let slugUpdates: Array<{ id: string; newSlug: string }> = [];
-
-    if (isLanguagePage) {
-      // Collect nested children slug updates
-      const childSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(currentPageNode, oldSlug, newSlug);
-      slugUpdates = [{ id: pageId, newSlug }, ...childSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug }))];
-    } else {
-      // Collect nested children slug updates for primary page
-      const childSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(currentPageNode, oldSlug, newSlug);
-      slugUpdates = [{ id: pageId, newSlug }, ...childSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug }))];
-    }
+    // Collect nested children slug updates
+    const childSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(currentPageNode, oldSlug, newSlug);
+    slugUpdates = [{ id: pageId, newSlug }, ...childSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug }))];
 
     return slugUpdates;
   }
@@ -140,7 +131,6 @@ export class SlugChangeHandler {
    * Handle parent change by recalculating slugs for the page and its children (ONLY 1 DB query - the tree fetch)
    */
   async handleParentChangeWithTree(pageId: string, filteredData: any): Promise<Array<{ id: string; newSlug: string }>> {
-    console.log("handleParentChangeWithTree", filteredData);
     const newParent = filteredData.parent!;
     const supabase = this.supabase || (await getSupabaseAdmin());
 
@@ -171,7 +161,7 @@ export class SlugChangeHandler {
       : this.pageTreeBuilder.calculateSlugFromParent(newParent, oldSlug, pagesTree.primaryTree);
 
     // Validate new slug availability using tree data (no DB query)
-    this.validateSlugAvailabilityInTree(newSlug, pageId, false, pagesTree);
+    this.validateSlugAvailabilityInTree(newSlug, pageId, primaryNode.dynamic || false, pagesTree);
 
     // Collect nested children slug updates for primary page
     const childSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(primaryNode, oldSlug, newSlug);
@@ -183,8 +173,17 @@ export class SlugChangeHandler {
     // Also handle language variants when parent changes
     const languageVariants = this.pageTreeBuilder.findLanguagePagesForPrimary(pageId, pagesTree.languageTree);
     for (const langVariant of languageVariants) {
-      const langChildSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(langVariant, oldSlug, newSlug);
-      slugUpdates.push({ id: langVariant.id, newSlug });
+      // Calculate new slug for language variant, preserving language prefix
+      const langVariantNewSlug = this.pageTreeBuilder.calculateLanguageVariantSlug(langVariant, newSlug);
+
+      // Collect nested children slug updates for language variant
+      const langChildSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(
+        langVariant,
+        langVariant.slug,
+        langVariantNewSlug,
+      );
+
+      slugUpdates.push({ id: langVariant.id, newSlug: langVariantNewSlug });
       slugUpdates.push(...langChildSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug })));
     }
 
@@ -202,8 +201,8 @@ export class SlugChangeHandler {
   ): Promise<void> {
     const supabase = this.supabase || (await getSupabaseAdmin());
 
-    // Update app_pages table
-    for (const update of slugUpdates) {
+    // Update app_pages table in parallel
+    const pageUpdatePromises = slugUpdates.map(async (update) => {
       const updateData: any = {
         slug: update.newSlug,
         lastSaved: "now()",
@@ -237,17 +236,28 @@ export class SlugChangeHandler {
       if (error) {
         throw new ActionError(`Failed to update page ${update.id}`, "UPDATE_PAGE_FAILED");
       }
-    }
 
-    // Update app_pages_online table
-    for (const update of slugUpdates) {
-      await supabase
-        .from(CHAI_ONLINE_PAGES_TABLE_NAME)
-        .update({ slug: update.newSlug })
-        .eq("id", update.id)
-        .eq("app", this.appId);
-      // Ignore errors for online table as pages might not be published
-    }
+      return update.id;
+    });
+
+    // Wait for all page updates to complete, will throw on first error
+    await Promise.all(pageUpdatePromises);
+
+    // Update app_pages_online table in parallel
+    // Ignore errors for online table as pages might not be published
+    const onlineUpdatePromises = slugUpdates.map(async (update) => {
+      try {
+        await supabase
+          .from(CHAI_ONLINE_PAGES_TABLE_NAME)
+          .update({ slug: update.newSlug })
+          .eq("id", update.id)
+          .eq("app", this.appId);
+      } catch (error) {
+        // Silently ignore errors for online table
+      }
+    });
+
+    await Promise.all(onlineUpdatePromises);
   }
 
   /**

@@ -50,6 +50,11 @@ export function createSupabaseAdminMock(responses: Record<string, any> = {}) {
         return builder;
       },
 
+      neq(field: string, value: any) {
+        state.filters[`${field}_neq`] = value;
+        return builder;
+      },
+
       in(field: string, values: any[]) {
         state.filters[`${field}_in`] = values;
         return builder;
@@ -62,6 +67,11 @@ export function createSupabaseAdminMock(responses: Record<string, any> = {}) {
 
       delete() {
         state.isDelete = true;
+        return builder;
+      },
+
+      update(data: any) {
+        state.filters._updateData = data;
         return builder;
       },
 

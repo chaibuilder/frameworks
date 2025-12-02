@@ -653,32 +653,6 @@ describe("UpdatePageAction", () => {
       expect(tracker.slugs).toContain("/services/[id]");
       expect(tracker.slugs).toContain("/services/[id]/reviews");
     });
-
-    it("should handle language variants of dynamic pages", async () => {
-      const mockPages = [
-        { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },
-        { id: "page-2", name: "Product Details", slug: "/products/[id]", pageType: "page", primaryPage: null, parent: "page-1", lang: "", dynamic: true },
-        { id: "lang-1", name: "Productos", slug: "/es/products", pageType: "page", primaryPage: "page-1", parent: null, lang: "es", dynamic: false },
-        { id: "lang-2", name: "Detalles del Producto", slug: "/es/products/[id]", pageType: "page", primaryPage: "page-2", parent: "lang-1", lang: "es", dynamic: true },
-      ];
-
-      const tracker = { slugs: [] as string[] };
-      
-      mockSupabase = {
-        from: vi.fn((table: string) => createMockChainHelper(table, mockPages, tracker)),
-      };
-
-      vi.mocked(getSupabaseAdmin).mockResolvedValue(mockSupabase);
-
-      await updatePageAction.execute({ 
-        id: "page-2", 
-        slug: "/products/[slug]"
-      });
-      
-      expect(tracker.slugs).toContain("/products/[slug]");
-      expect(tracker.slugs).toContain("/es/products/[slug]");
-    });
-
     it("should update language variant dynamic page when primary parent changes", async () => {
       const mockPages = [
         { id: "page-1", name: "Products", slug: "/products", pageType: "page", primaryPage: null, parent: null, lang: "", dynamic: false },

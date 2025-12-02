@@ -1,4 +1,5 @@
 import { getChaiAction } from "./actions/actions-registery";
+import { ActionError } from "./actions/action-error";
 import { BaseAction } from "./actions/base-action";
 import { decodedApiKey } from "./lib";
 import { SupabaseChaiBuilderBackEnd } from "./SupabaseChaiBuilderBackEnd";
@@ -69,6 +70,17 @@ export async function handleBuilderApi(req) {
     }
   } catch (error) {
     console.error("Error handling builder API:", error);
+    
+    // Handle ActionError with specific error code and message
+    if (error instanceof ActionError) {
+      return {
+        error: error.message,
+        code: error.code,
+        status: 400,
+      };
+    }
+    
+    // Generic error fallback
     return { error: "INTERNAL_SERVER_ERROR", status: 500 };
   }
 }

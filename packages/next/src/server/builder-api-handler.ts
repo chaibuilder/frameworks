@@ -2,6 +2,7 @@ import { ChaiAIChatHandler, ChaiBuilderPages } from "@chaibuilder/pages/server";
 import { get, has, isEmpty } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { ActionError } from "./builder-api/src/actions/action-error";
 import { ChaiBuilder } from "./chai-builder";
 import { getAppUuidFromRoute } from "./getAppUuidFromRoute";
 import { handleAskAiRequest } from "./handleAskAiRequest";
@@ -90,13 +91,21 @@ export const builderApiHandler = (apiKey?: string) => {
       }
       return NextResponse.json(response);
     } catch (error) {
-      console.log("AI Error", error);
-      // * On error, throw if firebase auth error, else 500
-      if (error instanceof Error) {
-        return NextResponse.json({ error: "Invalid or expired token" }, { status: 401 });
-      } else {
-        return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+      console.log("Error in builderApiHandler:", error);
+      
+      // Handle ActionError with specific error code and message
+      if (error instanceof ActionError) {
+        return NextResponse.json(
+          {
+            error: error.message,
+            code: error.code,
+          },
+          { status: 400 }
+        );
       }
+      
+      // Generic error fallback
+      return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
     }
   };
 };

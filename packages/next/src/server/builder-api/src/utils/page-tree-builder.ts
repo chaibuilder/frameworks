@@ -263,9 +263,12 @@ export class PageTreeBuilder {
     }
 
     // Find the new parent in the tree
-    const parentNode = this.findPageInPrimaryTree(newParentId, primaryTree);
+    let parentNode = this.findPageInPrimaryTree(newParentId, primaryTree);
     if (!parentNode) {
-      throw new Error("Parent page not found in tree");
+      parentNode = this.findPageInLanguageTree(newParentId, primaryTree);
+      if (!parentNode) {
+        throw new Error("Parent page not found in tree");
+      }
     }
 
     // Get the last segment of current slug (the page's own slug part)
@@ -380,29 +383,5 @@ export class PageTreeBuilder {
 
     // For other cases, construct new slug by replacing the parent part
     return `${newParentSlug}/${currentChildSlug.split("/").pop()}`;
-  }
-
-  /**
-   * Calculate new slug for a language variant when its primary page slug changes
-   * Preserves the language prefix (e.g., /es/products -> /es/services when primary changes from /products to /services)
-   * @param langVariantNode - The language variant node
-   * @param primaryNewSlug - New slug of the primary page
-   * @returns New slug for the language variant
-   */
-  calculateLanguageVariantSlug(langVariantNode: any, primaryNewSlug: string): string {
-    const currentLangSlug = langVariantNode.slug;
-
-    // Extract language prefix from current language slug
-    // Language slugs follow pattern: /{lang}/rest/of/path
-    const langSlugParts = currentLangSlug.split("/").filter(Boolean);
-
-    if (langSlugParts.length === 0) {
-      return primaryNewSlug;
-    }
-
-    // First segment is the language code (e.g., 'es', 'fr')
-    const langCode = langSlugParts[0];
-    // Reconstruct: /{langCode}{newPrimarySlug}
-    return `/${langCode}${primaryNewSlug.startsWith("/") ? primaryNewSlug : "/" + primaryNewSlug}`;
   }
 }

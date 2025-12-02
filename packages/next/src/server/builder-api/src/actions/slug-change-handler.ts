@@ -18,9 +18,27 @@ export class SlugChangeHandler {
   }
 
   /**
+   * Update a node's slug in the tree (mutates the tree in place)
+   */
+  private updateNodeSlugInTree(pageId: string, newSlug: string, tree: any[]): boolean {
+    for (const node of tree) {
+      if (node.id === pageId) {
+        node.slug = newSlug;
+        return true;
+      }
+      if (node.children && node.children.length > 0) {
+        if (this.updateNodeSlugInTree(pageId, newSlug, node.children)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
    * Validate that the new slug doesn't conflict with existing pages using tree data
    */
-  private validateSlugAvailabilityInTree(newSlug: string, pageId: string, isDynamic: boolean, pagesTree: any): void {
+  private validateSlugAvailabilityInTree(newSlug: string, pageId: string, isDynamic: boolean, pagesTree: any, isLanguagePage: boolean = false): void {
     // Helper function to recursively check all nodes in a tree
     const hasConflict = (nodes: any[]): boolean => {
       for (const node of nodes) {
@@ -41,12 +59,18 @@ export class SlugChangeHandler {
 
     // Check in primary tree
     if (hasConflict(pagesTree.primaryTree)) {
-      throw new ActionError("This slug is already in use. Please choose a different one.", "SLUG_ALREADY_USED");
+      const errorMessage = isLanguagePage
+        ? `Slug '${newSlug}' conflicts with a primary page slug. Language page slugs cannot overlap with primary page slugs.`
+        : `Slug '${newSlug}' is already in use. Please choose another slug`;
+      throw new ActionError(errorMessage, "SLUG_ALREADY_EXISTS");
     }
 
     // Check in language tree
     if (hasConflict(pagesTree.languageTree)) {
-      throw new ActionError("This slug is already in use. Please choose a different one.", "SLUG_ALREADY_USED");
+      const errorMessage = isLanguagePage
+        ? `Slug '${newSlug}' is already in use by another language page. Please choose another slug.`
+        : `Slug '${newSlug}' conflicts with a language page slug. Please choose another slug.`;
+      throw new ActionError(errorMessage, "SLUG_ALREADY_EXISTS");
     }
   }
 
@@ -163,6 +187,9 @@ export class SlugChangeHandler {
     // Validate new slug availability using tree data (no DB query)
     this.validateSlugAvailabilityInTree(newSlug, pageId, primaryNode.dynamic || false, pagesTree);
 
+    // Update the primary node's slug in the local tree so language variant validations see the updated slug
+    this.updateNodeSlugInTree(pageId, newSlug, pagesTree.primaryTree);
+
     // Collect nested children slug updates for primary page
     const childSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(primaryNode, oldSlug, newSlug);
     const slugUpdates: Array<{ id: string; newSlug: string }> = [
@@ -170,11 +197,31 @@ export class SlugChangeHandler {
       ...childSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug })),
     ];
 
+    // Also update child nodes' slugs in the local tree
+    for (const childUpdate of childSlugUpdates) {
+      this.updateNodeSlugInTree(childUpdate.id, childUpdate.newSlug, pagesTree.primaryTree);
+    }
+
     // Also handle language variants when parent changes
     const languageVariants = this.pageTreeBuilder.findLanguagePagesForPrimary(pageId, pagesTree.languageTree);
+    let parentLanguageNode;
+    if (newParent) {
+      parentLanguageNode = this.pageTreeBuilder.findLanguagePagesForPrimary(newParent, pagesTree.languageTree);
+    }
     for (const langVariant of languageVariants) {
       // Calculate new slug for language variant, preserving language prefix
-      const langVariantNewSlug = this.pageTreeBuilder.calculateLanguageVariantSlug(langVariant, newSlug);
+      const languageVariantParentId =
+        parentLanguageNode?.filter((node) => node.lang === langVariant.lang)[0].id || null;
+
+      const langVariantNewSlug = this.pageTreeBuilder.calculateSlugFromParent(
+        languageVariantParentId,
+        langVariant.slug,
+        pagesTree.languageTree,
+      );
+      this.validateSlugAvailabilityInTree(langVariantNewSlug, langVariant.id, langVariant.dynamic || false, pagesTree, true);
+
+      // Update the language variant's slug in the local tree so subsequent language variants see it
+      this.updateNodeSlugInTree(langVariant.id, langVariantNewSlug, pagesTree.languageTree);
 
       // Collect nested children slug updates for language variant
       const langChildSlugUpdates = this.pageTreeBuilder.collectNestedChildSlugs(
@@ -182,6 +229,11 @@ export class SlugChangeHandler {
         langVariant.slug,
         langVariantNewSlug,
       );
+
+      // Also update language variant child nodes' slugs in the local tree
+      for (const langChildUpdate of langChildSlugUpdates) {
+        this.updateNodeSlugInTree(langChildUpdate.id, langChildUpdate.newSlug, pagesTree.languageTree);
+      }
 
       slugUpdates.push({ id: langVariant.id, newSlug: langVariantNewSlug });
       slugUpdates.push(...langChildSlugUpdates.map((u) => ({ id: u.id, newSlug: u.newSlug })));

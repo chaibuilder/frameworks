@@ -41,12 +41,12 @@ export class SlugChangeHandler {
 
     // Check in primary tree
     if (hasConflict(pagesTree.primaryTree)) {
-      throw new ActionError(`Slug '${newSlug}' is already in use`, "SLUG_ALREADY_EXISTS");
+      throw new ActionError("This slug is already in use. Please choose a different one.", "SLUG_ALREADY_USED");
     }
 
     // Check in language tree
     if (hasConflict(pagesTree.languageTree)) {
-      throw new ActionError(`Slug '${newSlug}' is already in use`, "SLUG_ALREADY_EXISTS");
+      throw new ActionError("This slug is already in use. Please choose a different one.", "SLUG_ALREADY_USED");
     }
   }
 

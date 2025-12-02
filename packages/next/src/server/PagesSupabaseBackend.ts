@@ -1,4 +1,5 @@
 import { ChaiBuilderPagesBackendInterface } from "@chaibuilder/pages/server";
+import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { BaseAction } from "./builder-api/src/actions/base-action";
 import { ChaiAssets } from "./builder-api/src/assets/class-chai-assets";
@@ -120,6 +121,16 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
       return { error: "Invalid action", status: 400 };
     } catch (error) {
       console.error("Error handling users action:", error);
+      
+      // Handle ActionError with specific error code and message
+      if (error instanceof ActionError) {
+        return {
+          error: error.message,
+          code: error.code,
+          status: 400,
+        };
+      }
+      
       return { error: "Something went wrong.", status: 500 };
     }
   }
@@ -159,6 +170,17 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
         return response.data;
       }
     } catch (error) {
+      console.error("Error handling action:", error);
+      
+      // Handle ActionError with specific error code and message
+      if (error instanceof ActionError) {
+        return {
+          error: error.message,
+          code: error.code,
+          status: 400,
+        };
+      }
+      
       return { error: "Something went wrong.", status: 500 };
     }
   }

@@ -58,7 +58,7 @@ export class ChaiBuilderWebsite {
   async getWebsiteSettings(draft: boolean) {
     const { data, error } = await this.supabase
       .from(draft ? CHAI_APPS_TABLE_NAME : CHAI_APPS_ONLINE_TABLE_NAME)
-      .select("theme,fallbackLang,languages,settings")
+      .select("theme,fallbackLang,languages,settings,designTokens")
       .eq("id", this.appUuid)
       .single();
 
@@ -77,7 +77,7 @@ export class ChaiBuilderWebsite {
   }
 
   async updateWebsiteSettings(settings: ChaiBuilderWebsiteConfig) {
-    const columns = pick(settings, ["theme"]);
+    const columns = pick(settings, ["theme", "designTokens"]);
     const { error } = await this.supabase
       .from(CHAI_APPS_TABLE_NAME)
       .update({ ...columns, changes: ["Updated"] })

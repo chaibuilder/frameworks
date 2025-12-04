@@ -81,7 +81,6 @@ class ChaiBuilder {
   static async loadSiteSettings(draftMode: boolean) {
     ChaiBuilder.verifyInit();
     const siteSettings = await ChaiBuilder.getSiteSettings();
-    console.log("Site Settings", siteSettings);
 
     ChaiBuilder.pages?.setFallbackLang(siteSettings?.fallbackLang);
     ChaiBuilder.pages?.setDraftMode(draftMode);

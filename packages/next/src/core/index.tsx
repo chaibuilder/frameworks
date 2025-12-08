@@ -44,7 +44,7 @@ type ChaiBuilderProps = {
   | "locale"
   | "htmlDir"
   | "autoSave"
-  | "autoSaveInterval"
+  | "autoSaveActionsCount"
   | "fallbackLang"
   | "languages"
   | "themePresets"

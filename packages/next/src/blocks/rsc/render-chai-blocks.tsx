@@ -55,13 +55,16 @@ export const RenderChaiBlocks = async ({
     pageType: page.pageType,
     lang: page.lang,
   });
+  const settings = await ChaiBuilder.getSiteSettings();
+  const tokens = settings?.designTokens ?? designTokens;
+
   //Register Link and Image blocks with Chai Builder
   return (
     <>
       <JSONLD jsonLD={page?.seo?.jsonLD} pageData={pageData} />
       <RenderChaiBlocksSdk
         externalData={pageData}
-        blocks={!isEmpty(designTokens) ? applyDesignTokens(page.blocks, designTokens) : page.blocks}
+        blocks={!isEmpty(tokens) ? applyDesignTokens(page.blocks, tokens) : page.blocks}
         fallbackLang={page.fallbackLang}
         lang={page.lang}
         pageProps={pageProps}

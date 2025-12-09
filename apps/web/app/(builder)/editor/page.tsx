@@ -100,7 +100,7 @@ export default function Editor() {
         flags={{ dragAndDrop: true, designTokens: true }}
         currentUser={user}
         autoSave
-        autoSaveInterval={20}
+        autoSaveActionsCount={5}
         getAccessToken={getAccessToken}
         hasReactQueryProvider
         apiUrl="api"

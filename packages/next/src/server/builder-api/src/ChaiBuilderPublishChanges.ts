@@ -1,6 +1,5 @@
-import { ChaiBlock } from "@chaibuilder/sdk";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { compact, flattenDeep, get, isEmpty, omit, startsWith, uniq } from "lodash";
+import { flattenDeep, isEmpty, omit, uniq } from "lodash";
 import {
   CHAI_APPS_ONLINE_TABLE_NAME,
   CHAI_APPS_TABLE_NAME,
@@ -95,9 +94,7 @@ class ChaiBuilderPublishChanges {
 
   async publishPage(id: string) {
     const page = await this.clonePage(id);
-    const partialBlocks = this.getPartialBlocks(page.blocks);
-    const links = this.getLinks(page.blocks);
-    await this.addOnlinePage(page, partialBlocks, links);
+    await this.addOnlinePage(page);
 
     const tags = [`page-${page.primaryPage ?? page.id}`];
     if (isEmpty(page.slug)) {
@@ -131,7 +128,7 @@ class ChaiBuilderPublishChanges {
     return true;
   }
 
-  async addOnlinePage(page: any, partialBlocks: string, links: string) {
+  async addOnlinePage(page: any) {
     //delete all pages from the online table with the same page id
     await this.createRevision(page.id);
     await this.supabase.from(CHAI_ONLINE_PAGES_TABLE_NAME).delete().eq("id", page.id);
@@ -140,8 +137,6 @@ class ChaiBuilderPublishChanges {
       .from(CHAI_ONLINE_PAGES_TABLE_NAME)
       .insert({
         ...omit(page, ["changes"]),
-        partialBlocks,
-        links,
         createdAt: "now()",
         currentEditor: this.chaiUser,
       })
@@ -153,26 +148,6 @@ class ChaiBuilderPublishChanges {
     }
 
     return data;
-  }
-
-  getPartialBlocks(blocks: ChaiBlock[]) {
-    return compact(
-      blocks
-        .filter((block) => block._type === "GlobalBlock" || block._type === "PartialBlock")
-        .map((block) => get(block, "partialBlockId", get(block, "globalBlock", false))),
-    ).join("|");
-  }
-
-  getLinks(blocks: ChaiBlock[]) {
-    return compact(
-      blocks
-        .filter((block) => block._type === "Link" && get(block, "link.type", false) === "pageType")
-        .map((block) => {
-          const href = get(block, "link.href", "");
-          if (startsWith(href, "pageType:")) return get(href.split(":"), "2", "");
-          return "";
-        }),
-    ).join("|");
   }
 
   async clonePage(id: string) {

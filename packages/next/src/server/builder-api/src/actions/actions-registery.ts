@@ -6,6 +6,7 @@ import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetRevisionPageAction } from "./get-revision-page";
+import { GetSiteWideDataAction } from "./get-site-wide-data";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
 
@@ -27,6 +28,7 @@ class ActionsRegistry {
     this.register("GET_REVISION_PAGE", new GetRevisionPageAction());
     this.register("UPDATE_PAGE", new UpdatePageAction());
     this.register("GET_COMPARE_DATA", new GetCompareDataAction());
+    this.register("GET_SITE_WIDE_USAGE", new GetSiteWideDataAction());
     // Add more actions here as they are created
   }
 

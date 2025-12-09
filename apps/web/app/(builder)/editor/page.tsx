@@ -97,7 +97,6 @@ export default function Editor() {
   return (
     <QueryClientProvider client={queryClient}>
       <ChaiBuilder
-        flags={{ dragAndDrop: true, designTokens: true }}
         currentUser={user}
         autoSave
         autoSaveActionsCount={5}

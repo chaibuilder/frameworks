@@ -64,7 +64,11 @@ export default (props: ChaiBuilderProps) => {
 
   return (
     <ChaiBuilder
-      flags={props.flags ? props.flags : { useClipboard: false }}
+      flags={
+        props.flags
+          ? { dragAndDrop: true, designTokens: true, ...props.flags }
+          : { dragAndDrop: true, useClipboard: false, designTokens: true }
+      }
       autoSave={true}
       autoSaveInterval={20}
       hasReactQueryProvider={props.hasReactQueryProvider ?? false}

@@ -32,7 +32,7 @@ type UpdatePageActionData = {
 
   links?: string;
   partialBlocks?: string;
-  designTokens?: string;
+  designTokens?: Record<string, Record<string, string>>;
 };
 
 type UpdatePageActionResponse = {
@@ -121,7 +121,7 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
   async updateBlocks(pageId: string, blocks: ChaiBlock[]) {
     const links: string = this.getLinks(blocks);
     const partials: string = this.getPartialBlocks(blocks);
-    const designTokens: string = this.getDesignTokens(blocks);
+    const designTokens = this.getDesignTokens(blocks);
     console.log({ links, partials, designTokens });
 
     await this.updatePageInDatabase(pageId, { blocks, links, partialBlocks: partials, designTokens });
@@ -146,15 +146,23 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
     return compact(uuids).join("|");
   }
 
-  getDesignTokens(blocks: ChaiBlock[]) {
-    const blocksStr = JSON.stringify(blocks);
-    const regex = /dt-token_[^ "]+/g;
-    const tokens: string[] = [];
-    let match;
-    while ((match = regex.exec(blocksStr)) !== null) {
-      if (match[0]) tokens.push(match[0]);
+  getDesignTokens(blocks: ChaiBlock[]): Record<string, Record<string, string>> {
+    const regex = /dt#[^ "]+/g;
+    const result: Record<string, Record<string, string>> = {};
+    for (const block of blocks) {
+      const blockStr = JSON.stringify(block);
+      let match;
+      while ((match = regex.exec(blockStr)) !== null) {
+        if (match[0]) {
+          const tokenId = match[0];
+          if (!result[tokenId]) {
+            result[tokenId] = {};
+          }
+          result[tokenId][block._id] = block._name || block._type;
+        }
+      }
     }
-    return compact(tokens).join("|");
+    return result;
   }
 
   /**

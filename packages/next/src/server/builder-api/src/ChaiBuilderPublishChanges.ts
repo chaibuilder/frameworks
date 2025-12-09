@@ -99,8 +99,6 @@ class ChaiBuilderPublishChanges {
     const links = this.getLinks(page.blocks);
     await this.addOnlinePage(page, partialBlocks, links);
 
-    console.log("Partial Blocks: ", partialBlocks);
-    console.log("Links: ", links);
     const tags = [`page-${page.primaryPage ?? page.id}`];
     if (isEmpty(page.slug)) {
       tags.push(...(await this.getPartialBlockUsage(page.primaryPage ?? page.id)));

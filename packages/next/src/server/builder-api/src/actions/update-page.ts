@@ -1,5 +1,5 @@
 import { ChaiBlock } from "@chaibuilder/sdk";
-import { keys, pick } from "lodash";
+import { compact, get, keys, pick } from "lodash";
 import { z } from "zod";
 import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
@@ -29,6 +29,10 @@ type UpdatePageActionData = {
   dynamic?: boolean;
   dynamicSlugCustom?: string;
   tracking?: Record<string, any>;
+
+  links?: string;
+  partialBlocks?: string;
+  designTokens?: string;
 };
 
 type UpdatePageActionResponse = {
@@ -77,6 +81,12 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
 
     try {
       this.supabase = await getSupabaseAdmin();
+
+      if (this.isOnlyBlocksUpdate(data)) {
+        await this.updateBlocks(data.id, data.blocks!);
+        return await this.buildResponse(data.id, data);
+      }
+
       const filteredData = this.extractAllowedPageFields(data);
 
       // Initialize SlugChangeHandler
@@ -106,6 +116,45 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
     } catch (error) {
       return this.handleExecutionError(error);
     }
+  }
+
+  async updateBlocks(pageId: string, blocks: ChaiBlock[]) {
+    const links: string = this.getLinks(blocks);
+    const partials: string = this.getPartialBlocks(blocks);
+    const designTokens: string = this.getDesignTokens(blocks);
+    console.log({ links, partials, designTokens });
+
+    await this.updatePageInDatabase(pageId, { blocks, links, partialBlocks: partials, designTokens });
+  }
+
+  getPartialBlocks(blocks: ChaiBlock[]) {
+    return compact(
+      blocks
+        .filter((block) => block._type === "GlobalBlock" || block._type === "PartialBlock")
+        .map((block) => get(block, "partialBlockId", get(block, "globalBlock", false))),
+    ).join("|");
+  }
+
+  getLinks(blocks: ChaiBlock[]) {
+    const blocksStr = JSON.stringify(blocks);
+    const regex = /pageType:[^:]+:([a-f0-9-]{36})/gi;
+    const uuids: string[] = [];
+    let match;
+    while ((match = regex.exec(blocksStr)) !== null) {
+      if (match[1]) uuids.push(match[1]);
+    }
+    return compact(uuids).join("|");
+  }
+
+  getDesignTokens(blocks: ChaiBlock[]) {
+    const blocksStr = JSON.stringify(blocks);
+    const regex = /dt-token_[^ "]+/g;
+    const tokens: string[] = [];
+    let match;
+    while ((match = regex.exec(blocksStr)) !== null) {
+      if (match[0]) tokens.push(match[0]);
+    }
+    return compact(tokens).join("|");
   }
 
   /**
@@ -208,7 +257,7 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
    */
   private isOnlyBlocksUpdate(filteredData: Partial<UpdatePageActionData>): boolean {
     const dataKeys = keys(filteredData);
-    return dataKeys.includes("blocks") && dataKeys.length === 1;
+    return dataKeys.includes("blocks");
   }
 
   /**

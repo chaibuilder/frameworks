@@ -1,6 +1,6 @@
 {
   "name": "chai-next",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -29,8 +29,8 @@
   },
   "private": false,
   "dependencies": {
-    "@chaibuilder/pages": "0.17.2",
-    "@chaibuilder/sdk": "3.2.2",
+    "@chaibuilder/pages": "0.17.3",
+    "@chaibuilder/sdk": "3.2.4",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.50.3",
     "@tailwindcss/aspect-ratio": "^0.4.2",

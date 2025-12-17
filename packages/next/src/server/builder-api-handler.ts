@@ -87,7 +87,7 @@ export const builderApiHandler = (apiKey?: string) => {
         console.log("Revalidating tags", tags);
       }
       for (const tag of tags) {
-        revalidateTag(tag);
+        revalidateTag(tag, "max");
       }
       return NextResponse.json(response);
     } catch (error) {

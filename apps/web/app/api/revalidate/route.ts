@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const tagsArray = Array.isArray(tags) ? tags : tags.split(",");
-    await Promise.all(tagsArray.map((tag: string) => revalidateTag(tag)));
+    await Promise.all(tagsArray.map((tag: string) => revalidateTag(tag, "max")));
 
     const pathsArray = Array.isArray(paths) ? paths : paths.split(",");
     await Promise.all(pathsArray.map((path: string) => revalidatePath(path)));

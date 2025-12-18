@@ -8,13 +8,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "dev": "tsup  --watch --format esm,cjs",
-    "build": "tsup  --dts --format esm,cjs",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:drop": "drizzle-kit drop",
-    "db:test": "tsx src/db/test-connection.ts"
+    "build": "tsup  --dts --format esm,cjs"
   },
   "bin": {
     "chai-tailwind": "scripts/chai-tailwind.cjs"
@@ -106,11 +100,10 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/lodash": "4.17.20",
-    "@types/node": "^22.15.30",
+    "@types/node": "^22.18.12",
     "@vitest/coverage-v8": "^1.4.0",
     "drizzle-kit": "^0.31.8",
     "tsup": "^8.0.1",
-    "tsx": "^4.21.0",
     "typescript": "5.8.2",
     "vitest": "^1.4.0"
   }

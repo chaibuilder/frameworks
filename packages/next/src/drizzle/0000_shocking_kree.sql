@@ -1,3 +1,20 @@
+-- Current sql file was generated after introspecting the database
+-- If you want to run this migration please uncomment this code before executing migrations
+/*
+CREATE TABLE "app_pages_metadata" (
+	"id" bigint GENERATED ALWAYS AS IDENTITY (sequence name "app_pages_metadata_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"slug" varchar NOT NULL,
+	"pageId" uuid DEFAULT gen_random_uuid(),
+	"publishedAt" timestamp with time zone,
+	"pageType" varchar,
+	"pageBlocks" varchar,
+	"dataBindings" varchar,
+	"pageContent" varchar,
+	"dataProviders" varchar,
+	"app" uuid DEFAULT gen_random_uuid() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "clients" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
@@ -43,30 +60,6 @@ CREATE TABLE "apps_online" (
 	"apiKey" text,
 	"deletedAt" timestamp with time zone,
 	"client" uuid
-);
---> statement-breakpoint
-CREATE TABLE "app_online_pages" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-	"slug" text NOT NULL,
-	"lang" text DEFAULT '' NOT NULL,
-	"seo" jsonb DEFAULT '{}'::jsonb,
-	"app" uuid NOT NULL,
-	"buildTime" boolean DEFAULT false,
-	"status" text DEFAULT 'UNPUBLISHED',
-	"name" text NOT NULL,
-	"global" boolean DEFAULT false,
-	"primaryPage" uuid,
-	"type" text DEFAULT '',
-	"blocks" jsonb DEFAULT '[]'::jsonb,
-	"globalBlocks" text DEFAULT '',
-	"currentEditor" uuid,
-	"links" text DEFAULT '',
-	"online" boolean DEFAULT false,
-	"page" uuid,
-	"collection" text DEFAULT 'page',
-	"parent" uuid,
-	"pageType" text
 );
 --> statement-breakpoint
 CREATE TABLE "app_pages" (
@@ -254,15 +247,6 @@ CREATE TABLE "app_users" (
 	"status" text DEFAULT 'active' NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "do_not_delete" (
-	"user" uuid PRIMARY KEY NOT NULL,
-	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-	"password" boolean DEFAULT false NOT NULL,
-	"email" text NOT NULL,
-	"name" text,
-	CONSTRAINT "do_not_delete_user_unique" UNIQUE("user")
-);
---> statement-breakpoint
 CREATE TABLE "app_api_keys" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
@@ -271,40 +255,8 @@ CREATE TABLE "app_api_keys" (
 	"status" text DEFAULT 'ACTIVE'
 );
 --> statement-breakpoint
-CREATE TABLE "app_pages_metadata" (
-	"id" bigint GENERATED ALWAYS AS IDENTITY (sequence name "app_pages_metadata_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"slug" varchar NOT NULL,
-	"pageId" uuid DEFAULT gen_random_uuid(),
-	"publishedAt" timestamp with time zone,
-	"pageType" varchar,
-	"pageBlocks" varchar,
-	"dataBindings" varchar,
-	"pageContent" varchar,
-	"dataProviders" varchar,
-	"app" uuid DEFAULT gen_random_uuid() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "chai_studio_installs" (
-	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "chai_studio_installs_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
-	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-	"installUuid" uuid,
-	"installDatetime" timestamp with time zone,
-	"lastOpened" timestamp with time zone,
-	"installVersion" varchar,
-	"latestVersion" varchar,
-	"status" varchar DEFAULT 'ACTIVE',
-	"os" varchar,
-	"stats" jsonb,
-	"licenseKey" text,
-	"purchaseEmail" text,
-	"country" text,
-	"licenseType" text
-);
---> statement-breakpoint
 ALTER TABLE "apps" ADD CONSTRAINT "apps_client_clients_id_fk" FOREIGN KEY ("client") REFERENCES "public"."clients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "apps_online" ADD CONSTRAINT "apps_online_client_clients_id_fk" FOREIGN KEY ("client") REFERENCES "public"."clients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "app_online_pages" ADD CONSTRAINT "app_online_pages_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_pages" ADD CONSTRAINT "app_pages_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_pages_online" ADD CONSTRAINT "app_pages_online_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_pages_revisions" ADD CONSTRAINT "app_pages_revisions_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -318,3 +270,4 @@ ALTER TABLE "library_templates" ADD CONSTRAINT "library_templates_library_librar
 ALTER TABLE "app_user_plans" ADD CONSTRAINT "app_user_plans_client_clients_id_fk" FOREIGN KEY ("client") REFERENCES "public"."clients"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_users" ADD CONSTRAINT "app_users_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "app_api_keys" ADD CONSTRAINT "app_api_keys_app_apps_id_fk" FOREIGN KEY ("app") REFERENCES "public"."apps"("id") ON DELETE no action ON UPDATE no action;
+*/

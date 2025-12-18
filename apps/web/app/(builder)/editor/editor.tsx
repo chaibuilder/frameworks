@@ -109,7 +109,7 @@ export default function Editor() {
         autoSave
         autoSaveActionsCount={5}
         getAccessToken={getAccessToken}
-        hasReactQueryProvider
+        hasReactQueryProvider={true}
         apiUrl="api"
         getPreviewUrl={getPreviewUrl}
         getLiveUrl={getLiveUrl}

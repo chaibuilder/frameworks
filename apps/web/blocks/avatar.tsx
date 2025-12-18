@@ -1,8 +1,4 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ChaiBlock,
   ChaiBlockComponentProps,
@@ -10,7 +6,7 @@ import {
   registerChaiBlock,
   registerChaiBlockSchema,
   stylesProp,
-} from "chai-next/blocks";
+} from "@chaibuilder/nextjs/blocks";
 
 const ShadcnAvatar = (
   props: ChaiBlockComponentProps<{
@@ -20,14 +16,12 @@ const ShadcnAvatar = (
     containerStyles: ChaiStyles;
     imageStyles: ChaiStyles;
     fallbackStyles: ChaiStyles;
-  }>
+  }>,
 ) => {
   return (
     <Avatar {...props.blockProps} {...props.containerStyles}>
       <AvatarImage src={props.image} alt={props.alt} {...props.imageStyles} />
-      <AvatarFallback {...props.fallbackStyles}>
-        {props.fallbackText}
-      </AvatarFallback>
+      <AvatarFallback {...props.fallbackStyles}>{props.fallbackText}</AvatarFallback>
     </Avatar>
   );
 };

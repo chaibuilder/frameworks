@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
   ChaiBlock,
   ChaiBlockComponentProps,
@@ -11,20 +6,16 @@ import {
   registerChaiBlock,
   registerChaiBlockSchema,
   stylesProp,
-} from "chai-next/blocks";
+} from "@chaibuilder/nextjs/blocks";
 
 const ShadcnAccordion = (
   props: ChaiBlockComponentProps<{
     type: "single" | "multiple";
     styles: ChaiStyles;
-  }>
+  }>,
 ) => {
   return (
-    <Accordion
-      {...props.blockProps}
-      type={props.type}
-      collapsible
-      {...props.styles}>
+    <Accordion {...props.blockProps} type={props.type} collapsible {...props.styles}>
       {props.children}
     </Accordion>
   );
@@ -36,19 +27,12 @@ const ShadcnAccordionItem = (
     triggerStyles: ChaiStyles;
     contentStyles: ChaiStyles;
     itemStyles: ChaiStyles;
-  }>
+  }>,
 ) => {
   return (
-    <AccordionItem
-      {...props.blockProps}
-      {...props.itemStyles}
-      value={props.title}>
-      <AccordionTrigger {...props.triggerStyles}>
-        {props.title}
-      </AccordionTrigger>
-      <AccordionContent {...props.contentStyles}>
-        {props.children}
-      </AccordionContent>
+    <AccordionItem {...props.blockProps} {...props.itemStyles} value={props.title}>
+      <AccordionTrigger {...props.triggerStyles}>{props.title}</AccordionTrigger>
+      <AccordionContent {...props.contentStyles}>{props.children}</AccordionContent>
     </AccordionItem>
   );
 };

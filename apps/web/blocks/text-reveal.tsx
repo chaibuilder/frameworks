@@ -1,5 +1,5 @@
 "use client";
-import { registerChaiBlock, registerChaiBlockSchema } from "chai-next/blocks";
+import { registerChaiBlock, registerChaiBlockSchema } from "@chaibuilder/nextjs/blocks";
 import { motion } from "motion/react";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -19,8 +19,7 @@ export const TextRevealCard = (props: {
   const [isMouseOver, setIsMouseOver] = useState(false);
   useEffect(() => {
     if (cardRef.current) {
-      const { left, width: localWidth } =
-        cardRef.current.getBoundingClientRect();
+      const { left, width: localWidth } = cardRef.current.getBoundingClientRect();
       setLeft(left);
       setLocalWidth(localWidth);
     }
@@ -62,13 +61,10 @@ export const TextRevealCard = (props: {
       onTouchEnd={mouseLeaveHandler}
       onTouchMove={touchMoveHandler}
       ref={cardRef}
-      className={cn(
-        "bg-primary border border-white/[0.08] rounded-lg p-8 relative overflow-hidden",
-        className
-      )}>
+      className={cn("bg-primary relative overflow-hidden rounded-lg border border-white/[0.08] p-8", className)}>
       {children}
 
-      <div className=" relative flex items-center overflow-hidden">
+      <div className="relative flex items-center overflow-hidden">
         <motion.div
           style={{
             width: "100%",
@@ -84,12 +80,12 @@ export const TextRevealCard = (props: {
                 }
           }
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="absolute bg-primary z-20  will-change-transform">
+          className="bg-primary absolute z-20 will-change-transform">
           <p
             style={{
               textShadow: "4px 4px 15px rgba(0,0,0,0.5)",
             }}
-            className="text-base sm:text-[3rem] py-10 font-bold text-white bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300">
+            className="bg-gradient-to-b from-white to-neutral-300 bg-clip-text py-10 text-base font-bold text-transparent text-white sm:text-[3rem]">
             {revealText}
           </p>
         </motion.div>
@@ -100,12 +96,10 @@ export const TextRevealCard = (props: {
             opacity: widthPercentage > 0 ? 1 : 0,
           }}
           transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent absolute z-50 will-change-transform"></motion.div>
+          className="absolute z-50 h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent will-change-transform"></motion.div>
 
-        <div className=" overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
-          <p className="text-base sm:text-[3rem] py-10 font-bold bg-clip-text text-transparent bg-[#323238]">
-            {text}
-          </p>
+        <div className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
+          <p className="bg-[#323238] bg-clip-text py-10 text-base font-bold text-transparent sm:text-[3rem]">{text}</p>
           <MemoizedStars />
         </div>
       </div>
@@ -113,18 +107,8 @@ export const TextRevealCard = (props: {
   );
 };
 
-export const TextRevealCardTitle = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <h2 className={twMerge("text-white text-lg mb-2", className)}>
-      {children}
-    </h2>
-  );
+export const TextRevealCardTitle = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  return <h2 className={twMerge("mb-2 text-lg text-white", className)}>{children}</h2>;
 };
 
 export const TextRevealCardDescription = ({
@@ -134,9 +118,7 @@ export const TextRevealCardDescription = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <p className={twMerge("text-[#a9a9a9] text-sm", className)}>{children}</p>
-  );
+  return <p className={twMerge("text-sm text-[#a9a9a9]", className)}>{children}</p>;
 };
 
 const Stars = () => {

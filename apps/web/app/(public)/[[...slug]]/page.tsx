@@ -1,6 +1,6 @@
-import { ChaiPageProps, loadWebBlocks } from "chai-next/blocks";
-import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "chai-next/blocks/rsc";
-import ChaiBuilder from "chai-next/server";
+import { ChaiPageProps, loadWebBlocks } from "@chaibuilder/nextjs/blocks";
+import { ChaiPageStyles, PreviewBanner, RenderChaiBlocks } from "@chaibuilder/nextjs/blocks/rsc";
+import ChaiBuilder from "@chaibuilder/nextjs/server";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 

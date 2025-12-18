@@ -1,4 +1,4 @@
-import { builderApiHandler } from "chai-next/server";
+import { builderApiHandler } from "@chaibuilder/nextjs/server";
 
 const apiKey = process.env.CHAIBUILDER_API_KEY!;
 const handler: any = builderApiHandler(apiKey);

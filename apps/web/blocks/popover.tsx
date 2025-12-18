@@ -1,9 +1,5 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "chai-next";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@chaibuilder/nextjs";
 import {
   ChaiBlock,
   ChaiBlockComponentProps,
@@ -11,19 +7,13 @@ import {
   registerChaiBlock,
   registerChaiBlockSchema,
   stylesProp,
-} from "chai-next/blocks";
+} from "@chaibuilder/nextjs/blocks";
 import * as React from "react";
 
 const ShadcnPopover = (
   props: ChaiBlockComponentProps<{
     buttonText: string;
-    buttonVariant:
-      | "default"
-      | "link"
-      | "outline"
-      | "destructive"
-      | "secondary"
-      | "ghost";
+    buttonVariant: "default" | "link" | "outline" | "destructive" | "secondary" | "ghost";
     buttonSize?: "default" | "sm" | "lg" | "icon";
     align?: "start" | "center" | "end";
     alignOffset?: number;
@@ -32,7 +22,7 @@ const ShadcnPopover = (
     popoverStyles: ChaiStyles;
     triggerStyles: ChaiStyles;
     contentStyles: ChaiStyles;
-  }>
+  }>,
 ) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -40,11 +30,7 @@ const ShadcnPopover = (
     <div ref={containerRef} {...props.blockProps} {...props.popoverStyles}>
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            {...props.triggerStyles}
-            variant={props.buttonVariant}
-            size={props.buttonSize}
-          >
+          <Button {...props.triggerStyles} variant={props.buttonVariant} size={props.buttonSize}>
             {props.buttonText}
           </Button>
         </PopoverTrigger>
@@ -54,8 +40,7 @@ const ShadcnPopover = (
           sideOffset={props.sideOffset}
           alignOffset={props.alignOffset}
           container={containerRef.current}
-          {...props.contentStyles}
-        >
+          {...props.contentStyles}>
           {props.children}
         </PopoverContent>
       </Popover>
@@ -82,8 +67,7 @@ registerChaiBlock(ShadcnPopover, {
         _id: "popover-text",
         _type: "Paragraph",
         _parent: "popover-root",
-        content:
-          "Place your popover content here. You can add any blocks inside this popover.",
+        content: "Place your popover content here. You can add any blocks inside this popover.",
       },
     ] as ChaiBlock[];
   },
@@ -97,14 +81,7 @@ registerChaiBlock(ShadcnPopover, {
       buttonVariant: {
         type: "string",
         title: "Button Variant",
-        enum: [
-          "default",
-          "link",
-          "outline",
-          "destructive",
-          "secondary",
-          "ghost",
-        ],
+        enum: ["default", "link", "outline", "destructive", "secondary", "ghost"],
         default: "default",
       },
       buttonSize: {

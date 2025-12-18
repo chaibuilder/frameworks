@@ -340,7 +340,7 @@ export class PageTreeBuilder {
     const processChildren = (children: PageTreeNode[], parentOldSlug: string, parentNewSlug: string) => {
       for (const child of children) {
         const newChildSlug = this.generateNewChildSlug(child.slug, parentOldSlug, parentNewSlug);
-        
+
         slugUpdates.push({
           id: child.id,
           oldSlug: child.slug,

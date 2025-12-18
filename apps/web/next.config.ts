@@ -1,4 +1,4 @@
-import { withChaiBuilder } from "chai-next/config";
+import { withChaiBuilder } from "@chaibuilder/nextjs/config";
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   turbopack: {},

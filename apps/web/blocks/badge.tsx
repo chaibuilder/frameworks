@@ -7,21 +7,17 @@ import {
   registerChaiBlock,
   registerChaiBlockSchema,
   stylesProp,
-} from "chai-next/blocks";
+} from "@chaibuilder/nextjs/blocks";
 
 const ShadcnBadge = (
   props: ChaiBlockComponentProps<{
     text: string;
     variant: "default" | "secondary" | "destructive" | "outline";
     styles: ChaiStyles;
-  }>
+  }>,
 ) => {
   return (
-    <Badge
-      {...props.blockProps}
-      variant={props.variant}
-      {...props.styles}
-    >
+    <Badge {...props.blockProps} variant={props.variant} {...props.styles}>
       {props.text}
     </Badge>
   );

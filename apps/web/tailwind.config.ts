@@ -2,7 +2,7 @@ import aspectRatio from "@tailwindcss/aspect-ratio";
 import containerQueries from "@tailwindcss/container-queries";
 import forms from "@tailwindcss/forms";
 import typography from "@tailwindcss/typography";
-import { getChaiBuilderTheme } from "chai-next/utils";
+import { getChaiBuilderTheme } from "@chaibuilder/nextjs/utils";
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 import plugin from "tailwindcss/plugin";
@@ -15,7 +15,7 @@ const config: Config = {
     "./blocks/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/chai-next/dist/blocks/**/*.{js,cjs}",
+    "./node_modules/@chaibuilder/nextjs/dist/blocks/**/*.{js,cjs}",
   ],
   safelist: ["w-[inherit]", "h-[inherit]", "animate-scroll", "grid-cols-5"],
   theme: {

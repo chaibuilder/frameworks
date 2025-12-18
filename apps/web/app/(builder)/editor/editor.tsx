@@ -2,7 +2,6 @@
 
 import ChaiBuilder, { getSupabaseClient } from "@chaibuilder/nextjs";
 import "@chaibuilder/nextjs/builder-styles";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useCallback, useEffect, useState } from "react";
 import { LoginScreen } from "./login";
@@ -16,15 +15,6 @@ type LoggedInUser = {
 };
 
 const supabase = getSupabaseClient();
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-    },
-  },
-});
 
 export default function Editor() {
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
@@ -103,19 +93,16 @@ export default function Editor() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ChaiBuilder
-        currentUser={user}
-        autoSave
-        autoSaveActionsCount={5}
-        getAccessToken={getAccessToken}
-        hasReactQueryProvider={true}
-        apiUrl="api"
-        getPreviewUrl={getPreviewUrl}
-        getLiveUrl={getLiveUrl}
-        websocket={supabase}
-        onLogout={handleLogout}
-      />
-    </QueryClientProvider>
+    <ChaiBuilder
+      currentUser={user}
+      autoSave
+      autoSaveActionsCount={5}
+      getAccessToken={getAccessToken}
+      apiUrl="api"
+      getPreviewUrl={getPreviewUrl}
+      getLiveUrl={getLiveUrl}
+      websocket={supabase}
+      onLogout={handleLogout}
+    />
   );
 }

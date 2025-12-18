@@ -12,7 +12,7 @@ export * from "@chaibuilder/sdk/ui";
 export { getSupabaseClient } from "./supabase";
 
 // Use a type assertion to avoid the TypeScript error with interfaces
-export const ChaiBuilder: any = dynamic(() => import("@chaibuilder/pages"), {
+export const ChaiBuilderPages = dynamic(() => import("@chaibuilder/pages"), {
   ssr: false,
 });
 
@@ -63,16 +63,15 @@ export default (props: ChaiBuilderProps) => {
   }
 
   return (
-    <ChaiBuilder
+    <ChaiBuilderPages
       flags={
         props.flags
           ? { dragAndDrop: true, designTokens: true, ...props.flags }
-          : { dragAndDrop: true, useClipboard: false, designTokens: true }
+          : { dragAndDrop: true, copyPaste: false, designTokens: true }
       }
       autoSave={true}
-      autoSaveInterval={20}
-      hasReactQueryProvider={props.hasReactQueryProvider ?? false}
-      supabaseInstance={client}
+      autoSaveActionsCount={10}
+      websocket={client}
       apiUrl={builderApiUrl}
       usersApiUrl={builderApiUrl}
       assetsApiUrl={builderApiUrl}

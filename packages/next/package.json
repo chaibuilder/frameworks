@@ -29,8 +29,8 @@
   },
   "private": false,
   "dependencies": {
-    "@chaibuilder/pages": "0.17.3",
-    "@chaibuilder/sdk": "3.2.4",
+    "@chaibuilder/pages": "0.17.4",
+    "@chaibuilder/sdk": "3.2.6",
     "@supabase/ssr": "0.6.1",
     "@supabase/supabase-js": "2.50.3",
     "@tailwindcss/aspect-ratio": "^0.4.2",

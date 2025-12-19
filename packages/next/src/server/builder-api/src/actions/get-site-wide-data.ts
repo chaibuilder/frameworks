@@ -1,7 +1,7 @@
+import { and, eq } from "drizzle-orm";
 import { each, isEmpty } from "lodash";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
-import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
 import { BaseAction } from "./base-action";
 
@@ -40,12 +40,24 @@ export class GetSiteWideDataAction extends BaseAction<GetSiteWideDataActionData,
     if (!this.context) {
       throw apiError("CONTEXT_NOT_SET", new Error("CONTEXT_NOT_SET"));
     }
-    const supabase = await getSupabaseAdmin();
-    const { data: blocksData, error } = await supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("id, designTokens, name, slug, links, partialBlocks")
-      .eq("lang", "")
-      .eq("app", this.context.appId);
+    const { appId } = this.context;
+    const { data: blocksData, error } = await safeQuery(() =>
+      db
+        .select({
+          id: schema.appPages.id,
+          designTokens: schema.appPages.designTokens,
+          name: schema.appPages.name,
+          slug: schema.appPages.slug,
+          links: schema.appPages.links,
+          partialBlocks: schema.appPages.partialBlocks,
+        })
+        .from(schema.appPages)
+        .where(and(eq(schema.appPages.lang, ""), eq(schema.appPages.app, appId))),
+    );
+
+    if (error) {
+      throw apiError("FETCH_SITE_DATA_FAILED", error);
+    }
 
     const siteWideData: SiteWideUsage = {};
     each(blocksData, (page) => {
@@ -54,7 +66,7 @@ export class GetSiteWideDataAction extends BaseAction<GetSiteWideDataActionData,
         isPartial: isEmpty(page.slug),
         partialBlocks: !page.partialBlocks ? [] : page.partialBlocks?.split("|").filter(Boolean),
         links: !page.links ? [] : page.links.split("|").filter(Boolean),
-        designTokens: page.designTokens ?? {},
+        designTokens: (page.designTokens ?? {}) as BlocksWithDesignTokens,
       };
     });
     return siteWideData;

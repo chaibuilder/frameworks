@@ -20,6 +20,7 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
    * @returns true if the data is valid, false otherwise
    */
   validate(data: T): boolean {
+    if (!data) return true;
     try {
       const schema = this.getValidationSchema();
       schema.parse(data);
@@ -36,6 +37,7 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
    * @returns An array of validation errors or null if the data is valid
    */
   getValidationErrors(data: T): string | null {
+    if (!data) return null;
     try {
       const schema = this.getValidationSchema();
       schema.parse(data);

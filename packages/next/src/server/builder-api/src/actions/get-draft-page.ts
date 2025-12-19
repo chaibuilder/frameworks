@@ -91,7 +91,7 @@ export class GetDraftPageAction extends BaseAction<GetDraftPageActionData, GetDr
             blocks: targetTable.blocks,
           })
           .from(targetTable)
-          .where(eq(targetTable.id, primaryPageId))
+          .where(and(eq(targetTable.app, appId), eq(targetTable.id, primaryPageId)))
           .limit(1),
       );
 

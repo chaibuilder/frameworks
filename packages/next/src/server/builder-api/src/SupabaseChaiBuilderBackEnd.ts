@@ -98,7 +98,7 @@ export class SupabaseChaiBuilderBackEnd extends ChaiBuilderBackEnd {
         return { status: 200, data: librariesReponse };
       case "RESTORE_PAGE_REVISION":
         const restoreResponse = await this.revisions.restoreRevision(
-          args.data as { revisionId: string; discardCurrent: boolean },
+          args.data as { revisionId: string; discardCurrent: boolean; pageId?: string },
         );
         return { status: 200, data: restoreResponse };
       case "DELETE_PAGE_REVISION":

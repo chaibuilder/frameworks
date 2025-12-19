@@ -74,9 +74,6 @@ export class GetDraftPageAction extends BaseAction<GetDraftPageActionData, GetDr
     }
 
     const page = pageData[0];
-    if (!page) {
-      throw apiError("PAGE_NOT_FOUND", new Error("Page not found"));
-    }
 
     const primaryPageId = page.primaryPage ?? page.id;
 

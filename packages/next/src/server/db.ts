@@ -16,3 +16,14 @@ const client = postgres(connectionString, { max: 10 });
 export const db = drizzle(client, { schema });
 
 export { schema };
+
+type DbResult<T> = { data: T; error: null } | { data: null; error: Error };
+
+export async function safeQuery<T>(queryFn: () => Promise<T>): Promise<DbResult<T>> {
+  try {
+    const data = await queryFn();
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: error as Error };
+  }
+}

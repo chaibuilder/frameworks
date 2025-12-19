@@ -8,6 +8,7 @@ import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
+import { GetWebsiteSettingsAction } from "./get-website-settings";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
 
@@ -31,6 +32,7 @@ class ActionsRegistry {
     this.register("GET_COMPARE_DATA", new GetCompareDataAction());
     this.register("GET_SITE_WIDE_USAGE", new GetSiteWideDataAction());
     this.register("BENCHMARK_QUERY", new BenchmarkQueryAction());
+    this.register("GET_WEBSITE_DRAFT_SETTINGS", new GetWebsiteSettingsAction());
     // Add more actions here as they are created
   }
 

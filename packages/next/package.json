@@ -1,6 +1,6 @@
 {
   "name": "@chaibuilder/nextjs",
-  "version": "0.4.0",
+  "version": "0.1.2",
   "description": "Chai Builder NextJS Package",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",

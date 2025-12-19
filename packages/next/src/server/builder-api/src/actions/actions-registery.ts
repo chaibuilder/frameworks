@@ -3,6 +3,7 @@ import { BenchmarkQueryAction } from "./benchmark-query";
 import { ChaiAction } from "./chai-action-interface";
 import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
+import { RestorePageAction } from "./restore-page";
 import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
@@ -27,6 +28,7 @@ class ActionsRegistry {
     // Register all actions
     this.register("DELETE_PAGE", new DeletePageAction());
     this.register("DUPLICATE_PAGE", new DuplicatePageAction());
+    this.register("RESTORE_PAGE_REVISION", new RestorePageAction());
     this.register("UPDATE_PAGE_METADATA", new UpdatePageMetadataAction());
     this.register("GENERATE_SEO_FIELD", new GenerateSeoFieldAction());
     this.register("GENERATE_HTML_FROM_PROMPT", new GenerateHtmlFromPromptAction());

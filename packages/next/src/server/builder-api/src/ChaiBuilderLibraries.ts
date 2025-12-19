@@ -156,10 +156,15 @@ export class ChaiBuilderLibraries {
     }
     const clientId = app.client;
     // Fetch libraries that are either global (app is null) or belong to the current app
-    const { data, error } = await this.supabase
-      .from("libraries")
-      .select("createdAt,id,name,type")
-      .eq("client", clientId);
+    const query = this.supabase.from("libraries").select("createdAt,id,name,type");
+
+    if (clientId) {
+      query.eq("client", clientId);
+    } else {
+      query.is("client", null);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Error fetching libraries:", error);

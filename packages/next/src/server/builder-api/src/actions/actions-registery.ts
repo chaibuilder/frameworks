@@ -8,6 +8,7 @@ import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
+import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
@@ -33,6 +34,7 @@ class ActionsRegistry {
     this.register("GET_SITE_WIDE_USAGE", new GetSiteWideDataAction());
     this.register("BENCHMARK_QUERY", new BenchmarkQueryAction());
     this.register("GET_WEBSITE_DRAFT_SETTINGS", new GetWebsiteSettingsAction());
+    this.register("GET_WEBSITE_PAGES", new GetWebsitePagesAction());
     // Add more actions here as they are created
   }
 

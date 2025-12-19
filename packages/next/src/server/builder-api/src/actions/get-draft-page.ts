@@ -15,6 +15,7 @@ type GetDraftPageActionResponse = {
   lang: string;
   primaryPage?: string | null;
   seo: any;
+  currentEditor?: string | null;
   pageType?: string | null;
   lastSaved?: string | null;
   tracking: any;

@@ -4,18 +4,170 @@
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.app_pages_metadata": {
-      "name": "app_pages_metadata",
+    "public.do_not_delete": {
+      "name": "do_not_delete",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "password": {
+          "name": "password",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "user": {
+          "name": "user",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_meta_user_fkey": {
+          "name": "user_meta_user_fkey",
+          "tableFrom": "do_not_delete",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_meta_user_key": {
+          "columns": [
+            "user"
+          ],
+          "nullsNotDistinct": false,
+          "name": "user_meta_user_key"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.library_templates": {
+      "name": "library_templates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "user": {
+          "name": "user",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageId": {
+          "name": "pageId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageType": {
+          "name": "pageType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "library": {
+          "name": "library",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "preview": {
+          "name": "preview",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "library_templates_library_fkey": {
+          "name": "library_templates_library_fkey",
+          "tableFrom": "library_templates",
+          "tableTo": "libraries",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "library"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.webhook_events": {
+      "name": "webhook_events",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "bigint",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true,
           "identity": {
-            "type": "always",
-            "name": "app_pages_metadata_id_seq",
+            "type": "byDefault",
+            "name": "webhook_events_id_seq",
             "increment": "1",
             "minValue": "1",
             "maxValue": "9223372036854775807",
@@ -25,59 +177,102 @@
             "schema": "public"
           }
         },
-        "created_at": {
-          "name": "created_at",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "slug": {
-          "name": "slug",
-          "type": "varchar",
+        "provider": {
+          "name": "provider",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
-        "pageId": {
-          "name": "pageId",
+        "eventType": {
+          "name": "eventType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payload": {
+          "name": "payload",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": false
+        },
+        "clientId": {
+          "name": "clientId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "webhook_events_clientId_fkey": {
+          "name": "webhook_events_clientId_fkey",
+          "tableFrom": "webhook_events",
+          "tableTo": "clients",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "clientId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "webhook_events_userId_fkey": {
+          "name": "webhook_events_userId_fkey",
+          "tableFrom": "webhook_events",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.app_users": {
+      "name": "app_users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "publishedAt": {
-          "name": "publishedAt",
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "now()"
         },
-        "pageType": {
-          "name": "pageType",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pageBlocks": {
-          "name": "pageBlocks",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dataBindings": {
-          "name": "dataBindings",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pageContent": {
-          "name": "pageContent",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dataProviders": {
-          "name": "dataProviders",
-          "type": "varchar",
+        "user": {
+          "name": "user",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -85,8 +280,247 @@
           "name": "app",
           "type": "uuid",
           "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'editor'"
+        },
+        "permissions": {
+          "name": "permissions",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "app_users_app_fkey": {
+          "name": "app_users_app_fkey",
+          "tableFrom": "app_users",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "app_users_user_fkey": {
+          "name": "app_users_user_fkey",
+          "tableFrom": "app_users",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.app_domains": {
+      "name": "app_domains",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "app": {
+          "name": "app",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hosting": {
+          "name": "hosting",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'vercel'"
+        },
+        "hostingProjectId": {
+          "name": "hostingProjectId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'env'"
+        },
+        "subdomain": {
+          "name": "subdomain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "domain": {
+          "name": "domain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "domainConfigured": {
+          "name": "domainConfigured",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "app_domains_app_fkey": {
+          "name": "app_domains_app_fkey",
+          "tableFrom": "app_domains",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.chai_studio_installs": {
+      "name": "chai_studio_installs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "chai_studio_installs_id_seq",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "startWith": "1",
+            "cache": "1",
+            "cycle": false,
+            "schema": "public"
+          }
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "installUuid": {
+          "name": "installUuid",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "installDatetime": {
+          "name": "installDatetime",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastOpened": {
+          "name": "lastOpened",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "installVersion": {
+          "name": "installVersion",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latestVersion": {
+          "name": "latestVersion",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ACTIVE'"
+        },
+        "os": {
+          "name": "os",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stats": {
+          "name": "stats",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "licenseKey": {
+          "name": "licenseKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "purchaseEmail": {
+          "name": "purchaseEmail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "licenseType": {
+          "name": "licenseType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -95,7 +529,356 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
+    },
+    "public.app_pages_revisions": {
+      "name": "app_pages_revisions",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "seo": {
+          "name": "seo",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "app": {
+          "name": "app",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "buildTime": {
+          "name": "buildTime",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "primaryPage": {
+          "name": "primaryPage",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "currentEditor": {
+          "name": "currentEditor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "changes": {
+          "name": "changes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collection": {
+          "name": "collection",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'page'"
+        },
+        "partialBlocks": {
+          "name": "partialBlocks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "links": {
+          "name": "links",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "online": {
+          "name": "online",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "pageType": {
+          "name": "pageType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "parent": {
+          "name": "parent",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastSaved": {
+          "name": "lastSaved",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamic": {
+          "name": "dynamic",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "uid": {
+          "name": "uid",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'published'"
+        },
+        "libRefId": {
+          "name": "libRefId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicSlugCustom": {
+          "name": "dynamicSlugCustom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "tracking": {
+          "name": "tracking",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "jsonld": {
+          "name": "jsonld",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "globalJsonLds": {
+          "name": "globalJsonLds",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "designTokens": {
+          "name": "designTokens",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "app_pages_revisions_app_fkey": {
+          "name": "app_pages_revisions_app_fkey",
+          "tableFrom": "app_pages_revisions",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.apps_online": {
+      "name": "apps_online",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user": {
+          "name": "user",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "settings": {
+          "name": "settings",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "theme": {
+          "name": "theme",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "fallbackLang": {
+          "name": "fallbackLang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'en'"
+        },
+        "languages": {
+          "name": "languages",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "changes": {
+          "name": "changes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "configData": {
+          "name": "configData",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "apiKey": {
+          "name": "apiKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deletedAt": {
+          "name": "deletedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "client": {
+          "name": "client",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "designTokens": {
+          "name": "designTokens",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "apps_online_client_fkey": {
+          "name": "apps_online_client_fkey",
+          "tableFrom": "apps_online",
+          "tableTo": "clients",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "client"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "apps_online_user_fkey": {
+          "name": "apps_online_user_fkey",
+          "tableFrom": "apps_online",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
     },
     "public.clients": {
       "name": "clients",
@@ -192,7 +975,458 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
+    },
+    "public.app_online_pages": {
+      "name": "app_online_pages",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "seo": {
+          "name": "seo",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "app": {
+          "name": "app",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "buildTime": {
+          "name": "buildTime",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'UNPUBLISHED'"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "global": {
+          "name": "global",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "primaryPage": {
+          "name": "primaryPage",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "globalBlocks": {
+          "name": "globalBlocks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "currentEditor": {
+          "name": "currentEditor",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "links": {
+          "name": "links",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "online": {
+          "name": "online",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "page": {
+          "name": "page",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collection": {
+          "name": "collection",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'page'"
+        },
+        "parent": {
+          "name": "parent",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageType": {
+          "name": "pageType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "app_online_pages_app_fkey": {
+          "name": "app_online_pages_app_fkey",
+          "tableFrom": "app_online_pages",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "app_online_pages_currentEditor_fkey": {
+          "name": "app_online_pages_currentEditor_fkey",
+          "tableFrom": "app_online_pages",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "currentEditor"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "app_online_pages_page_fkey": {
+          "name": "app_online_pages_page_fkey",
+          "tableFrom": "app_online_pages",
+          "tableTo": "app_pages",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "page"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.ai_logs": {
+      "name": "ai_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "byDefault",
+            "name": "ai_logs_id_seq",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "startWith": "1",
+            "cache": "1",
+            "cycle": false,
+            "schema": "public"
+          }
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "totalDuration": {
+          "name": "totalDuration",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error": {
+          "name": "error",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "totalTokens": {
+          "name": "totalTokens",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tokenUsage": {
+          "name": "tokenUsage",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user": {
+          "name": "user",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "client": {
+          "name": "client",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost": {
+          "name": "cost",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'0'"
+        },
+        "prompt": {
+          "name": "prompt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "ai_logs_user_fkey": {
+          "name": "ai_logs_user_fkey",
+          "tableFrom": "ai_logs",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.app_api_keys": {
+      "name": "app_api_keys",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "apiKey": {
+          "name": "apiKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "app": {
+          "name": "app",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'ACTIVE'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "app_api_keys_app_fkey": {
+          "name": "app_api_keys_app_fkey",
+          "tableFrom": "app_api_keys",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
+    },
+    "public.libraries": {
+      "name": "libraries",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "app": {
+          "name": "app",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "client": {
+          "name": "client",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "libraries_app_fkey": {
+          "name": "libraries_app_fkey",
+          "tableFrom": "libraries",
+          "tableTo": "apps",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "libraries_client_fkey": {
+          "name": "libraries_client_fkey",
+          "tableFrom": "libraries",
+          "tableTo": "clients",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "client"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": true
     },
     "public.apps": {
       "name": "apps",
@@ -275,12 +1509,19 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "designTokens": {
+          "name": "designTokens",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "apps_client_clients_id_fk": {
-          "name": "apps_client_clients_id_fk",
+        "apps_client_fkey": {
+          "name": "apps_client_fkey",
           "tableFrom": "apps",
           "tableTo": "clients",
           "schemaTo": "public",
@@ -292,23 +1533,38 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "apps_user_fkey": {
+          "name": "apps_user_fkey",
+          "tableFrom": "apps",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
-    "public.apps_online": {
-      "name": "apps_online",
+    "public.library_items": {
+      "name": "library_items",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "createdAt": {
           "name": "createdAt",
@@ -317,86 +1573,66 @@
           "notNull": true,
           "default": "now()"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar",
+        "library": {
+          "name": "library",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "preview": {
+          "name": "preview",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "group": {
+          "name": "group",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'general'"
         },
         "user": {
           "name": "user",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "settings": {
-          "name": "settings",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "theme": {
-          "name": "theme",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "fallbackLang": {
-          "name": "fallbackLang",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'en'"
-        },
-        "languages": {
-          "name": "languages",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        },
-        "changes": {
-          "name": "changes",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "configData": {
-          "name": "configData",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "apiKey": {
-          "name": "apiKey",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "deletedAt": {
-          "name": "deletedAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "client": {
-          "name": "client",
-          "type": "uuid",
+        "html": {
+          "name": "html",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "apps_online_client_clients_id_fk": {
-          "name": "apps_online_client_clients_id_fk",
-          "tableFrom": "apps_online",
-          "tableTo": "clients",
+        "library_items_library_fkey": {
+          "name": "library_items_library_fkey",
+          "tableFrom": "library_items",
+          "tableTo": "libraries",
           "schemaTo": "public",
           "columnsFrom": [
-            "client"
+            "library"
           ],
           "columnsTo": [
             "id"
@@ -409,601 +1645,7 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.app_pages": {
-      "name": "app_pages",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "lang": {
-          "name": "lang",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "seo": {
-          "name": "seo",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "app": {
-          "name": "app",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "buildTime": {
-          "name": "buildTime",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "primaryPage": {
-          "name": "primaryPage",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "blocks": {
-          "name": "blocks",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        },
-        "currentEditor": {
-          "name": "currentEditor",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "changes": {
-          "name": "changes",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "collection": {
-          "name": "collection",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'page'"
-        },
-        "online": {
-          "name": "online",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "parent": {
-          "name": "parent",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pageType": {
-          "name": "pageType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "lastSaved": {
-          "name": "lastSaved",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamic": {
-          "name": "dynamic",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "libRefId": {
-          "name": "libRefId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamicSlugCustom": {
-          "name": "dynamicSlugCustom",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "''"
-        },
-        "metadata": {
-          "name": "metadata",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "tracking": {
-          "name": "tracking",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "jsonld": {
-          "name": "jsonld",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "globalJsonLds": {
-          "name": "globalJsonLds",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "app_pages_app_apps_id_fk": {
-          "name": "app_pages_app_apps_id_fk",
-          "tableFrom": "app_pages",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.app_pages_online": {
-      "name": "app_pages_online",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "lang": {
-          "name": "lang",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "seo": {
-          "name": "seo",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "app": {
-          "name": "app",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "buildTime": {
-          "name": "buildTime",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "primaryPage": {
-          "name": "primaryPage",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "blocks": {
-          "name": "blocks",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        },
-        "currentEditor": {
-          "name": "currentEditor",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "changes": {
-          "name": "changes",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "collection": {
-          "name": "collection",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'page'"
-        },
-        "partialBlocks": {
-          "name": "partialBlocks",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "links": {
-          "name": "links",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "online": {
-          "name": "online",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
-        },
-        "pageType": {
-          "name": "pageType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "parent": {
-          "name": "parent",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "lastSaved": {
-          "name": "lastSaved",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamic": {
-          "name": "dynamic",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "libRefId": {
-          "name": "libRefId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamicSlugCustom": {
-          "name": "dynamicSlugCustom",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "''"
-        },
-        "metadata": {
-          "name": "metadata",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "tracking": {
-          "name": "tracking",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "jsonld": {
-          "name": "jsonld",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "globalJsonLds": {
-          "name": "globalJsonLds",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "app_pages_online_app_apps_id_fk": {
-          "name": "app_pages_online_app_apps_id_fk",
-          "tableFrom": "app_pages_online",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.app_pages_revisions": {
-      "name": "app_pages_revisions",
-      "schema": "",
-      "columns": {
-        "uid": {
-          "name": "uid",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "lang": {
-          "name": "lang",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "''"
-        },
-        "seo": {
-          "name": "seo",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "app": {
-          "name": "app",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "buildTime": {
-          "name": "buildTime",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "primaryPage": {
-          "name": "primaryPage",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "blocks": {
-          "name": "blocks",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        },
-        "currentEditor": {
-          "name": "currentEditor",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "changes": {
-          "name": "changes",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "collection": {
-          "name": "collection",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'page'"
-        },
-        "partialBlocks": {
-          "name": "partialBlocks",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "links": {
-          "name": "links",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "online": {
-          "name": "online",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
-        },
-        "pageType": {
-          "name": "pageType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "parent": {
-          "name": "parent",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "lastSaved": {
-          "name": "lastSaved",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamic": {
-          "name": "dynamic",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'published'"
-        },
-        "libRefId": {
-          "name": "libRefId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "dynamicSlugCustom": {
-          "name": "dynamicSlugCustom",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "''"
-        },
-        "metadata": {
-          "name": "metadata",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "tracking": {
-          "name": "tracking",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "jsonld": {
-          "name": "jsonld",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'::jsonb"
-        },
-        "globalJsonLds": {
-          "name": "globalJsonLds",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "app_pages_revisions_app_apps_id_fk": {
-          "name": "app_pages_revisions_app_apps_id_fk",
-          "tableFrom": "app_pages_revisions",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.app_assets": {
       "name": "app_assets",
@@ -1110,8 +1752,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "app_assets_app_apps_id_fk": {
-          "name": "app_assets_app_apps_id_fk",
+        "app_assets_app_fkey": {
+          "name": "app_assets_app_fkey",
           "tableFrom": "app_assets",
           "tableTo": "apps",
           "schemaTo": "public",
@@ -1129,88 +1771,7 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.app_domains": {
-      "name": "app_domains",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "app": {
-          "name": "app",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hosting": {
-          "name": "hosting",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'vercel'"
-        },
-        "hostingProjectId": {
-          "name": "hostingProjectId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'env'"
-        },
-        "subdomain": {
-          "name": "subdomain",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "domain": {
-          "name": "domain",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "domainConfigured": {
-          "name": "domainConfigured",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "app_domains_app_apps_id_fk": {
-          "name": "app_domains_app_apps_id_fk",
-          "tableFrom": "app_domains",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.app_form_submissions": {
       "name": "app_form_submissions",
@@ -1264,8 +1825,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "app_form_submissions_app_apps_id_fk": {
-          "name": "app_form_submissions_app_apps_id_fk",
+        "app_form_submissions_app_fkey": {
+          "name": "app_form_submissions_app_fkey",
           "tableFrom": "app_form_submissions",
           "tableTo": "apps",
           "schemaTo": "public",
@@ -1283,19 +1844,12 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
-    "public.libraries": {
-      "name": "libraries",
+    "public.app_pages_online": {
+      "name": "app_pages_online",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp with time zone",
@@ -1303,108 +1857,54 @@
           "notNull": true,
           "default": "now()"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar",
+        "slug": {
+          "name": "slug",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "seo": {
+          "name": "seo",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
         },
         "app": {
           "name": "app",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "type": {
-          "name": "type",
-          "type": "varchar",
+        "buildTime": {
+          "name": "buildTime",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": false
         },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'active'"
-        },
-        "client": {
-          "name": "client",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "libraries_app_apps_id_fk": {
-          "name": "libraries_app_apps_id_fk",
-          "tableFrom": "libraries",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "libraries_client_clients_id_fk": {
-          "name": "libraries_client_clients_id_fk",
-          "tableFrom": "libraries",
-          "tableTo": "clients",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "client"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.library_items": {
-      "name": "library_items",
-      "schema": "",
-      "columns": {
         "id": {
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "library": {
-          "name": "library",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "name": {
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "description": {
-          "name": "description",
-          "type": "text",
+        "primaryPage": {
+          "name": "primaryPage",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -1415,96 +1915,43 @@
           "notNull": false,
           "default": "'[]'::jsonb"
         },
-        "preview": {
-          "name": "preview",
+        "currentEditor": {
+          "name": "currentEditor",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "group": {
-          "name": "group",
+        "changes": {
+          "name": "changes",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "collection": {
+          "name": "collection",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "default": "'general'"
+          "default": "'page'"
         },
-        "user": {
-          "name": "user",
+        "partialBlocks": {
+          "name": "partialBlocks",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "html": {
-          "name": "html",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "library_items_library_libraries_id_fk": {
-          "name": "library_items_library_libraries_id_fk",
-          "tableFrom": "library_items",
-          "tableTo": "libraries",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "library"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {},
-      "policies": {},
-      "isRLSEnabled": false
-    },
-    "public.library_templates": {
-      "name": "library_templates",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "user": {
-          "name": "user",
+        "links": {
+          "name": "links",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "name": {
-          "name": "name",
-          "type": "text",
+        "online": {
+          "name": "online",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "pageId": {
-          "name": "pageId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": true
         },
         "pageType": {
           "name": "pageType",
@@ -1512,28 +1959,82 @@
           "primaryKey": false,
           "notNull": false
         },
-        "library": {
-          "name": "library",
+        "parent": {
+          "name": "parent",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
-        "preview": {
-          "name": "preview",
-          "type": "text",
+        "lastSaved": {
+          "name": "lastSaved",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamic": {
+          "name": "dynamic",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "libRefId": {
+          "name": "libRefId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicSlugCustom": {
+          "name": "dynamicSlugCustom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "tracking": {
+          "name": "tracking",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "jsonld": {
+          "name": "jsonld",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "globalJsonLds": {
+          "name": "globalJsonLds",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "designTokens": {
+          "name": "designTokens",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "library_templates_library_libraries_id_fk": {
-          "name": "library_templates_library_libraries_id_fk",
-          "tableFrom": "library_templates",
-          "tableTo": "libraries",
+        "app_pages_online_app_fkey": {
+          "name": "app_pages_online_app_fkey",
+          "tableFrom": "app_pages_online",
+          "tableTo": "apps",
           "schemaTo": "public",
           "columnsFrom": [
-            "library"
+            "app"
           ],
           "columnsTo": [
             "id"
@@ -1546,7 +2047,7 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
     "public.app_user_plans": {
       "name": "app_user_plans",
@@ -1585,25 +2086,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'ACTIVE'"
-        },
-        "data": {
-          "name": "data",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "priceId": {
-          "name": "priceId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "subscriptionId": {
           "name": "subscriptionId",
           "type": "text",
@@ -1615,12 +2097,19 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
+        },
+        "scheduledForCancellation": {
+          "name": "scheduledForCancellation",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "app_user_plans_client_clients_id_fk": {
-          "name": "app_user_plans_client_clients_id_fk",
+        "app_user_plans_client_fkey": {
+          "name": "app_user_plans_client_fkey",
           "tableFrom": "app_user_plans",
           "tableTo": "clients",
           "schemaTo": "public",
@@ -1632,25 +2121,32 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "app_user_plans_user_fkey": {
+          "name": "app_user_plans_user_fkey",
+          "tableFrom": "app_user_plans",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "user"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
-    "public.app_users": {
-      "name": "app_users",
+    "public.app_pages": {
+      "name": "app_pages",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp with time zone",
@@ -1658,48 +2154,199 @@
           "notNull": true,
           "default": "now()"
         },
-        "user": {
-          "name": "user",
-          "type": "uuid",
+        "slug": {
+          "name": "slug",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "lang": {
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "''"
+        },
+        "seo": {
+          "name": "seo",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
         },
         "app": {
           "name": "app",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "role": {
-          "name": "role",
-          "type": "varchar",
+        "buildTime": {
+          "name": "buildTime",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": false,
-          "default": "'editor'"
+          "default": false
         },
-        "permissions": {
-          "name": "permissions",
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "primaryPage": {
+          "name": "primaryPage",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "currentEditor": {
+          "name": "currentEditor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "changes": {
+          "name": "changes",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
-        "status": {
-          "name": "status",
+        "collection": {
+          "name": "collection",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'active'"
+          "notNull": false,
+          "default": "'page'"
+        },
+        "online": {
+          "name": "online",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "parent": {
+          "name": "parent",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageType": {
+          "name": "pageType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastSaved": {
+          "name": "lastSaved",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamic": {
+          "name": "dynamic",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "libRefId": {
+          "name": "libRefId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dynamicSlugCustom": {
+          "name": "dynamicSlugCustom",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "tracking": {
+          "name": "tracking",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "jsonld": {
+          "name": "jsonld",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::jsonb"
+        },
+        "globalJsonLds": {
+          "name": "globalJsonLds",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "links": {
+          "name": "links",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "partialBlocks": {
+          "name": "partialBlocks",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "designTokens": {
+          "name": "designTokens",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "app_users_app_apps_id_fk": {
-          "name": "app_users_app_apps_id_fk",
-          "tableFrom": "app_users",
+        "app_pages_app_fkey": {
+          "name": "app_pages_app_fkey",
+          "tableFrom": "app_pages",
           "tableTo": "apps",
           "schemaTo": "public",
           "columnsFrom": [
             "app"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "app_pages_parent_fkey": {
+          "name": "app_pages_parent_fkey",
+          "tableFrom": "app_pages",
+          "tableTo": "app_pages",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "parent"
           ],
           "columnsTo": [
             "id"
@@ -1712,69 +2359,108 @@
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     },
-    "public.app_api_keys": {
-      "name": "app_api_keys",
+    "public.app_pages_metadata": {
+      "name": "app_pages_metadata",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
+          "type": "bigint",
+          "primaryKey": false,
           "notNull": true,
-          "default": "gen_random_uuid()"
+          "identity": {
+            "type": "byDefault",
+            "name": "app_pages_metadata_id_seq",
+            "increment": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "startWith": "1",
+            "cache": "1",
+            "cycle": false,
+            "schema": "public"
+          }
         },
-        "createdAt": {
-          "name": "createdAt",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         },
-        "apiKey": {
-          "name": "apiKey",
-          "type": "text",
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pageId": {
+          "name": "pageId",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false,
-          "default": "''"
+          "default": "gen_random_uuid()"
+        },
+        "publishedAt": {
+          "name": "publishedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageType": {
+          "name": "pageType",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageBlocks": {
+          "name": "pageBlocks",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dataBindings": {
+          "name": "dataBindings",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pageContent": {
+          "name": "pageContent",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dataProviders": {
+          "name": "dataProviders",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         },
         "app": {
           "name": "app",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
-        },
-        "status": {
-          "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'ACTIVE'"
+          "notNull": true,
+          "default": "gen_random_uuid()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "app_api_keys_app_apps_id_fk": {
-          "name": "app_api_keys_app_apps_id_fk",
-          "tableFrom": "app_api_keys",
-          "tableTo": "apps",
-          "schemaTo": "public",
-          "columnsFrom": [
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "app_pages_metadata_pkey": {
+          "name": "app_pages_metadata_pkey",
+          "columns": [
+            "slug",
             "app"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          ]
         }
       },
-      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {},
       "policies": {},
-      "isRLSEnabled": false
+      "isRLSEnabled": true
     }
   },
   "enums": {},
@@ -1789,6 +2475,14 @@
     "columns": {}
   },
   "internal": {
-    "tables": {}
+    "tables": {
+      "ai_logs": {
+        "columns": {
+          "cost": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    }
   }
 }

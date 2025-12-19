@@ -65,13 +65,17 @@ export class GetWebsiteSettingsAction extends BaseAction<
 
     const settings = first(config);
 
+    const defaultSettings = this.getDefaultSettings();
+    const { fallbackLang: _defaultFallbackLang, languages: _defaultLanguages, theme: _defaultTheme, ...restDefaultSettings } =
+      defaultSettings;
+
     return {
-      ...this.getDefaultSettings(),
+      ...restDefaultSettings,
       ...settings,
       // Handle null/undefined values by providing defaults
-      fallbackLang: settings?.fallbackLang || this.getDefaultSettings().fallbackLang,
-      languages: (settings?.languages as string[]) || this.getDefaultSettings().languages,
-      theme: settings?.theme || this.getDefaultSettings().theme,
+      fallbackLang: settings?.fallbackLang ?? defaultSettings.fallbackLang,
+      languages: (settings?.languages as string[]) ?? defaultSettings.languages,
+      theme: settings?.theme ?? defaultSettings.theme,
       // Generate deterministic app key like the original implementation
       appKey: this.generateDeterministicUuid(appId),
     };

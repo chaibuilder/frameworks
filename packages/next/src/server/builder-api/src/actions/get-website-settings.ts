@@ -12,8 +12,10 @@ type GetWebsiteSettingsActionData = {
 
 type GetWebsiteSettingsActionResponse = {
   fallbackLang: string;
-  languages: string[]; // Making it more flexible to match database schema
-  theme: any; // Making it more flexible to match database schema
+  // List of language codes (e.g. "en", "fr") as stored in the apps/appsOnline.languages column.
+  languages: string[];
+  // Theme configuration JSON as stored in the apps/appsOnline.theme column; shape is defined by the client/theme system.
+  theme: any;
   appKey: string;
   designTokens?: any;
 };

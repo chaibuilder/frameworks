@@ -9,9 +9,7 @@ const checkForEnv = (envVar: string | undefined, name: string) => {
   return envVar;
 };
 
-checkForEnv(process.env.DATABASE_URL, "DATABASE_URL");
-
-const connectionString = process.env.DATABASE_URL || "";
+const connectionString = checkForEnv(process.env.DATABASE_URL, "DATABASE_URL");
 const client = postgres(connectionString, { max: 10 });
 export const db = drizzle(client, { schema });
 

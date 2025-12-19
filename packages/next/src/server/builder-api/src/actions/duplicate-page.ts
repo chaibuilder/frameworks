@@ -1,6 +1,6 @@
-import { isEmpty } from "lodash";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
+import { db, schema } from "../../../db";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -40,38 +40,46 @@ export class DuplicatePageAction extends BaseAction<DuplicatePageActionData, Dup
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
 
-    if (!isEmpty(data.slug) && (await this.doesSlugExist(data.slug as string))) {
-      throw new ActionError("Slug already exists", "SLUG_EXISTS");
-    }
-    const supabase = await getSupabaseAdmin();
     try {
-      const { data: originalPage } = await supabase
-        .from("app_pages")
-        .select("*")
-        .eq("id", data.pageId)
-        .eq("app", this.context.appId)
-        .single();
+      // Parallel execution: Check slug uniqueness and fetch original page simultaneously
+      const [slugExists, originalPage] = await Promise.all([
+        data.slug ? this.doesSlugExist(data.slug) : Promise.resolve(false),
+        db.query.appPages.findFirst({
+          where: and(eq(schema.appPages.id, data.pageId), eq(schema.appPages.app, this.context.appId)),
+        }),
+      ]);
 
+      // Validate slug uniqueness if provided
+      if (data.slug && slugExists) {
+        throw new ActionError("Slug already exists", "SLUG_EXISTS");
+      }
+
+      // Validate original page exists
       if (!originalPage) {
         throw new ActionError("Page not found", "PAGE_NOT_FOUND");
       }
 
-      const { data: result } = await supabase
-        .from("app_pages")
-        .insert({
-          ...originalPage,
-          name: data.name,
-          id: undefined,
-          createdAt: undefined,
-          lastSaved: null,
-          currentEditor: null,
-          changes: null,
-          online: false,
-          libRefId: null,
-          ...(data.slug && { slug: data.slug }),
-        })
-        .select()
-        .single();
+      // Create duplicated page with optimized insert
+      const { id, createdAt, ...pageData } = originalPage;
+      const duplicatedPageData = {
+        ...pageData,
+        name: data.name,
+        currentEditor: null,
+        changes: null,
+        online: false,
+        libRefId: null,
+        lastSaved: null,
+        ...(data.slug && { slug: data.slug }),
+      };
+
+      const [result] = await db
+        .insert(schema.appPages)
+        .values(duplicatedPageData)
+        .returning({ id: schema.appPages.id });
+
+      if (!result) {
+        throw new ActionError("Failed to create duplicate page", "INSERT_FAILED");
+      }
 
       return { id: result.id };
     } catch (error) {
@@ -80,14 +88,20 @@ export class DuplicatePageAction extends BaseAction<DuplicatePageActionData, Dup
   }
 
   private async doesSlugExist(slug: string): Promise<boolean> {
-    const supabase = await getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from("app_pages")
-      .select("id")
-      .eq("slug", slug)
-      .eq("app", this.context?.appId)
-      .single();
+    if (!this.context?.appId) {
+      return false;
+    }
+    try {
+      const existingPage = await db.query.appPages.findFirst({
+        where: and(eq(schema.appPages.slug, slug), eq(schema.appPages.app, this.context.appId)),
+        columns: {
+          id: true,
+        },
+      });
 
-    return !error && !!data;
+      return !!existingPage;
+    } catch (error) {
+      return false;
+    }
   }
 }

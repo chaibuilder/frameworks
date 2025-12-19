@@ -48,21 +48,46 @@ class ChaiPageRevisions {
     return { success: true };
   }
 
-  async restoreRevision(args: { revisionId: string; discardCurrent: boolean }) {
-    //
-    const { data: revision, error: revisionError } = await this.supabase
-      .from(CHAI_PAGES_REVISIONS_TABLE_NAME)
-      .select("id, blocks, type")
-      .eq("app", this.appUuid)
-      .eq("uid", args.revisionId)
-      .single();
+  async restoreRevision(args: { revisionId: string; discardCurrent: boolean; pageId?: string }) {
+    let pageId: string;
+    let blocks: any;
 
-    if (revisionError) {
-      throw apiError("ERROR_RESTORING_REVISION", revisionError);
+    // Handle special case when revisionId is "current" (live page)
+    if (args.revisionId === "current") {
+      // Fetch from app_pages_online table for live revision
+      if (!args.pageId) {
+        throw apiError("ERROR_RESTORING_REVISION", new Error("pageId is required when restoring current revision"));
+      }
+
+      const { data: onlinePage, error: onlinePageError } = await this.supabase
+        .from(CHAI_ONLINE_PAGES_TABLE_NAME)
+        .select("id, blocks")
+        .eq("app", this.appUuid)
+        .eq("id", args.pageId)
+        .single();
+
+      if (onlinePageError || !onlinePage) {
+        throw apiError("ERROR_RESTORING_REVISION", onlinePageError || new Error("Live page not found"));
+      }
+
+      pageId = onlinePage.id;
+      blocks = onlinePage.blocks;
+    } else {
+      // Fetch from app_pages_revisions table for regular revisions
+      const { data: revision, error: revisionError } = await this.supabase
+        .from(CHAI_PAGES_REVISIONS_TABLE_NAME)
+        .select("id, blocks, type")
+        .eq("app", this.appUuid)
+        .eq("uid", args.revisionId)
+        .single();
+
+      if (revisionError) {
+        throw apiError("ERROR_RESTORING_REVISION", revisionError);
+      }
+
+      pageId = revision.id;
+      blocks = revision.blocks;
     }
-
-    const pageId = revision.id;
-    const blocks = revision.blocks;
 
     if (!args.discardCurrent) {
       const { data: currentPage, error: currentPageError } = await this.supabase

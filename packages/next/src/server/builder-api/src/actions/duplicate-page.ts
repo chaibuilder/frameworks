@@ -1,6 +1,6 @@
-import { isEmpty } from "lodash";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
+import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -39,55 +39,70 @@ export class DuplicatePageAction extends BaseAction<DuplicatePageActionData, Dup
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
+    const { appId } = this.context;
 
-    if (!isEmpty(data.slug) && (await this.doesSlugExist(data.slug as string))) {
-      throw new ActionError("Slug already exists", "SLUG_EXISTS");
-    }
-    const supabase = await getSupabaseAdmin();
-    try {
-      const { data: originalPage } = await supabase
-        .from("app_pages")
-        .select("*")
-        .eq("id", data.pageId)
-        .eq("app", this.context.appId)
-        .single();
-
-      if (!originalPage) {
-        throw new ActionError("Page not found", "PAGE_NOT_FOUND");
+    // Validate slug uniqueness if provided
+    if (data.slug) {
+      const slugExists = await this.doesSlugExist(data.slug);
+      if (slugExists) {
+        throw new ActionError("Slug already exists", "SLUG_EXISTS");
       }
+    }
 
-      const { data: result } = await supabase
-        .from("app_pages")
-        .insert({
-          ...originalPage,
-          name: data.name,
-          id: undefined,
-          createdAt: undefined,
-          lastSaved: null,
-          currentEditor: null,
-          changes: null,
-          online: false,
-          libRefId: null,
-          ...(data.slug && { slug: data.slug }),
-        })
-        .select()
-        .single();
+    const { data: originalPage, error } = await safeQuery(() =>
+      db.query.appPages.findFirst({
+        where: and(eq(schema.appPages.id, data.pageId), eq(schema.appPages.app, appId)),
+      }),
+    );
 
-      return { id: result.id };
-    } catch (error) {
+    if (error) {
       throw error;
     }
+
+    // Validate original page exists
+    if (!originalPage) {
+      throw new ActionError("Page not found", "PAGE_NOT_FOUND");
+    }
+
+    const duplicatedPageData = {
+      ...originalPage,
+      id: undefined,
+      createdAt: undefined,
+      name: data.name,
+      currentEditor: null,
+      changes: null,
+      online: false,
+      libRefId: null,
+      lastSaved: null,
+      ...(data.slug && { slug: data.slug }),
+    };
+
+    const [result] = await db.insert(schema.appPages).values(duplicatedPageData).returning({ id: schema.appPages.id });
+
+    if (!result) {
+      throw new ActionError("Failed to create duplicate page", "INSERT_FAILED");
+    }
+
+    return { id: result.id };
   }
 
   private async doesSlugExist(slug: string): Promise<boolean> {
-    const supabase = await getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from("app_pages")
-      .select("id")
-      .eq("slug", slug)
-      .eq("app", this.context?.appId)
-      .single();
+    if (!this.context) {
+      throw new ActionError("Context not set", "CONTEXT_NOT_SET");
+    }
+    const { appId } = this.context;
+    const { data: existingPage, error } = await safeQuery(() =>
+      db.query.appPages.findFirst({
+        where: and(eq(schema.appPages.slug, slug), eq(schema.appPages.app, appId)),
+        columns: {
+          id: true,
+        },
+      }),
+    );
 
-    return !error && !!data;
+    if (error) {
+      throw new ActionError(`${error.message}`, "SLUG_CHECK_FAILED");
+    }
+    return !!existingPage;
   }
 }

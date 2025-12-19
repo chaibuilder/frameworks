@@ -9,6 +9,7 @@ export {
 } from "@chaibuilder/pages/server";
 
 export { getSupabaseAdmin } from "./supabase";
+export { db, schema } from "./db";
 export { builderApiHandler };
 
 export default ChaiBuilder;

@@ -1,4 +1,5 @@
 import { get } from "lodash";
+import { BenchmarkQueryAction } from "./benchmark-query";
 import { ChaiAction } from "./chai-action-interface";
 import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
@@ -29,6 +30,7 @@ class ActionsRegistry {
     this.register("UPDATE_PAGE", new UpdatePageAction());
     this.register("GET_COMPARE_DATA", new GetCompareDataAction());
     this.register("GET_SITE_WIDE_USAGE", new GetSiteWideDataAction());
+    this.register("BENCHMARK_QUERY", new BenchmarkQueryAction());
     // Add more actions here as they are created
   }
 

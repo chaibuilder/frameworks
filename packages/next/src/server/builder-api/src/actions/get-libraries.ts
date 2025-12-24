@@ -69,6 +69,22 @@ export class GetLibrariesAction extends BaseAction<GetLibrariesActionData, GetLi
 
     const clientId = appQuery[0].client;
 
+    // Only fetch libraries if clientId exists
+    if (!clientId) {
+      // If no client, return only the site library if it exists
+      return siteLibrary
+        ? [
+            {
+              id: siteLibrary.id,
+              name: siteLibrary.name,
+              type: siteLibrary.type,
+              createdAt: siteLibrary.createdAt,
+              isSiteLibrary: true,
+            },
+          ]
+        : [];
+    }
+
     // Fetch libraries that belong to the current client or are global (client is null)
     const { data: librariesQuery, error: librariesQueryError } = await safeQuery(() =>
       db
@@ -79,7 +95,7 @@ export class GetLibrariesAction extends BaseAction<GetLibrariesActionData, GetLi
           createdAt: libraries.createdAt,
         })
         .from(libraries)
-        .where(clientId ? eq(libraries.client, clientId) : isNull(libraries.client)),
+        .where(eq(libraries.client, clientId)),
     );
 
     if (librariesQueryError) {

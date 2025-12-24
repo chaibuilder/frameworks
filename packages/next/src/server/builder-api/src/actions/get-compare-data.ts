@@ -1,6 +1,7 @@
 import { ChaiBlock } from "@chaibuilder/sdk";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
+import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -82,30 +83,56 @@ export class GetCompareDataAction extends BaseAction<GetCompareDataActionData, G
     type: "draft" | "revision" | "live",
     id: string,
   ): Promise<{ blocks: ChaiBlock[]; seo: any; tracking: any }> {
-    let query;
-    const supabase = await getSupabaseAdmin();
+    let data;
+    let error;
+
     switch (type) {
       case "draft":
         // Get blocks from app_pages table
-        query = supabase.from("app_pages").select("blocks,seo,tracking").eq("id", id).single();
+        ({ data, error } = await safeQuery(() =>
+          db.query.appPages.findFirst({
+            where: eq(schema.appPages.id, id),
+            columns: {
+              blocks: true,
+              seo: true,
+              tracking: true,
+            },
+          }),
+        ));
         break;
 
       case "live":
         // Get blocks from app_pages_online table
-        query = supabase.from("app_pages_online").select("blocks,seo,tracking").eq("id", id).single();
+        ({ data, error } = await safeQuery(() =>
+          db.query.appPagesOnline.findFirst({
+            where: eq(schema.appPagesOnline.id, id),
+            columns: {
+              blocks: true,
+              seo: true,
+              tracking: true,
+            },
+          }),
+        ));
         break;
 
       case "revision":
         // Get blocks from app_pages_revisions table
         // Note: revisions use 'uid' as primary key
-        query = supabase.from("app_pages_revisions").select("blocks,seo,tracking").eq("uid", id).single();
+        ({ data, error } = await safeQuery(() =>
+          db.query.appPagesRevisions.findFirst({
+            where: eq(schema.appPagesRevisions.uid, id),
+            columns: {
+              blocks: true,
+              seo: true,
+              tracking: true,
+            },
+          }),
+        ));
         break;
 
       default:
         throw new ActionError(`Invalid version type: ${type}`, "INVALID_VERSION_TYPE");
     }
-
-    const { data, error } = await query;
 
     if (error) {
       throw new ActionError(`Failed to fetch blocks for ${type} version: ${error.message}`, "FETCH_BLOCKS_ERROR");
@@ -116,7 +143,11 @@ export class GetCompareDataAction extends BaseAction<GetCompareDataActionData, G
     }
 
     // Return blocks or empty array if blocks is null/undefined
-    return data;
+    return {
+      blocks: (data.blocks as ChaiBlock[]) || [],
+      seo: data.seo || {},
+      tracking: data.tracking || {},
+    };
   }
 
   /**

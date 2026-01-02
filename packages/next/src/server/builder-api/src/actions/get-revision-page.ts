@@ -50,7 +50,10 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "draft":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPages.findFirst({
-            where: eq(schema.appPages.id, data.id),
+            where: and(
+              eq(schema.appPages.id, data.id),
+              eq(schema.appPages.lang, data.lang ?? ""),
+            ),
           }),
         ));
         break;
@@ -58,7 +61,10 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "live":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPagesOnline.findFirst({
-            where: eq(schema.appPagesOnline.id, data.id),
+            where: and(
+              eq(schema.appPagesOnline.id, data.id),
+              eq(schema.appPagesOnline.lang, data.lang ?? ""),
+            ),
           }),
         ));
         break;
@@ -66,7 +72,10 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "revision":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPagesRevisions.findFirst({
-            where: eq(schema.appPagesRevisions.uid, data.id),
+            where: and(
+              eq(schema.appPagesRevisions.uid, data.id),
+              eq(schema.appPagesRevisions.lang, data.lang ?? ""),
+            ),
           }),
         ));
         break;
@@ -108,7 +117,7 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
     }
 
     // Fetch all partial blocks in ONE query
-    const { data: partialResults } = await safeQuery(() =>
+    const { data: partialResults, error: partialError } = await safeQuery(() =>
       db
         .select({
           id: table.id,
@@ -117,6 +126,10 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
         .from(table)
         .where(and(eq(table.app, appId), inArray(table.id, partialBlockIds))),
     );
+
+    if (partialError) {
+      throw apiError("PARTIAL_BLOCKS_FETCH_ERROR", partialError);
+    }
 
     // Create a map for quick lookup: { partialBlockId: blocks[] }
     const partialBlocksMap = new Map<string, ChaiBlock[]>();

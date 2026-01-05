@@ -9,6 +9,7 @@ import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetDraftPageAction } from "./get-draft-page";
 import { GetLanguagePagesAction } from "./get-language-pages";
+import { GetLibrariesAction } from "./get-libraries";
 import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
 import { GetWebsitePagesAction } from "./get-website-pages";
@@ -39,6 +40,7 @@ class ActionsRegistry {
     this.register("BENCHMARK_QUERY", new BenchmarkQueryAction());
     this.register("GET_WEBSITE_DRAFT_SETTINGS", new GetWebsiteSettingsAction());
     this.register("GET_WEBSITE_PAGES", new GetWebsitePagesAction());
+    this.register("GET_LIBRARIES", new GetLibrariesAction());
     this.register("GET_DRAFT_PAGE", new GetDraftPageAction());
     this.register("GET_LANGUAGE_PAGES", new GetLanguagePagesAction());
     // Add more actions here as they are created

@@ -1,5 +1,6 @@
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
+import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -39,33 +40,40 @@ export class UpdatePageMetadataAction extends BaseAction<
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
-    const supabase = await getSupabaseAdmin();
-    try {
-      const { data: originalPage } = await supabase
-        .from("app_pages")
-        .select("*")
-        .eq("id", data.id)
-        .eq("app", this.context.appId)
-        .single();
 
-      if (!originalPage) {
-        throw new ActionError("Page not found", "PAGE_NOT_FOUND");
-      }
+    const { appId } = this.context;
 
-      const { error } = await supabase
-        .from("app_pages")
-        .update({ metadata: data.metadata })
-        .eq("id", data.id)
-        .eq("app", this.context.appId);
+    // Check if page exists
+    const { data: originalPage, error: fetchError } = await safeQuery(() =>
+      db.query.appPages.findFirst({
+        where: and(eq(schema.appPages.id, data.id), eq(schema.appPages.app, appId)),
+        columns: {
+          id: true,
+        },
+      }),
+    );
 
-      if (error) {
-        console.error(error);
-        throw new ActionError("Failed to update page metadata", "UPDATE_FAILED", error);
-      }
+    if (fetchError) {
+      throw new ActionError(`Failed to fetch page: ${fetchError.message}`, "FETCH_FAILED");
+    }
 
-      return { success: true };
-    } catch {
+    if (!originalPage) {
+      throw new ActionError("Page not found", "PAGE_NOT_FOUND");
+    }
+
+    // Update page metadata
+    const { error: updateError } = await safeQuery(() =>
+      db
+        .update(schema.appPages)
+        .set({ metadata: data.metadata })
+        .where(and(eq(schema.appPages.id, data.id), eq(schema.appPages.app, appId))),
+    );
+
+    if (updateError) {
+      console.error(updateError);
       throw new ActionError("Failed to update page metadata", "UPDATE_FAILED");
     }
+
+    return { success: true };
   }
 }

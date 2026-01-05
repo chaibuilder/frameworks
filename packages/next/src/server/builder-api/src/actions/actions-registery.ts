@@ -17,6 +17,7 @@ import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
+import { DeleteLibraryItemAction } from "./delete-library-item";
 
 /**
  * Registry of all available actions
@@ -45,6 +46,7 @@ class ActionsRegistry {
     this.register("GET_LIBRARIES", new GetLibrariesAction());
     this.register("GET_DRAFT_PAGE", new GetDraftPageAction());
     this.register("GET_LANGUAGE_PAGES", new GetLanguagePagesAction());
+    this.register("DELETE_LIBRARY_ITEM", new DeleteLibraryItemAction());
     // Add more actions here as they are created
   }
 

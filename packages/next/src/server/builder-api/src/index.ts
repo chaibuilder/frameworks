@@ -1,4 +1,3 @@
-import { SupabaseClient } from "@supabase/supabase-js";
 import { getChaiAction } from "./actions/actions-registery";
 import { ActionError } from "./actions/action-error";
 import { BaseAction } from "./actions/base-action";
@@ -9,7 +8,7 @@ const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY ?? "";
 
 const NON_AUTH_TOKEN_LIST = ["GET_PAGE", "GET_PAGE_META", "GET_LINK", "GET_WEBSITE_SETTINGS", "GET_REVISION_PAGE"];
 
-export async function handleBuilderApi(req: any, supabase: SupabaseClient) {
+export async function handleBuilderApi(req) {
   const formData = await req.json();
   // get appuuid from headers
   const apiKey = req.headers.get("x-chai-api-key");
@@ -55,7 +54,7 @@ export async function handleBuilderApi(req: any, supabase: SupabaseClient) {
 
       // If action is registered in the new system, use it
       // Set the context on the action handler
-      actionHandler.setContext({ appId, userId, supabase });
+      actionHandler.setContext({ appId, userId });
       // Execute the action
       const result = await actionHandler.execute(data);
       return result;

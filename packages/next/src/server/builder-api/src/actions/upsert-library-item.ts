@@ -7,6 +7,7 @@ import { db, safeQuery, schema } from "../../../db";
 import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
+import { getSupabaseAdmin } from "../../../supabase";
 
 /**
  * Data type for UpsertLibraryItemAction
@@ -61,7 +62,8 @@ export class UpsertLibraryItemAction extends BaseAction<UpsertLibraryItemActionD
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
-    const { appId, userId, supabase } = this.context;
+    const { appId, userId } = this.context;
+    const supabase = await getSupabaseAdmin();
     const { name, group, blocks, description, previewImage, previewImageUrl, id } = data;
 
     let finalPreviewImageUrl = previewImageUrl;

@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
+import { getSupabaseAdmin } from "../../../supabase";
 import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
@@ -51,7 +52,8 @@ export class MarkAsTemplateAction extends BaseAction<MarkAsTemplateActionData, M
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
-    const { appId, userId, supabase } = this.context;
+    const { appId, userId } = this.context;
+    const supabase = await getSupabaseAdmin();
     const { id: pageId, description, name, pageType, previewImage, previewImageUrl } = data;
 
     let finalPreviewImageUrl = previewImageUrl;

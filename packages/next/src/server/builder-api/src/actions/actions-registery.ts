@@ -4,7 +4,6 @@ import { ChaiAction } from "./chai-action-interface";
 import { CreatePageAction } from "./create-page";
 import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
-import { RestorePageAction } from "./restore-page";
 import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
 import { GetCompareDataAction } from "./get-compare-data";
@@ -15,8 +14,11 @@ import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
 import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
+import { MarkAsTemplateAction } from "./mark-as-template";
+import { RestorePageAction } from "./restore-page";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
+import { UpsertLibraryItemAction } from "./upsert-library-item";
 
 /**
  * Registry of all available actions
@@ -45,6 +47,8 @@ class ActionsRegistry {
     this.register("GET_LIBRARIES", new GetLibrariesAction());
     this.register("GET_DRAFT_PAGE", new GetDraftPageAction());
     this.register("GET_LANGUAGE_PAGES", new GetLanguagePagesAction());
+    this.register("UPSERT_LIBRARY_ITEM", new UpsertLibraryItemAction());
+    this.register("MARK_AS_TEMPLATE", new MarkAsTemplateAction());
     // Add more actions here as they are created
   }
 

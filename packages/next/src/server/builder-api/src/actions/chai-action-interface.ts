@@ -1,3 +1,5 @@
+import { SupabaseClient } from "@supabase/supabase-js";
+
 /**
  * Action Context
  * Contains information and repositories needed by actions
@@ -5,6 +7,7 @@
 export interface ActionContext {
   appId: string;
   userId?: string;
+  supabase: SupabaseClient;
 }
 
 /**

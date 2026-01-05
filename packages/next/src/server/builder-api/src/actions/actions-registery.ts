@@ -1,6 +1,7 @@
 import { get } from "lodash";
 import { BenchmarkQueryAction } from "./benchmark-query";
 import { ChaiAction } from "./chai-action-interface";
+import { CreatePageAction } from "./create-page";
 import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
 import { RestorePageAction } from "./restore-page";
@@ -27,6 +28,7 @@ class ActionsRegistry {
 
   private constructor() {
     // Register all actions
+    this.register("CREATE_PAGE", new CreatePageAction());
     this.register("DELETE_PAGE", new DeletePageAction());
     this.register("DUPLICATE_PAGE", new DuplicatePageAction());
     this.register("RESTORE_PAGE_REVISION", new RestorePageAction());

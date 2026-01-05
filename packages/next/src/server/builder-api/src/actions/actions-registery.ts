@@ -17,6 +17,8 @@ import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
+import { GetLibraryItemAction } from "./get-library-item";
+import { GetLibraryItemsAction } from "./get-library-items";
 
 /**
  * Registry of all available actions
@@ -45,6 +47,8 @@ class ActionsRegistry {
     this.register("GET_LIBRARIES", new GetLibrariesAction());
     this.register("GET_DRAFT_PAGE", new GetDraftPageAction());
     this.register("GET_LANGUAGE_PAGES", new GetLanguagePagesAction());
+    this.register("GET_LIBRARY_ITEM", new GetLibraryItemAction());
+    this.register("GET_LIBRARY_ITEMS", new GetLibraryItemsAction());
     // Add more actions here as they are created
   }
 

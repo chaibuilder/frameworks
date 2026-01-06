@@ -15,6 +15,7 @@ import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
 import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
+import { PublishPageAction } from "./publish-page";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
 
@@ -45,6 +46,7 @@ class ActionsRegistry {
     this.register("GET_LIBRARIES", new GetLibrariesAction());
     this.register("GET_DRAFT_PAGE", new GetDraftPageAction());
     this.register("GET_LANGUAGE_PAGES", new GetLanguagePagesAction());
+    this.register("PUBLISH_PAGE", new PublishPageAction());
     // Add more actions here as they are created
   }
 

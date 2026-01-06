@@ -42,11 +42,6 @@ export class GetLibraryItemsAction extends BaseAction<GetLibraryItemsActionData,
     }
     const { id } = data;
 
-    // Return empty array if no id provided
-    if (!id) {
-      return [];
-    }
-
     // Fetch library items for the given library
     const { data: items, error } = await safeQuery(() =>
       db

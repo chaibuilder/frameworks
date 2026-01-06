@@ -16,12 +16,10 @@ type GetLibraryItemActionResponse = {
   id: string;
   name: string | null;
   blocks: unknown;
-  library?: string | null;
   description: string | null;
   group: string | null;
   user: string | null;
   preview: string | null;
-  type?: string | null;
   createdAt: string;
   html: string | null;
 };

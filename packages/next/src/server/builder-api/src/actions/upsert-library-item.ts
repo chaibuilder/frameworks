@@ -4,10 +4,8 @@ import { set } from "lodash";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
-import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
-import { getSupabaseAdmin } from "../../../supabase";
 
 /**
  * Data type for UpsertLibraryItemAction
@@ -63,10 +61,7 @@ export class UpsertLibraryItemAction extends BaseAction<UpsertLibraryItemActionD
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
     const { appId, userId } = this.context;
-    const supabase = await getSupabaseAdmin();
     const { name, group, blocks, description, previewImage, previewImageUrl, id } = data;
-
-    let finalPreviewImageUrl = previewImageUrl;
 
     // Get the site library for this app
     const { data: siteLibrary, error: libraryError } = await safeQuery(() =>
@@ -87,21 +82,8 @@ export class UpsertLibraryItemAction extends BaseAction<UpsertLibraryItemActionD
     }
 
     // Handle preview image upload if provided
-    if (previewImage) {
-      const dam = new ChaiBuilderDAM(supabase, appId, userId ?? "");
-      const uploadedImage = await dam.uploadAssetToStorage({
-        base64File: previewImage,
-        path: "library-previews/" + siteLibrary.id,
-      });
-
-      if (uploadedImage.error) {
-        throw new ActionError(`Failed to upload preview image: ${uploadedImage.error}`, "UPLOAD_PREVIEW_FAILED");
-      }
-
-      if (uploadedImage.url) {
-        finalPreviewImageUrl = uploadedImage.url;
-      }
-    }
+    const uploadedImageUrl = await this.uploadPreviewImage(previewImage, appId, userId ?? null, siteLibrary.id);
+    const finalPreviewImageUrl = uploadedImageUrl || previewImageUrl;
 
     // If id is provided, update existing library item
     if (id) {

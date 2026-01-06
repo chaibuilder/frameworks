@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
-import { getSupabaseAdmin } from "../../../supabase";
-import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
 
@@ -53,10 +51,7 @@ export class MarkAsTemplateAction extends BaseAction<MarkAsTemplateActionData, M
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }
     const { appId, userId } = this.context;
-    const supabase = await getSupabaseAdmin();
     const { id: pageId, description, name, pageType, previewImage, previewImageUrl } = data;
-
-    let finalPreviewImageUrl = previewImageUrl;
 
     // Get the site library for this app
     const { data: siteLibrary, error: libraryError } = await safeQuery(() =>
@@ -77,21 +72,8 @@ export class MarkAsTemplateAction extends BaseAction<MarkAsTemplateActionData, M
     }
 
     // Handle preview image upload if provided
-    if (previewImage) {
-      const dam = new ChaiBuilderDAM(supabase, appId, userId ?? "");
-      const uploadedImage = await dam.uploadAssetToStorage({
-        base64File: previewImage,
-        path: "library-previews/" + siteLibrary.id,
-      });
-
-      if (uploadedImage.error) {
-        throw new ActionError(`Failed to upload preview image: ${uploadedImage.error}`, "UPLOAD_PREVIEW_FAILED");
-      }
-
-      if (uploadedImage.url) {
-        finalPreviewImageUrl = uploadedImage.url;
-      }
-    }
+    const uploadedImageUrl = await this.uploadPreviewImage(previewImage, appId, userId ?? null, siteLibrary.id);
+    const finalPreviewImageUrl = uploadedImageUrl || previewImageUrl;
 
     // Insert the template
     const { data: template, error } = await safeQuery(() =>

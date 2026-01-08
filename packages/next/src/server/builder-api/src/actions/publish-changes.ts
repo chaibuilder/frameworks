@@ -268,7 +268,6 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
    * Handle execution errors with proper error transformation
    */
   private handleExecutionError(error: unknown): never {
-    console.log("Error publishing changes:", error);
     if (error instanceof ActionError) {
       throw error;
     }

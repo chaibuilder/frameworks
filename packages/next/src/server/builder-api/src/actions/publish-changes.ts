@@ -1,4 +1,4 @@
-import { and, eq, inArray, like } from "drizzle-orm";
+import { and, eq, inArray, like, InferSelectModel } from "drizzle-orm";
 import { flattenDeep, isEmpty, uniq } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
@@ -14,6 +14,24 @@ type PublishChangesActionData = {
 
 type PublishChangesActionResponse = {
   tags: string[];
+};
+
+/**
+ * Type for App data from the database
+ */
+type AppData = InferSelectModel<typeof schema.apps>;
+
+/**
+ * Type for AppPage data from the database
+ */
+type AppPageData = InferSelectModel<typeof schema.appPages>;
+
+/**
+ * Type for the return value when adding a page online
+ */
+type AddOnlinePageResult = {
+  id: string;
+  primaryPage: string | null;
 };
 
 /**
@@ -110,7 +128,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
   /**
    * Clone app data from main table
    */
-  private async cloneApp(): Promise<any> {
+  private async cloneApp(): Promise<AppData> {
     const { data, error } = await safeQuery(() =>
       db.query.apps.findFirst({
         where: eq(schema.apps.id, this.appId),
@@ -212,7 +230,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
   /**
    * Add page to online table
    */
-  private async addOnlinePage(page: any): Promise<any> {
+  private async addOnlinePage(page: AppPageData): Promise<AddOnlinePageResult> {
     // Create revision and delete existing online page
     await this.createRevision(page.id);
 
@@ -250,7 +268,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
   /**
    * Clone page data from main table
    */
-  private async clonePage(id: string): Promise<any> {
+  private async clonePage(id: string): Promise<AppPageData> {
     const { data, error } = await safeQuery(() =>
       db.query.appPages.findFirst({
         where: and(eq(schema.appPages.id, id), eq(schema.appPages.app, this.appId)),

@@ -176,7 +176,6 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
     if (isEmpty(page.slug)) {
       tags.push(...(await this.getPartialBlockUsage(page.primaryPage ?? page.id)));
     }
-    console.log("Tags: ", tags);
     return tags;
   }
 

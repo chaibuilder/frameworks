@@ -43,7 +43,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
     try {
       const ids = data.ids ?? [];
       if (ids.length === 0) {
-        throw new ActionError("IDS_REQUIRED", "IDS_REQUIRED");
+        throw new ActionError("IDS_REQUIRED", "At least one page ID or THEME must be provided");
       }
 
       const responses = await Promise.all(

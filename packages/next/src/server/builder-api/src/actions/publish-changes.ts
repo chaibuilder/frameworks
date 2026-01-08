@@ -35,6 +35,11 @@ type AddOnlinePageResult = {
 };
 
 /**
+ * Type for partial page data with only id field
+ */
+type PartialPageIdOnly = Pick<InferSelectModel<typeof schema.appPagesOnline>, "id">;
+
+/**
  * Action to publish changes to pages or theme
  */
 export class PublishChangesAction extends BaseAction<PublishChangesActionData, PublishChangesActionResponse> {
@@ -179,7 +184,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
     );
 
     return uniq(data ?? [])
-      .map((row: any) => row.id)
+      .map((row: PartialPageIdOnly) => row.id)
       .map((page) => `page-${page}`);
   }
 

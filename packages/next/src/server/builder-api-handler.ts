@@ -7,7 +7,7 @@ import { ChaiBuilder } from "./chai-builder";
 import { getAppUuidFromRoute } from "./getAppUuidFromRoute";
 import { handleAskAiRequest } from "./handleAskAiRequest";
 import { logAiRequest, logAiRequestError } from "./log-ai-request";
-import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
+import { ChaiBuilderPostgresBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
 const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
@@ -17,7 +17,7 @@ export const builderApiHandler = (apiKey?: string) => {
     try {
       const USE_CHAI_API_SERVER = !isEmpty(apiKey);
       const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
-      const backend = new ChaiBuilderSupabaseBackend(apiKeyToUse);
+      const backend = new ChaiBuilderPostgresBackend(apiKeyToUse);
       ChaiBuilder.setSiteId(apiKeyToUse);
       // register global data providers
       const authorization = req.headers.get("authorization");
@@ -92,7 +92,7 @@ export const builderApiHandler = (apiKey?: string) => {
       return NextResponse.json(response);
     } catch (error) {
       console.log("Error in builderApiHandler:", error);
-      
+
       // Handle ActionError with specific error code and message
       if (error instanceof ActionError) {
         return NextResponse.json(
@@ -100,10 +100,10 @@ export const builderApiHandler = (apiKey?: string) => {
             error: error.message,
             code: error.code,
           },
-          { status: 400 }
+          { status: 400 },
         );
       }
-      
+
       // Generic error fallback
       return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
     }

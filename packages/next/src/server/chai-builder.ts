@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
-import { ChaiBuilderSupabaseBackend } from "./PagesSupabaseBackend";
+import { ChaiBuilderPostgresBackend } from "./PagesSupabaseBackend";
 import { getSupabaseAdmin } from "./supabase";
 
 type ChaiBuilderPage =
@@ -37,7 +37,7 @@ class ChaiBuilder {
       throw new Error("Please initialize ChaiBuilder with an API key");
     }
     ChaiBuilder.siteId = apiKey;
-    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderSupabaseBackend(apiKey) });
+    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderPostgresBackend(apiKey) });
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
 
@@ -53,7 +53,7 @@ class ChaiBuilder {
       return notFound();
     }
     ChaiBuilder.siteId = siteResult.id as string;
-    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderSupabaseBackend(siteResult.id as string) });
+    ChaiBuilder.pages = new ChaiBuilderPages({ backend: new ChaiBuilderPostgresBackend(siteResult.id as string) });
     await ChaiBuilder.loadSiteSettings(draftMode);
   };
 

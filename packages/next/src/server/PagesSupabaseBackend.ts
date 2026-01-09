@@ -5,9 +5,10 @@ import { BaseAction } from "./builder-api/src/actions/base-action";
 import { ChaiAssets } from "./builder-api/src/assets/class-chai-assets";
 import { SupabaseChaiBuilderBackEnd } from "./builder-api/src/SupabaseChaiBuilderBackEnd";
 import { ChaiBuilderUsers } from "./builder-api/src/users/ChaiBuilderUsers";
+import { db } from "./db";
 import { getSupabaseAdmin } from "./supabase";
 
-export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterface {
+export class ChaiBuilderPostgresBackend implements ChaiBuilderPagesBackendInterface {
   private appId;
   constructor(appId: string) {
     this.appId = appId;
@@ -121,7 +122,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
       return { error: "Invalid action", status: 400 };
     } catch (error) {
       console.error("Error handling users action:", error);
-      
+
       // Handle ActionError with specific error code and message
       if (error instanceof ActionError) {
         return {
@@ -130,7 +131,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
           status: 400,
         };
       }
-      
+
       return { error: "Something went wrong.", status: 500 };
     }
   }
@@ -154,12 +155,13 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
 
         // If action is registered in the new system, use it
         // Set the context on the action handler
-        actionHandler.setContext({ appId: this.appId, userId });
+        actionHandler.setContext({ appId: this.appId, userId, db: db });
 
         // Execute the action
         const result = await actionHandler.execute(data);
         return result;
       } else {
+        console.log("Action not found in registry, falling back to original implementation", action);
         const supabase = await getSupabaseAdmin();
         // Fallback to the original implementation if action not found in registry
         const backend = new SupabaseChaiBuilderBackEnd(supabase, this.appId, userId ?? "");
@@ -171,7 +173,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
       }
     } catch (error) {
       console.error("Error handling action:", error);
-      
+
       // Handle ActionError with specific error code and message
       if (error instanceof ActionError) {
         return {
@@ -180,7 +182,7 @@ export class ChaiBuilderSupabaseBackend implements ChaiBuilderPagesBackendInterf
           status: 400,
         };
       }
-      
+
       return { error: "Something went wrong.", status: 500 };
     }
   }

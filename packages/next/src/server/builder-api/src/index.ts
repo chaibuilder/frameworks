@@ -1,18 +1,27 @@
-import { getChaiAction } from "./actions/actions-registery";
+import { getSupabaseAdmin } from "../../supabase";
 import { ActionError } from "./actions/action-error";
+import { getChaiAction } from "./actions/actions-registery";
 import { BaseAction } from "./actions/base-action";
 import { decodedApiKey } from "./lib";
 import { SupabaseChaiBuilderBackEnd } from "./SupabaseChaiBuilderBackEnd";
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY ?? "";
 
-const NON_AUTH_TOKEN_LIST = ["GET_PAGE", "GET_PAGE_META", "GET_LINK", "GET_WEBSITE_SETTINGS", "GET_REVISION_PAGE"];
+const NON_AUTH_TOKEN_LIST = [
+  "GET_PAGE",
+  "GET_PAGE_META",
+  "GET_LINK",
+  "GET_WEBSITE_SETTINGS",
+  "GET_WEBSITE_PAGES",
+  "GET_REVISION_PAGE",
+];
 
-export async function handleBuilderApi(req) {
+export async function handleBuilderApi(req: any) {
   const formData = await req.json();
   // get appuuid from headers
   const apiKey = req.headers.get("x-chai-api-key");
   const appId = decodedApiKey(apiKey, ENCRYPTION_KEY).data?.appId;
+  const supabase = await getSupabaseAdmin();
 
   if (!appId) {
     return { error: "INVALID API KEY", status: 400 };
@@ -55,10 +64,11 @@ export async function handleBuilderApi(req) {
       // If action is registered in the new system, use it
       // Set the context on the action handler
       actionHandler.setContext({ appId, userId });
-      // Execute the action
+      // Execute the actio
       const result = await actionHandler.execute(data);
       return result;
     } else {
+      console.log("Action not found in registry, falling back to original implementation", action);
       // Fallback to the original implementation if action not found in registry
       const backend = new SupabaseChaiBuilderBackEnd(supabase, appId, userId ?? "");
       const response = await backend.handle({ action, data } as any);
@@ -70,7 +80,7 @@ export async function handleBuilderApi(req) {
     }
   } catch (error) {
     console.error("Error handling builder API:", error);
-    
+
     // Handle ActionError with specific error code and message
     if (error instanceof ActionError) {
       return {
@@ -79,7 +89,7 @@ export async function handleBuilderApi(req) {
         status: 400,
       };
     }
-    
+
     // Generic error fallback
     return { error: "INTERNAL_SERVER_ERROR", status: 500 };
   }

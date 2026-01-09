@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { sortBy } from "lodash";
+import { orderBy } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
@@ -77,21 +77,38 @@ export class GetPageRevisionsAction extends BaseAction<GetPageRevisionsActionDat
         .where(and(eq(schema.appPagesRevisions.app, this.context!.appId), eq(schema.appPagesRevisions.id, pageId))),
     );
 
-    if (error || revisionsError) {
-      throw new ActionError("Error getting page revisions", "ERROR_GETTING_PAGE_REVISIONS");
+    if (error) {
+      const message =
+        error instanceof Error
+          ? `Error getting current page for revisions: ${error.message}`
+          : "Error getting current page for revisions";
+      throw new ActionError(message, "ERROR_GETTING_CURRENT_PAGE_FOR_REVISIONS");
     }
 
-    // Map current page data to match the expected format
-    const currentPage = (data ?? []).map((page) => ({
-      ...page,
-      type: "published",
-      uid: "current",
-    }));
+    if (revisionsError) {
+      const message =
+        revisionsError instanceof Error
+          ? `Error getting page revisions: ${revisionsError.message}`
+          : "Error getting page revisions";
+      throw new ActionError(message, "ERROR_GETTING_PAGE_REVISIONS");
+    }
+
+    // Map current page data to match the expected format (at most one current page)
+    const page = data?.[0];
+    const currentPage = page
+      ? [
+          {
+            ...page,
+            type: "published",
+            uid: "current",
+          },
+        ]
+      : [];
 
     // Merge the two arrays
     const merged = [...currentPage, ...(revisions ?? [])];
 
     // Sort by createdAt in descending order
-    return sortBy(merged, "createdAt").reverse();
+    return orderBy(merged, ["createdAt"], ["desc"]);
   }
 }

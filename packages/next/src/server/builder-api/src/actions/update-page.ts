@@ -1,8 +1,8 @@
 import { ChaiBlock } from "@chaibuilder/sdk";
+import { and, eq, sql } from "drizzle-orm";
 import { compact, get, keys, pick } from "lodash";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
-import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { db, safeQuery, schema } from "../../../db";
 import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
 import { BaseAction } from "./base-action";
@@ -46,7 +46,6 @@ type UpdatePageActionResponse = {
  * Action to update a page
  */
 export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePageActionResponse> {
-  private supabase: any;
   private appId: string = "";
   private pageTreeBuilder?: PageTreeBuilder;
   private slugChangeHandler?: SlugChangeHandler;
@@ -80,8 +79,6 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
     this.appId = this.context!.appId;
 
     try {
-      this.supabase = await getSupabaseAdmin();
-
       if (this.isOnlyBlocksUpdate(data)) {
         await this.updateBlocks(data.id, data.blocks!);
         return await this.buildResponse(data.id, data);
@@ -90,7 +87,7 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
       const filteredData = this.extractAllowedPageFields(data);
 
       // Initialize SlugChangeHandler
-      this.slugChangeHandler = new SlugChangeHandler(this.appId, this.supabase);
+      this.slugChangeHandler = new SlugChangeHandler(this.appId);
 
       // Check if slug or parent is being changed
       const isSlugChanged = await this.slugChangeHandler.isSlugChanged(data.id, filteredData.slug);
@@ -99,12 +96,12 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
       if (isParentChanged && filteredData.parent !== undefined) {
         // Parent change takes priority (it also updates slugs)
         // This handles both parent-only changes and parent+slug changes
-        this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, false);
+        this.pageTreeBuilder = new PageTreeBuilder(this.appId);
         this.slugChangeHandler.setPageTreeBuilder(this.pageTreeBuilder);
         await this.handleParentChangeWithHandler(data.id, filteredData);
       } else if (isSlugChanged && filteredData.slug) {
         // Slug change only (no parent change)
-        this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, false);
+        this.pageTreeBuilder = new PageTreeBuilder(this.appId);
         this.slugChangeHandler.setPageTreeBuilder(this.pageTreeBuilder);
         await this.handleSlugChangeWithHandler(data.id, filteredData);
       } else {
@@ -245,15 +242,17 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
    */
   private async updatePageInDatabase(pageId: string, filteredData: Partial<UpdatePageActionData>): Promise<void> {
     const changes = this.determineChangeTypes(filteredData);
-    const { error } = await this.supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .update({
-        ...filteredData,
-        changes,
-        lastSaved: "now()",
-      })
-      .eq("app", this.appId)
-      .eq("id", pageId);
+
+    const { error } = await safeQuery(() =>
+      db
+        .update(schema.appPages)
+        .set({
+          ...filteredData,
+          changes,
+          lastSaved: sql`now()`,
+        })
+        .where(and(eq(schema.appPages.id, pageId), eq(schema.appPages.app, this.appId))),
+    );
 
     if (error) {
       throw new ActionError("Error updating page", "ERROR_UPDATING_PAGE");
@@ -272,17 +271,29 @@ export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePag
    * Fetch the updated page data from database
    */
   private async fetchUpdatedPageData(pageId: string): Promise<any> {
-    const { data: updatedPage, error: updatedPageError } = await this.supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("id, slug, lang, pageType, name, online, parent, seo, tracking")
-      .eq("id", pageId)
-      .single();
+    const { data: result, error } = await safeQuery(() =>
+      db
+        .select({
+          id: schema.appPages.id,
+          slug: schema.appPages.slug,
+          lang: schema.appPages.lang,
+          pageType: schema.appPages.pageType,
+          name: schema.appPages.name,
+          online: schema.appPages.online,
+          parent: schema.appPages.parent,
+          seo: schema.appPages.seo,
+          tracking: schema.appPages.tracking,
+        })
+        .from(schema.appPages)
+        .where(eq(schema.appPages.id, pageId))
+        .limit(1),
+    );
 
-    if (updatedPageError) {
+    if (error || !result || result.length === 0) {
       throw new ActionError("Error getting updated page", "ERROR_GETTING_PAGE");
     }
 
-    return updatedPage;
+    return result[0];
   }
 
   /**

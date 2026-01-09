@@ -1,6 +1,6 @@
 import { ChaiBlock } from "@chaibuilder/sdk";
 import { and, eq } from "drizzle-orm";
-import { get, isEmpty, omit } from "lodash";
+import { isEmpty, omit } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
@@ -201,25 +201,42 @@ export class CreatePageAction extends BaseAction<CreatePageActionData, CreatePag
    * Get blocks from a template and handle partial blocks from external libraries
    */
   private async getTemplateBlocks(templateId: string, appId: string): Promise<ChaiBlock[]> {
-    // Fetch template information
-    const { data: template, error: templateError } = await safeQuery(() =>
-      db.query.libraryTemplates.findFirst({
-        where: eq(schema.libraryTemplates.id, templateId),
-        with: {
+    // Fetch template with library information using JOIN
+    const { data: result, error: templateError } = await safeQuery(() =>
+      db
+        .select({
+          template: schema.libraryTemplates,
           library: {
-            columns: {
-              id: true,
-              app: true,
-              name: true,
-            },
+            id: schema.libraries.id,
+            app: schema.libraries.app,
+            name: schema.libraries.name,
           },
-        },
-      }),
+        })
+        .from(schema.libraryTemplates)
+        .leftJoin(schema.libraries, eq(schema.libraryTemplates.library, schema.libraries.id))
+        .where(eq(schema.libraryTemplates.id, templateId))
+        .limit(1)
+        .then((rows) => rows[0]),
     );
 
-    if (templateError || !template) {
-      throw new ActionError("Failed to fetch template", "ERROR_GETTING_TEMPLATE_BLOCKS", templateError);
+    if (templateError) {
+      throw new ActionError(
+        `Failed to fetch template: ${templateError.message || "Unknown database error"}`,
+        "ERROR_GETTING_TEMPLATE_BLOCKS",
+        templateError,
+      );
     }
+
+    if (!result || !result.template) {
+      throw new ActionError(`Template not found with ID: ${templateId}`, "TEMPLATE_NOT_FOUND");
+    }
+
+    if (!result.library) {
+      throw new ActionError(`Template library not found for template: ${templateId}`, "ERROR_GETTING_TEMPLATE_LIBRARY");
+    }
+
+    const template = result.template;
+    const library = result.library;
 
     // Fetch template blocks
     const { data: templatePage, error: templateBlocksError } = await safeQuery(() =>
@@ -231,8 +248,16 @@ export class CreatePageAction extends BaseAction<CreatePageActionData, CreatePag
       }),
     );
 
-    if (templateBlocksError || !templatePage) {
-      throw new ActionError("Failed to fetch template blocks", "ERROR_GETTING_TEMPLATE_BLOCKS", templateBlocksError);
+    if (templateBlocksError) {
+      throw new ActionError(
+        `Failed to fetch template blocks: ${templateBlocksError.message || "Unknown database error"}`,
+        "ERROR_GETTING_TEMPLATE_BLOCKS",
+        templateBlocksError,
+      );
+    }
+
+    if (!templatePage) {
+      throw new ActionError(`Template page not found with ID: ${template.pageId}`, "TEMPLATE_PAGE_NOT_FOUND");
     }
 
     let blocks: ChaiBlock[] = (templatePage.blocks as ChaiBlock[]) || [];
@@ -249,11 +274,11 @@ export class CreatePageAction extends BaseAction<CreatePageActionData, CreatePag
       return block;
     });
 
-    const isSiteLibrary = get(template, "library.app", "") === appId;
+    const isSiteLibrary = library.app === appId;
 
     // If template is from an external library, copy partial blocks
     if (!isSiteLibrary) {
-      const libraryName = get(template, "library.name", "");
+      const libraryName = library.name || "";
 
       // Find all partial blocks
       const partialBlocks = blocks.filter((block) => block._type === "PartialBlock" && !isEmpty(block.partialBlockId));

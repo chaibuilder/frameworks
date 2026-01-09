@@ -1,6 +1,6 @@
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
-import { CHAI_ONLINE_PAGES_TABLE_NAME, CHAI_PAGES_REVISIONS_TABLE_NAME, CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { db, safeQuery, schema } from "../../../db.js";
 import { apiError } from "../lib";
 import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
@@ -32,7 +32,6 @@ type DeletePageActionResponse = {
  * - Language variants of nested children
  */
 export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePageActionResponse> {
-  private supabase: any;
   private appId: string = "";
   private userId: string = "";
   private pageTreeBuilder?: PageTreeBuilder;
@@ -58,10 +57,8 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
     this.userId = this.context.userId || "";
 
     try {
-      this.supabase = await getSupabaseAdmin();
-
-      // Initialize PageTreeBuilder
-      this.pageTreeBuilder = new PageTreeBuilder(this.supabase, this.appId, true);
+      // Initialize PageTreeBuilder with ORM
+      this.pageTreeBuilder = new PageTreeBuilder(this.appId);
 
       // Execute the delete operation
       return await this.deletePage(data.id);
@@ -106,32 +103,34 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
   }
 
   /**
-   * Perform Deletion With Ids
+   * Perform Deletion With Ids using Drizzle ORM
    */
   public async performDeletionWithIds(ids: string[]): Promise<any> {
     const reverseIds = [...ids].reverse();
-    const { error } = await this.supabase.from("library_templates").delete().in("pageId", reverseIds);
-    if (error) {
-      throw apiError("DELETE_FAILED", error);
-    }
-    const { error: revisionsError } = await this.supabase
-      .from(CHAI_PAGES_REVISIONS_TABLE_NAME)
-      .delete()
-      .in("id", reverseIds);
-    if (revisionsError) {
-      throw apiError("DELETE_FAILED", revisionsError);
-    }
-    const { error: pagesError } = await this.supabase.from(CHAI_PAGES_TABLE_NAME).delete().in("id", reverseIds);
-    if (pagesError) {
-      throw apiError("DELETE_FAILED", pagesError);
-    }
-    const { error: onlinePagesError } = await this.supabase
-      .from(CHAI_ONLINE_PAGES_TABLE_NAME)
-      .delete()
-      .in("id", reverseIds);
-    if (onlinePagesError) {
-      throw apiError("DELETE_FAILED", onlinePagesError);
-    }
+
+    // Delete from library_templates
+    const { error: libError } = await safeQuery(() =>
+      db.delete(schema.libraryTemplates).where(inArray(schema.libraryTemplates.pageId, reverseIds)),
+    );
+    if (libError) throw apiError("DELETE_FAILED", libError);
+
+    // Delete from app_pages_revisions
+    const { error: revError } = await safeQuery(() =>
+      db.delete(schema.appPagesRevisions).where(inArray(schema.appPagesRevisions.id, reverseIds)),
+    );
+    if (revError) throw apiError("DELETE_FAILED", revError);
+
+    // Delete from app_pages
+    const { error: pagesError } = await safeQuery(() =>
+      db.delete(schema.appPages).where(inArray(schema.appPages.id, reverseIds)),
+    );
+    if (pagesError) throw apiError("DELETE_FAILED", pagesError);
+
+    // Delete from app_pages_online
+    const { error: onlineError } = await safeQuery(() =>
+      db.delete(schema.appPagesOnline).where(inArray(schema.appPagesOnline.id, reverseIds)),
+    );
+    if (onlineError) throw apiError("DELETE_FAILED", onlineError);
   }
 
   /**
@@ -185,13 +184,15 @@ export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePag
    * Get current editor for a page
    */
   public async getCurrentEditor(id: string): Promise<string | null> {
-    const { data: pageData } = await this.supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("currentEditor")
-      .eq("id", id)
-      .eq("app", this.appId)
-      .single();
+    const { data, error } = await safeQuery(() =>
+      db
+        .select({ currentEditor: schema.appPages.currentEditor })
+        .from(schema.appPages)
+        .where(and(eq(schema.appPages.id, id), eq(schema.appPages.app, this.appId)))
+        .limit(1),
+    );
 
-    return pageData?.currentEditor;
+    if (error || !data || data.length === 0) return null;
+    return data[0]?.currentEditor || null;
   }
 }

@@ -29,7 +29,7 @@ export class GetLibraryGroupsAction extends BaseAction<GetLibraryGroupsActionDat
   /**
    * Execute the get library groups action
    */
-  async execute(data: GetLibraryGroupsActionData): Promise<GetLibraryGroupsActionResponse> {
+  async execute(_data: GetLibraryGroupsActionData): Promise<GetLibraryGroupsActionResponse> {
     if (!this.context) {
       throw new ActionError("Context not set", "CONTEXT_NOT_SET");
     }

@@ -6,6 +6,7 @@ import { DeletePageAction } from "./delete-page";
 import { DuplicatePageAction } from "./duplicate-page";
 import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
+import { GetChangesAction } from "./get-changes";
 import { GetCompareDataAction } from "./get-compare-data";
 import { GetDraftPageAction } from "./get-draft-page";
 import { GetLanguagePagesAction } from "./get-language-pages";
@@ -62,6 +63,7 @@ class ActionsRegistry {
     this.register("UNMARK_AS_TEMPLATE", new UnmarkAsTemplateAction());
     this.register("GET_TEMPLATES_BY_TYPE", new GetTemplatesByTypeAction());
     this.register("SEARCH_PAGES", new SearchPagesAction());
+    this.register("GET_CHANGES", new GetChangesAction());
     this.register("UPDATE_WEBSITE_DATA", new UpdateWebsiteDataAction());
     // Add more actions here as they are created
   }

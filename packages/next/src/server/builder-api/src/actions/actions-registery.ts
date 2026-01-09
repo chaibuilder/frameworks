@@ -31,6 +31,7 @@ import { UpdateWebsiteSettingsAction } from "./update-website-settings";
 import { TakeOfflineAction } from "./take-offline";
 import { UpdateWebsiteDataAction } from "./update-website-data";
 import { GetLibraryGroupsAction } from "./get-library-groups";
+import { DeletePageRevisionAction } from "./delete-page-revision";
 
 /**
  * Registry of all available actions
@@ -73,6 +74,7 @@ class ActionsRegistry {
     this.register("GET_CHANGES", new GetChangesAction());
     this.register("UPDATE_WEBSITE_DATA", new UpdateWebsiteDataAction());
     this.register("GET_LIBRARY_GROUPS", new GetLibraryGroupsAction());
+    this.register("DELETE_PAGE_REVISION", new DeletePageRevisionAction());
     // Add more actions here as they are created
   }
 

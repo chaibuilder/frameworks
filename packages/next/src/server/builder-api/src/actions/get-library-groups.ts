@@ -54,9 +54,6 @@ export class GetLibraryGroupsAction extends BaseAction<GetLibraryGroupsActionDat
     }
 
     const siteLibrary = library[0];
-    if (!siteLibrary) {
-      return [];
-    }
 
     // Fetch all groups from library items
     const { data: items, error } = await safeQuery(() =>

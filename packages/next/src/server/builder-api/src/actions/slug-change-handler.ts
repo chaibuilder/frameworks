@@ -1,6 +1,6 @@
+import { and, eq, sql } from "drizzle-orm";
 import { pick } from "lodash";
-import { getSupabaseAdmin } from "../../../supabase";
-import { CHAI_ONLINE_PAGES_TABLE_NAME, CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { db, safeQuery, schema } from "../../../db";
 import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
 
@@ -9,12 +9,10 @@ import { ActionError } from "./action-error";
  */
 export class SlugChangeHandler {
   private appId: string;
-  private supabase: any;
   private pageTreeBuilder?: PageTreeBuilder;
 
-  constructor(appId: string, supabase?: any) {
+  constructor(appId: string) {
     this.appId = appId;
-    this.supabase = supabase;
   }
 
   /**
@@ -38,7 +36,13 @@ export class SlugChangeHandler {
   /**
    * Validate that the new slug doesn't conflict with existing pages using tree data
    */
-  private validateSlugAvailabilityInTree(newSlug: string, pageId: string, isDynamic: boolean, pagesTree: any, isLanguagePage: boolean = false): void {
+  private validateSlugAvailabilityInTree(
+    newSlug: string,
+    pageId: string,
+    isDynamic: boolean,
+    pagesTree: any,
+    isLanguagePage: boolean = false,
+  ): void {
     // Helper function to recursively check all nodes in a tree
     const hasConflict = (nodes: any[]): boolean => {
       for (const node of nodes) {
@@ -82,14 +86,19 @@ export class SlugChangeHandler {
       return false;
     }
 
-    const supabase = this.supabase || (await getSupabaseAdmin());
-    const { data: pageData } = await supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("slug")
-      .eq("id", pageId)
-      .eq("app", this.appId)
-      .single();
+    const { data: result, error } = await safeQuery(() =>
+      db
+        .select({ slug: schema.appPages.slug })
+        .from(schema.appPages)
+        .where(and(eq(schema.appPages.id, pageId), eq(schema.appPages.app, this.appId)))
+        .limit(1),
+    );
 
+    if (error || !result || result.length === 0) {
+      return false;
+    }
+
+    const pageData = result[0];
     return pageData?.slug !== newSlug;
   }
 
@@ -99,15 +108,20 @@ export class SlugChangeHandler {
   async isParentChanged(pageId: string, newParent?: string | null): Promise<boolean> {
     if (newParent === undefined) return false;
 
-    const supabase = this.supabase || (await getSupabaseAdmin());
-    const { data: currentPage } = await supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("parent")
-      .eq("id", pageId)
-      .eq("app", this.appId)
-      .single();
+    const { data: result, error } = await safeQuery(() =>
+      db
+        .select({ parent: schema.appPages.parent })
+        .from(schema.appPages)
+        .where(and(eq(schema.appPages.id, pageId), eq(schema.appPages.app, this.appId)))
+        .limit(1),
+    );
 
-    return currentPage?.parent !== newParent;
+    if (error || !result || result.length === 0) {
+      return false;
+    }
+
+    const pageData = result[0];
+    return pageData?.parent !== newParent;
   }
 
   /**
@@ -115,11 +129,10 @@ export class SlugChangeHandler {
    */
   async handleSlugChangeWithTree(pageId: string, filteredData: any): Promise<Array<{ id: string; newSlug: string }>> {
     const newSlug = filteredData.slug!;
-    const supabase = this.supabase || (await getSupabaseAdmin());
 
     // Initialize PageTreeBuilder if not already done
     if (!this.pageTreeBuilder) {
-      this.pageTreeBuilder = new PageTreeBuilder(supabase, this.appId, false);
+      this.pageTreeBuilder = new PageTreeBuilder(this.appId);
     }
 
     // SINGLE DB QUERY: Get pages tree (fetches all pages at once)
@@ -156,11 +169,10 @@ export class SlugChangeHandler {
    */
   async handleParentChangeWithTree(pageId: string, filteredData: any): Promise<Array<{ id: string; newSlug: string }>> {
     const newParent = filteredData.parent!;
-    const supabase = this.supabase || (await getSupabaseAdmin());
 
     // Initialize PageTreeBuilder if not already done
     if (!this.pageTreeBuilder) {
-      this.pageTreeBuilder = new PageTreeBuilder(supabase, this.appId, false);
+      this.pageTreeBuilder = new PageTreeBuilder(this.appId);
     }
 
     // SINGLE DB QUERY: Get pages tree (fetches all pages at once)
@@ -218,7 +230,13 @@ export class SlugChangeHandler {
         langVariant.slug,
         pagesTree.languageTree,
       );
-      this.validateSlugAvailabilityInTree(langVariantNewSlug, langVariant.id, langVariant.dynamic || false, pagesTree, true);
+      this.validateSlugAvailabilityInTree(
+        langVariantNewSlug,
+        langVariant.id,
+        langVariant.dynamic || false,
+        pagesTree,
+        true,
+      );
 
       // Update the language variant's slug in the local tree so subsequent language variants see it
       this.updateNodeSlugInTree(langVariant.id, langVariantNewSlug, pagesTree.languageTree);
@@ -251,39 +269,42 @@ export class SlugChangeHandler {
     mainPageId: string,
     changes: string[],
   ): Promise<void> {
-    const supabase = this.supabase || (await getSupabaseAdmin());
-
     // Update app_pages table in parallel
     const pageUpdatePromises = slugUpdates.map(async (update) => {
       const updateData: any = {
         slug: update.newSlug,
-        lastSaved: "now()",
+        lastSaved: sql`now()`,
       };
 
       // Only add other fields for the main page being updated
       if (update.id === mainPageId) {
+        const additionalFields = pick(filteredData, [
+          "name",
+          "seo",
+          "blocks",
+          "currentEditor",
+          "buildTime",
+          "parent",
+          "pageType",
+          "dynamic",
+          "dynamicSlugCustom",
+          "tracking",
+          "links",
+          "partialBlocks",
+          "designTokens",
+        ]);
         Object.assign(updateData, {
-          ...pick(filteredData, [
-            "name",
-            "seo",
-            "blocks",
-            "currentEditor",
-            "buildTime",
-            "parent",
-            "pageType",
-            "dynamic",
-            "dynamicSlugCustom",
-            "tracking",
-          ]),
+          ...additionalFields,
           changes,
         });
       }
 
-      const { error } = await supabase
-        .from(CHAI_PAGES_TABLE_NAME)
-        .update(updateData)
-        .eq("id", update.id)
-        .eq("app", this.appId);
+      const { data: result, error } = await safeQuery(() =>
+        db
+          .update(schema.appPages)
+          .set(updateData)
+          .where(and(eq(schema.appPages.id, update.id), eq(schema.appPages.app, this.appId))),
+      );
 
       if (error) {
         throw new ActionError(`Failed to update page ${update.id}`, "UPDATE_PAGE_FAILED");
@@ -298,14 +319,15 @@ export class SlugChangeHandler {
     // Update app_pages_online table in parallel
     // Ignore errors for online table as pages might not be published
     const onlineUpdatePromises = slugUpdates.map(async (update) => {
-      try {
-        await supabase
-          .from(CHAI_ONLINE_PAGES_TABLE_NAME)
-          .update({ slug: update.newSlug })
-          .eq("id", update.id)
-          .eq("app", this.appId);
-      } catch (error) {
-        // Silently ignore errors for online table
+      const { error } = await safeQuery(() =>
+        db
+          .update(schema.appPagesOnline)
+          .set({ slug: update.newSlug })
+          .where(and(eq(schema.appPagesOnline.id, update.id), eq(schema.appPagesOnline.app, this.appId))),
+      );
+      // Silently ignore errors for online table as pages might not be published
+      if (error) {
+        console.error(`Failed to update online page ${update.id}`, error);
       }
     });
 
@@ -317,12 +339,5 @@ export class SlugChangeHandler {
    */
   setPageTreeBuilder(builder: PageTreeBuilder): void {
     this.pageTreeBuilder = builder;
-  }
-
-  /**
-   * Set the Supabase instance
-   */
-  setSupabase(supabase: any): void {
-    this.supabase = supabase;
   }
 }

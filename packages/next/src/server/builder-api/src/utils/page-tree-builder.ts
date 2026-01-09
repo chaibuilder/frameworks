@@ -1,4 +1,5 @@
-import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
+import { eq } from "drizzle-orm";
+import { db, safeQuery, schema } from "../../../db.js";
 import { apiError } from "../lib";
 
 /**
@@ -30,17 +31,14 @@ export interface PageTreeResult {
  * Supports primary pages, language variants, and partial pages (globals/forms)
  */
 export class PageTreeBuilder {
-  private supabase: any;
   private appId: string;
   private enableLogging: boolean;
 
   /**
-   * @param supabase - Supabase client instance
    * @param appId - Application ID to filter pages
    * @param enableLogging - Enable console logging for debugging (default: false)
    */
-  constructor(supabase: any, appId: string, enableLogging: boolean = false) {
-    this.supabase = supabase;
+  constructor(appId: string, enableLogging: boolean = false) {
     this.appId = appId;
     this.enableLogging = enableLogging;
   }
@@ -50,10 +48,22 @@ export class PageTreeBuilder {
    * @returns PageTreeResult containing primary and language trees
    */
   async getPagesTree(): Promise<PageTreeResult> {
-    const { data: pages, error } = await this.supabase
-      .from(CHAI_PAGES_TABLE_NAME)
-      .select("id, name, slug, pageType, primaryPage, parent, lang, dynamic")
-      .eq("app", this.appId);
+    // Use Drizzle ORM
+    const { data: pages, error } = await safeQuery(() =>
+      db
+        .select({
+          id: schema.appPages.id,
+          name: schema.appPages.name,
+          slug: schema.appPages.slug,
+          pageType: schema.appPages.pageType,
+          primaryPage: schema.appPages.primaryPage,
+          parent: schema.appPages.parent,
+          lang: schema.appPages.lang,
+          dynamic: schema.appPages.dynamic,
+        })
+        .from(schema.appPages)
+        .where(eq(schema.appPages.app, this.appId))
+    );
 
     if (error) {
       throw apiError("ERROR_GETTING_PAGES", error);

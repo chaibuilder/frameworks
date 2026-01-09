@@ -1,3 +1,4 @@
+import { db } from "../../db";
 import { getSupabaseAdmin } from "../../supabase";
 import { ActionError } from "./actions/action-error";
 import { getChaiAction } from "./actions/actions-registery";
@@ -63,7 +64,7 @@ export async function handleBuilderApi(req: any) {
 
       // If action is registered in the new system, use it
       // Set the context on the action handler
-      actionHandler.setContext({ appId, userId });
+      actionHandler.setContext({ appId, userId, db });
       // Execute the actio
       const result = await actionHandler.execute(data);
       return result;

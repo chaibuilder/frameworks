@@ -1,4 +1,4 @@
-import { eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { apps, libraries } from "../../../../drizzle/schema";
 import { db, safeQuery } from "../../../db";

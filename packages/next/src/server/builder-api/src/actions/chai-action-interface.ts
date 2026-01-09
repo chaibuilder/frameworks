@@ -1,3 +1,6 @@
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import * as schema from "../../../../drizzle/schema";
+
 /**
  * Action Context
  * Contains information and repositories needed by actions
@@ -5,6 +8,7 @@
 export interface ActionContext {
   appId: string;
   userId?: string;
+  db: PostgresJsDatabase<typeof schema>;
 }
 
 /**

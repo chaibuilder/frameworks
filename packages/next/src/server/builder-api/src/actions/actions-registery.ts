@@ -30,6 +30,7 @@ import { PublishChangesAction } from "./publish-changes";
 import { UpdateWebsiteSettingsAction } from "./update-website-settings";
 import { TakeOfflineAction } from "./take-offline";
 import { UpdateWebsiteDataAction } from "./update-website-data";
+import { DeletePageRevisionAction } from "./delete-page-revision";
 
 /**
  * Registry of all available actions
@@ -71,6 +72,7 @@ class ActionsRegistry {
     this.register("TAKE_OFFLINE", new TakeOfflineAction());
     this.register("GET_CHANGES", new GetChangesAction());
     this.register("UPDATE_WEBSITE_DATA", new UpdateWebsiteDataAction());
+    this.register("DELETE_PAGE_REVISION", new DeletePageRevisionAction());
     // Add more actions here as they are created
   }
 

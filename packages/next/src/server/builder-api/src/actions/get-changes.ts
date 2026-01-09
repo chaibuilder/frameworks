@@ -15,7 +15,7 @@ type PageChange = {
   name: string;
   pageType: string | null;
   lang: string;
-  changes: string[] | unknown;
+  changes: string[] | null;
   primaryPage: string | null;
   online: boolean | null;
   currentEditor?: string | null;

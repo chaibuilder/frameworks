@@ -26,6 +26,7 @@ import { DeleteLibraryItemAction } from "./delete-library-item";
 import { UnmarkAsTemplateAction } from "./unmark-as-template";
 import { GetTemplatesByTypeAction } from "./get-templates-by-type";
 import { SearchPagesAction } from "./search-pages";
+import { UpdateWebsiteDataAction } from "./update-website-data";
 
 /**
  * Registry of all available actions
@@ -63,6 +64,7 @@ class ActionsRegistry {
     this.register("GET_TEMPLATES_BY_TYPE", new GetTemplatesByTypeAction());
     this.register("SEARCH_PAGES", new SearchPagesAction());
     this.register("GET_CHANGES", new GetChangesAction());
+    this.register("UPDATE_WEBSITE_DATA", new UpdateWebsiteDataAction());
     // Add more actions here as they are created
   }
 

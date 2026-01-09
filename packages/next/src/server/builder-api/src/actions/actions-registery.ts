@@ -26,6 +26,7 @@ import { DeleteLibraryItemAction } from "./delete-library-item";
 import { UnmarkAsTemplateAction } from "./unmark-as-template";
 import { GetTemplatesByTypeAction } from "./get-templates-by-type";
 import { SearchPagesAction } from "./search-pages";
+import { PublishChangesAction } from "./publish-changes";
 import { UpdateWebsiteSettingsAction } from "./update-website-settings";
 import { TakeOfflineAction } from "./take-offline";
 import { UpdateWebsiteDataAction } from "./update-website-data";
@@ -65,6 +66,7 @@ class ActionsRegistry {
     this.register("UNMARK_AS_TEMPLATE", new UnmarkAsTemplateAction());
     this.register("GET_TEMPLATES_BY_TYPE", new GetTemplatesByTypeAction());
     this.register("SEARCH_PAGES", new SearchPagesAction());
+    this.register("PUBLISH_CHANGES", new PublishChangesAction());
     this.register("UPDATE_WEBSITE_SETTINGS", new UpdateWebsiteSettingsAction());
     this.register("TAKE_OFFLINE", new TakeOfflineAction());
     this.register("GET_CHANGES", new GetChangesAction());

@@ -61,6 +61,13 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
     this.context = context;
   }
 
+  getDb() {
+    if (!this.context) {
+      throw new ActionError("Context not set", "CONTEXT_NOT_SET");
+    }
+    return this.context.db;
+  }
+
   /**
    * Abstract method to execute the action
    * Each action must implement this to define its own business logic

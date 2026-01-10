@@ -1,6 +1,9 @@
-import { builderApiHandler } from "@chaibuilder/nextjs/server";
+// const apiKey = process.env.CHAIBUILDER_API_KEY!;
+// const handler: any = builderApiHandler(apiKey);
 
-const apiKey = process.env.CHAIBUILDER_API_KEY!;
-const handler: any = builderApiHandler(apiKey);
+// export { handler as POST };
+ChaiActionsRegistry.register("LOGIN", new LoginAction());
 
-export { handler as POST };
+export const POST = () => {
+  return new Response("Not implemented");
+};

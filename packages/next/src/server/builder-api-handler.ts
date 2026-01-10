@@ -1,45 +1,21 @@
-import { ChaiAIChatHandler, ChaiBuilderPages } from "@chaibuilder/pages/server";
-import { get, has, isEmpty } from "lodash";
+import { ChaiAIChatHandler } from "@chaibuilder/pages/server";
+import { get, has } from "lodash";
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { ActionError } from "./builder-api/src/actions/action-error";
+import { getChaiAction } from "./builder-api/src/actions/actions-registery";
+import { BaseAction } from "./builder-api/src/actions/base-action";
 import { ChaiBuilder } from "./chai-builder";
-import { getAppUuidFromRoute } from "./getAppUuidFromRoute";
 import { handleAskAiRequest } from "./handleAskAiRequest";
 import { logAiRequest, logAiRequestError } from "./log-ai-request";
-import { ChaiBuilderPostgresBackend } from "./PagesSupabaseBackend";
-import { getSupabaseAdmin } from "./supabase";
 
-const BYPASS_AUTH_CHECK_ACTIONS = ["LOGIN"];
-
-export const builderApiHandler = (apiKey?: string) => {
+export const builderApiHandler = ({ apiKey, db, userId }: { apiKey: string; db: any; userId: string }) => {
   return async (req: NextRequest) => {
     try {
-      const USE_CHAI_API_SERVER = !isEmpty(apiKey);
-      const apiKeyToUse = USE_CHAI_API_SERVER ? (apiKey as string) : await getAppUuidFromRoute(req);
-      const backend = new ChaiBuilderPostgresBackend(apiKeyToUse);
-      ChaiBuilder.setSiteId(apiKeyToUse);
-      // register global data providers
-      const authorization = req.headers.get("authorization");
-      let authTokenOrUserId = (authorization ? authorization.split(" ")[1] : "") as string;
+      ChaiBuilder.setSiteId(apiKey);
 
-      const chaiBuilderPages = new ChaiBuilderPages({ backend });
       const requestBody = await req.json();
-      const checkAuth = !BYPASS_AUTH_CHECK_ACTIONS.includes(requestBody.action);
       // Check for `authorization` header
-      if (checkAuth && !authorization) {
-        return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
-      }
-      if (checkAuth) {
-        const supabase = await getSupabaseAdmin();
-        const supabaseUser = await supabase.auth.getUser(authTokenOrUserId);
-        if (supabaseUser.error) {
-          // If the token is invalid or expired, return a 401 response
-          return NextResponse.json({ error: "Invalid or expired token sss" }, { status: 401 });
-        }
-        authTokenOrUserId = supabaseUser.data.user?.id || "";
-      }
-
       let response = null;
       if (requestBody.action === "ASK_AI") {
         const startTime = new Date().getTime();
@@ -50,7 +26,7 @@ export const builderApiHandler = (apiKey?: string) => {
               logAiRequest({
                 arg,
                 prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
-                userId: authTokenOrUserId,
+                userId,
                 model: requestBody.data.model,
                 startTime,
               });
@@ -62,7 +38,7 @@ export const builderApiHandler = (apiKey?: string) => {
             try {
               logAiRequestError({
                 error,
-                userId: authTokenOrUserId,
+                userId,
                 startTime: startTime,
                 model: requestBody.data.model,
                 prompt: requestBody.data.messages[requestBody.data.messages.length - 1].content,
@@ -74,16 +50,36 @@ export const builderApiHandler = (apiKey?: string) => {
         });
         return await handleAskAiRequest(ai, requestBody.data);
       } else {
-        response = await chaiBuilderPages.handle(requestBody, authTokenOrUserId, {} as any);
+        const { action, data } = requestBody;
+        // Get the action handler from the registry
+        const actionHandler = getChaiAction(action);
+        if (actionHandler) {
+          // Validate the data first
+          if (!actionHandler.validate(data)) {
+            // For BaseAction implementations, we can get detailed validation errors
+            const errorMessages = (actionHandler as BaseAction).getValidationErrors(data);
+            return {
+              error: `Validation failed: ${errorMessages}`,
+              code: "INVALID_REQUEST_DATA",
+              status: 400,
+            };
+          }
+
+          // If action is registered in the new system, use it
+          // Set the context on the action handler
+          actionHandler.setContext({ appId: apiKey, userId, db: db });
+
+          // Execute the action
+          response = await actionHandler.execute(data);
+        }
       }
 
       if (has(response, "error")) {
         return NextResponse.json(response, { status: response.status });
       }
-
       const tags = get(response, "tags", []);
       if (tags.length > 0) {
-        console.log("Site Id", apiKeyToUse);
+        console.log("Site Id", apiKey);
         console.log("Revalidating tags", tags);
       }
       for (const tag of tags) {

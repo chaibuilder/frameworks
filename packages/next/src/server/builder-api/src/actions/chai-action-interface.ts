@@ -7,8 +7,8 @@ import * as schema from "../../../../drizzle/schema";
  */
 export interface ActionContext {
   appId: string;
-  userId?: string;
   db: PostgresJsDatabase<typeof schema>;
+  userId?: string;
 }
 
 /**

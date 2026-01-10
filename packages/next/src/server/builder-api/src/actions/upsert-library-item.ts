@@ -5,6 +5,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
+import { getChaiAction } from "./actions-registery";
 import { ChaiBaseAction } from "./base-action";
 
 /**
@@ -85,8 +86,15 @@ export class UpsertLibraryItemAction extends ChaiBaseAction<
     }
 
     // Handle preview image upload if provided
-    //TODO: comment out for now
-    const uploadedImageUrl = await this.uploadPreviewImage(previewImage, appId, userId ?? null, siteLibrary.id);
+    //TODO: HANDLE WITH ACTION
+    const uploadAction = getChaiAction("UPLOAD_ASSET");
+    uploadAction?.setContext(this.context);
+    const uploadedImageUrl = await uploadAction?.execute({
+      file: previewImage,
+      appId,
+      userId: userId ?? null,
+      libraryId: siteLibrary.id,
+    });
     const finalPreviewImageUrl = uploadedImageUrl || previewImageUrl;
 
     // If id is provided, update existing library item

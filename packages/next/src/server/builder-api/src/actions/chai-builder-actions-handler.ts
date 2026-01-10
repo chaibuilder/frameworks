@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
-import { ActionError } from "./builder-api/src/actions/action-error";
-import { getChaiAction } from "./builder-api/src/actions/actions-registery";
-import { ChaiBaseAction } from "./builder-api/src/actions/base-action";
+import { ActionError } from "./action-error";
+import { getChaiAction } from "./actions-registery";
+import { ChaiBaseAction } from "./base-action";
 
 export const chaiBuilderActionHandler = (params: { apiKey: string; userId: string }) => {
   return async (actionData: { action: string; data?: unknown }) => {
@@ -71,14 +70,12 @@ export const chaiBuilderActionHandler = (params: { apiKey: string; userId: strin
       // }
     } catch (error) {
       console.log("Error in builderApiHandler:", error);
-
       // Handle ActionError with specific error code and message
       if (error instanceof ActionError) {
-        return NextResponse.json({ error: error.message, code: error.code }, { status: 400 });
+        return { error: error.message, code: error.code, status: 400 };
       }
-
       // Generic error fallback
-      return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+      return { error: "Something went wrong.", status: 500 };
     }
   };
 };

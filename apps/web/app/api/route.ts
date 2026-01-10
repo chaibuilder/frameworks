@@ -11,7 +11,7 @@ const apiKey = process.env.CHAIBUILDER_API_KEY!;
 
 export const POST = async (req: NextRequest) => {
   const actionData = (await req.json()) as { action: string; data?: unknown };
-  const handler: any = chaiBuilderActionHandler<NextRequest>({ apiKey, userId: "test-user", req });
+  const handler: any = chaiBuilderActionHandler({ apiKey, userId: "test-user" });
   const response = await handler(actionData);
   if (has(response, "error")) {
     return NextResponse.json(response, { status: response.status });

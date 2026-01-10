@@ -9,7 +9,7 @@ const checkForEnv = (envVar: string | undefined, name: string) => {
   return envVar;
 };
 
-const connectionString = checkForEnv(process.env.CHAI_DATABASE_URL, "CHAI_DATABASE_URL");
+const connectionString = checkForEnv(process.env.CHAIBUILDER_DATABASE_URL, "CHAIBUILDER_DATABASE_URL");
 const client = postgres(connectionString, { max: 10 });
 export const db = drizzle(client, { schema });
 

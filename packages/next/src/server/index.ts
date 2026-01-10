@@ -1,5 +1,5 @@
-import { chaiBuilderActionHandler } from "./builder-api-handler";
 import ChaiActionsRegistry from "./builder-api/src/actions/actions-registery";
+import { chaiBuilderActionHandler } from "./builder-api/src/actions/chai-builder-actions-handler";
 import { ChaiBuilder } from "./chai-builder";
 
 export {

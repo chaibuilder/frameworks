@@ -9,6 +9,7 @@ export interface ActionContext {
   appId: string;
   db: PostgresJsDatabase<typeof schema>;
   userId?: string;
+  req?: unknown;
 }
 
 /**

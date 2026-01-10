@@ -1,4 +1,4 @@
-import { builderApiHandler } from "./builder-api-handler";
+import { chaiBuilderApiHandler } from "./builder-api-handler";
 import { ChaiBuilder } from "./chai-builder";
 
 export {
@@ -8,8 +8,7 @@ export {
   registerChaiPartialType,
 } from "@chaibuilder/pages/server";
 
-export { getSupabaseAdmin } from "./supabase";
 export { db, schema } from "./db";
-export { builderApiHandler };
+export { chaiBuilderApiHandler };
 
 export default ChaiBuilder;

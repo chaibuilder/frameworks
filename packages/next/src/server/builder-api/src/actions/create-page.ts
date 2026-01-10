@@ -227,12 +227,8 @@ export class CreatePageAction extends BaseAction<CreatePageActionData, CreatePag
       );
     }
 
-    if (!result || !result.template) {
+    if (!result || !result.template || !result.library) {
       throw new ActionError(`Template not found with ID: ${templateId}`, "TEMPLATE_NOT_FOUND");
-    }
-
-    if (!result.library) {
-      throw new ActionError(`Template library not found for template: ${templateId}`, "ERROR_GETTING_TEMPLATE_LIBRARY");
     }
 
     const template = result.template;

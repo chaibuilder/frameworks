@@ -4,7 +4,7 @@ import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { BaseAction } from "./builder-api/src/actions/base-action";
 import { db } from "./db";
 
-export const chaiBuilderApiHandler = <T>(params: { apiKey: string; userId: string; req: T }) => {
+export const chaiBuilderActionHandler = <T>(params: { apiKey: string; userId: string; req: T }) => {
   return async (actionData: { action: string; data?: unknown }) => {
     const { apiKey, userId } = params;
     try {

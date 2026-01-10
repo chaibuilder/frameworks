@@ -1,4 +1,4 @@
-import { chaiBuilderApiHandler } from "./builder-api-handler";
+import { chaiBuilderActionHandler } from "./builder-api-handler";
 import { ChaiBuilder } from "./chai-builder";
 
 export {
@@ -9,6 +9,6 @@ export {
 } from "@chaibuilder/pages/server";
 
 export { db, schema } from "./db";
-export { chaiBuilderApiHandler };
+export { chaiBuilderActionHandler };
 
 export default ChaiBuilder;

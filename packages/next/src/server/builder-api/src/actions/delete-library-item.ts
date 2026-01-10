@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for DeleteLibraryItemAction
@@ -18,7 +18,10 @@ type DeleteLibraryItemActionResponse = {
 /**
  * Action to delete a library item
  */
-export class DeleteLibraryItemAction extends BaseAction<DeleteLibraryItemActionData, DeleteLibraryItemActionResponse> {
+export class DeleteLibraryItemAction extends ChaiBaseAction<
+  DeleteLibraryItemActionData,
+  DeleteLibraryItemActionResponse
+> {
   /**
    * Define the validation schema for delete library item action
    */

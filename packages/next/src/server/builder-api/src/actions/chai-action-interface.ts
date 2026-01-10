@@ -5,7 +5,7 @@ import * as schema from "../../../../drizzle/schema";
  * Action Context
  * Contains information and repositories needed by actions
  */
-export interface ActionContext {
+export interface ChaiActionContext {
   appId: string;
   db: PostgresJsDatabase<typeof schema>;
   userId?: string;
@@ -18,6 +18,6 @@ export interface ActionContext {
  */
 export interface ChaiAction<T = any, K = any> {
   validate(data: T): boolean;
-  setContext(context: ActionContext): void;
+  setContext(context: ChaiActionContext): void;
   execute(data: T): Promise<K>;
 }

@@ -2,7 +2,9 @@ import { get } from "lodash";
 import { BenchmarkQueryAction } from "./benchmark-query";
 import { ChaiAction } from "./chai-action-interface";
 import { CreatePageAction } from "./create-page";
+import { DeleteLibraryItemAction } from "./delete-library-item";
 import { DeletePageAction } from "./delete-page";
+import { DeletePageRevisionAction } from "./delete-page-revision";
 import { DuplicatePageAction } from "./duplicate-page";
 import { GenerateHtmlFromPromptAction } from "./generate-html-from-prompt";
 import { GenerateSeoFieldAction } from "./generate-seo-field";
@@ -11,35 +13,33 @@ import { GetCompareDataAction } from "./get-compare-data";
 import { GetDraftPageAction } from "./get-draft-page";
 import { GetLanguagePagesAction } from "./get-language-pages";
 import { GetLibrariesAction } from "./get-libraries";
+import { GetLibraryGroupsAction } from "./get-library-groups";
+import { GetLibraryItemAction } from "./get-library-item";
+import { GetLibraryItemsAction } from "./get-library-items";
+import { GetPageRevisionsAction } from "./get-page-revisions";
 import { GetRevisionPageAction } from "./get-revision-page";
 import { GetSiteWideDataAction } from "./get-site-wide-data";
+import { GetTemplatesByTypeAction } from "./get-templates-by-type";
 import { GetWebsitePagesAction } from "./get-website-pages";
 import { GetWebsiteSettingsAction } from "./get-website-settings";
 import { MarkAsTemplateAction } from "./mark-as-template";
+import { PublishChangesAction } from "./publish-changes";
 import { RestorePageAction } from "./restore-page";
+import { SearchPagesAction } from "./search-pages";
+import { TakeOfflineAction } from "./take-offline";
+import { UnmarkAsTemplateAction } from "./unmark-as-template";
 import { UpdatePageAction } from "./update-page";
 import { UpdatePageMetadataAction } from "./update-page-metadata";
-import { UpsertLibraryItemAction } from "./upsert-library-item";
-import { GetLibraryItemAction } from "./get-library-item";
-import { GetLibraryItemsAction } from "./get-library-items";
-import { DeleteLibraryItemAction } from "./delete-library-item";
-import { UnmarkAsTemplateAction } from "./unmark-as-template";
-import { GetTemplatesByTypeAction } from "./get-templates-by-type";
-import { SearchPagesAction } from "./search-pages";
-import { GetPageRevisionsAction } from "./get-page-revisions";
-import { PublishChangesAction } from "./publish-changes";
-import { UpdateWebsiteSettingsAction } from "./update-website-settings";
-import { TakeOfflineAction } from "./take-offline";
 import { UpdateWebsiteDataAction } from "./update-website-data";
-import { GetLibraryGroupsAction } from "./get-library-groups";
-import { DeletePageRevisionAction } from "./delete-page-revision";
+import { UpdateWebsiteSettingsAction } from "./update-website-settings";
+import { UpsertLibraryItemAction } from "./upsert-library-item";
 
 /**
  * Registry of all available actions
  * This is a singleton that holds all action handlers
  */
-class ActionsRegistry {
-  private static instance: ActionsRegistry;
+class ChaiActionsRegistry {
+  private static instance: ChaiActionsRegistry;
   private actions: Record<string, ChaiAction<any, any>> = {};
 
   private constructor() {
@@ -83,11 +83,11 @@ class ActionsRegistry {
   /**
    * Get the singleton instance of the registry
    */
-  public static getInstance(): ActionsRegistry {
-    if (!ActionsRegistry.instance) {
-      ActionsRegistry.instance = new ActionsRegistry();
+  public static getInstance(): ChaiActionsRegistry {
+    if (!ChaiActionsRegistry.instance) {
+      ChaiActionsRegistry.instance = new ChaiActionsRegistry();
     }
-    return ActionsRegistry.instance;
+    return ChaiActionsRegistry.instance;
   }
 
   /**
@@ -114,8 +114,8 @@ class ActionsRegistry {
 
 // Export a function to get an action by name
 export const getChaiAction = (action: string): ChaiAction<any, any> | undefined => {
-  return ActionsRegistry.getInstance().getAction(action);
+  return ChaiActionsRegistry.getInstance().getAction(action);
 };
 
 // Export the registry instance for direct access if needed
-export default ActionsRegistry.getInstance();
+export default ChaiActionsRegistry.getInstance();

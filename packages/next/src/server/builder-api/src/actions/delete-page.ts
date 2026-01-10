@@ -4,7 +4,7 @@ import { db, safeQuery, schema } from "../../../db";
 import { apiError } from "../lib";
 import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for DeletePageAction
@@ -31,7 +31,7 @@ type DeletePageActionResponse = {
  * - All language variant pages
  * - Language variants of nested children
  */
-export class DeletePageAction extends BaseAction<DeletePageActionData, DeletePageActionResponse> {
+export class DeletePageAction extends ChaiBaseAction<DeletePageActionData, DeletePageActionResponse> {
   private appId: string = "";
   private userId: string = "";
   private pageTreeBuilder?: PageTreeBuilder;

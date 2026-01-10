@@ -7,6 +7,7 @@ const apiKey = process.env.CHAIBUILDER_API_KEY!;
 
 // export { handler as POST };
 // ChaiActionsRegistry.register("LOGIN", new LoginAction());
+// ChaiActionsRegistry.register("LOGOUT", new LogoutAction());
 
 export const POST = async (req: NextRequest) => {
   const actionData = (await req.json()) as { action: string; data?: unknown };

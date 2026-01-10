@@ -3,7 +3,7 @@ import { each, isEmpty } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type BlocksWithDesignTokens = Record<string, Record<string, string>>;
 export interface SiteWideUsage {
@@ -25,7 +25,7 @@ type GetSiteWideDataActionResponse = SiteWideUsage;
 /**
  * Action to generate SEO fields for a page
  */
-export class GetSiteWideDataAction extends BaseAction<GetSiteWideDataActionData, GetSiteWideDataActionResponse> {
+export class GetSiteWideDataAction extends ChaiBaseAction<GetSiteWideDataActionData, GetSiteWideDataActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */

@@ -3,7 +3,7 @@ import { pick } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for RestorePageAction
@@ -22,7 +22,7 @@ type RestorePageActionResponse = {
 /**
  * Action to restore a page revision
  */
-export class RestorePageAction extends BaseAction<RestorePageActionData, RestorePageActionResponse> {
+export class RestorePageAction extends ChaiBaseAction<RestorePageActionData, RestorePageActionResponse> {
   /**
    * Define the validation schema for restore page action
    */

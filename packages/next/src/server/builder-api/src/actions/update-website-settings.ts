@@ -3,7 +3,7 @@ import { pick } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type UpdateWebsiteSettingsActionData = {
   settings: any;
@@ -17,7 +17,7 @@ type UpdateWebsiteSettingsActionResponse = {
  * Action to update website settings (theme, designTokens, etc.)
  * Matches the behavior of the old ChaiBuilderWebsite.updateWebsiteSettings method
  */
-export class UpdateWebsiteSettingsAction extends BaseAction<
+export class UpdateWebsiteSettingsAction extends ChaiBaseAction<
   UpdateWebsiteSettingsActionData,
   UpdateWebsiteSettingsActionResponse
 > {

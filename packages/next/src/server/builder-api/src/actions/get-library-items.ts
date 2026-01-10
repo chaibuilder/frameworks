@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GetLibraryItemsAction
@@ -23,7 +23,7 @@ type GetLibraryItemsActionResponse = Array<{
 /**
  * Action to get all items from a library
  */
-export class GetLibraryItemsAction extends BaseAction<GetLibraryItemsActionData, GetLibraryItemsActionResponse> {
+export class GetLibraryItemsAction extends ChaiBaseAction<GetLibraryItemsActionData, GetLibraryItemsActionResponse> {
   /**
    * Define the validation schema for get library items action
    */

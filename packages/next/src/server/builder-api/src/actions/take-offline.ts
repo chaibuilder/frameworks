@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for TakeOfflineAction
@@ -23,7 +23,7 @@ type TakeOfflineActionResponse = {
  * - Removing the page from the online pages table
  * - Handling different page types (primary, language, partial)
  */
-export class TakeOfflineAction extends BaseAction<TakeOfflineActionData, TakeOfflineActionResponse> {
+export class TakeOfflineAction extends ChaiBaseAction<TakeOfflineActionData, TakeOfflineActionResponse> {
   private appId: string = "";
 
   /**

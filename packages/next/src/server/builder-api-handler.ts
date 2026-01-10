@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
-import { BaseAction } from "./builder-api/src/actions/base-action";
+import { ChaiBaseAction } from "./builder-api/src/actions/base-action";
 import { db } from "./db";
 
 export const chaiBuilderActionHandler = <T>(params: { apiKey: string; userId: string; req: T }) => {
@@ -57,7 +57,7 @@ export const chaiBuilderActionHandler = <T>(params: { apiKey: string; userId: st
       // Validate the data first
       if (!actionHandler.validate(data)) {
         // For BaseAction implementations, we can get detailed validation errors
-        const errorMessages = (actionHandler as BaseAction).getValidationErrors(data);
+        const errorMessages = (actionHandler as ChaiBaseAction).getValidationErrors(data);
         return {
           error: `Validation failed: ${errorMessages}`,
           code: "INVALID_REQUEST_DATA",

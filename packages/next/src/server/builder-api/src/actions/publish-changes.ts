@@ -1,9 +1,9 @@
-import { and, eq, inArray, like, InferSelectModel } from "drizzle-orm";
+import { and, eq, inArray, InferSelectModel, like } from "drizzle-orm";
 import { flattenDeep, isEmpty, uniq } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for PublishChangesAction
@@ -42,7 +42,7 @@ type PartialPageIdOnly = Pick<InferSelectModel<typeof schema.appPagesOnline>, "i
 /**
  * Action to publish changes to pages or theme
  */
-export class PublishChangesAction extends BaseAction<PublishChangesActionData, PublishChangesActionResponse> {
+export class PublishChangesAction extends ChaiBaseAction<PublishChangesActionData, PublishChangesActionResponse> {
   private appId: string = "";
   private userId: string = "";
 
@@ -249,7 +249,7 @@ export class PublishChangesAction extends BaseAction<PublishChangesActionData, P
 
     // Destructure to remove fields that shouldn't be copied or are auto-generated
     const { changes, createdAt, ...pageData } = page;
-    
+
     const { data, error } = await safeQuery(() =>
       db
         .insert(schema.appPagesOnline)

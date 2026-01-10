@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { z } from "zod";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 const aiModel = "anthropic/claude-haiku-4.5";
 
@@ -34,7 +34,7 @@ type GenerateSeoFieldActionResponse = {
 /**
  * Action to generate SEO fields for a page
  */
-export class GenerateSeoFieldAction extends BaseAction<GenerateSeoFieldActionData, GenerateSeoFieldActionResponse> {
+export class GenerateSeoFieldAction extends ChaiBaseAction<GenerateSeoFieldActionData, GenerateSeoFieldActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */

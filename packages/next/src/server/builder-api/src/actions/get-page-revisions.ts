@@ -3,7 +3,7 @@ import { orderBy } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GetPageRevisionsAction
@@ -22,7 +22,7 @@ type GetPageRevisionsActionResponse = Array<{
 /**
  * Action to get revisions for a specific page
  */
-export class GetPageRevisionsAction extends BaseAction<GetPageRevisionsActionData, GetPageRevisionsActionResponse> {
+export class GetPageRevisionsAction extends ChaiBaseAction<GetPageRevisionsActionData, GetPageRevisionsActionResponse> {
   /**
    * Define the validation schema for get page revisions action
    */

@@ -2,7 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GetTemplatesByTypeAction
@@ -26,7 +26,7 @@ type GetTemplatesByTypeActionResponse = Array<{
 /**
  * Action to get templates by page type
  */
-export class GetTemplatesByTypeAction extends BaseAction<
+export class GetTemplatesByTypeAction extends ChaiBaseAction<
   GetTemplatesByTypeActionData,
   GetTemplatesByTypeActionResponse
 > {

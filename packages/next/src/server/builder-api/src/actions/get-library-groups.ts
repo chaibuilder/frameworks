@@ -3,7 +3,7 @@ import { map, uniq } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GetLibraryGroupsAction
@@ -18,7 +18,7 @@ type GetLibraryGroupsActionResponse = Array<{
 /**
  * Action to get all unique groups from library items
  */
-export class GetLibraryGroupsAction extends BaseAction<GetLibraryGroupsActionData, GetLibraryGroupsActionResponse> {
+export class GetLibraryGroupsAction extends ChaiBaseAction<GetLibraryGroupsActionData, GetLibraryGroupsActionResponse> {
   /**
    * Define the validation schema for get library groups action
    */

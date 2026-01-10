@@ -3,7 +3,7 @@ import { z } from "zod";
 import { apps, libraries } from "../../../../drizzle/schema";
 import { db, safeQuery } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type GetLibrariesActionData = Record<string, never>;
 
@@ -17,7 +17,7 @@ type Library = {
 
 type GetLibrariesActionResponse = Library[];
 
-export class GetLibrariesAction extends BaseAction<GetLibrariesActionData, GetLibrariesActionResponse> {
+export class GetLibrariesAction extends ChaiBaseAction<GetLibrariesActionData, GetLibrariesActionResponse> {
   protected getValidationSchema() {
     return z.object({}).optional().default({});
   }

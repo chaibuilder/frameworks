@@ -2,7 +2,7 @@ import { and, eq, ilike, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for SearchPagesAction
@@ -21,7 +21,7 @@ type SearchPagesActionResponse = Array<{
 /**
  * Action to search pages by type and query
  */
-export class SearchPagesAction extends BaseAction<SearchPagesActionData, SearchPagesActionResponse> {
+export class SearchPagesAction extends ChaiBaseAction<SearchPagesActionData, SearchPagesActionResponse> {
   /**
    * Define the validation schema for search pages action
    */

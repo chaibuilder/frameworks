@@ -4,7 +4,7 @@ import { db, schema } from "../../../../server/db";
 import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 interface BenchmarkResult {
   supabase: {
@@ -25,7 +25,7 @@ type BenchmarkQueryActionData = {
   iterations?: number;
 };
 
-export class BenchmarkQueryAction extends BaseAction<BenchmarkQueryActionData, BenchmarkResult> {
+export class BenchmarkQueryAction extends ChaiBaseAction<BenchmarkQueryActionData, BenchmarkResult> {
   protected getValidationSchema() {
     return z.object({
       iterations: z.number().min(1).max(100).optional().default(10),

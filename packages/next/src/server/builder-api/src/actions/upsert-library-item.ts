@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for UpsertLibraryItemAction
@@ -37,7 +37,10 @@ type UpsertLibraryItemActionResponse = {
 /**
  * Action to upsert (create or update) a library item
  */
-export class UpsertLibraryItemAction extends BaseAction<UpsertLibraryItemActionData, UpsertLibraryItemActionResponse> {
+export class UpsertLibraryItemAction extends ChaiBaseAction<
+  UpsertLibraryItemActionData,
+  UpsertLibraryItemActionResponse
+> {
   /**
    * Define the validation schema for upsert library item action
    */

@@ -4,7 +4,7 @@ import { first } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type GetWebsiteSettingsActionData = {
   draft: boolean;
@@ -18,7 +18,7 @@ type GetWebsiteSettingsActionResponse = {
   designTokens?: any;
 };
 
-export class GetWebsiteSettingsAction extends BaseAction<
+export class GetWebsiteSettingsAction extends ChaiBaseAction<
   GetWebsiteSettingsActionData,
   GetWebsiteSettingsActionResponse
 > {

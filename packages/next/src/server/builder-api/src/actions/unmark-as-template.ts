@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for UnmarkAsTemplateAction
@@ -18,7 +18,7 @@ type UnmarkAsTemplateActionResponse = {
 /**
  * Action to unmark a page as a template (delete from library_templates)
  */
-export class UnmarkAsTemplateAction extends BaseAction<UnmarkAsTemplateActionData, UnmarkAsTemplateActionResponse> {
+export class UnmarkAsTemplateAction extends ChaiBaseAction<UnmarkAsTemplateActionData, UnmarkAsTemplateActionResponse> {
   /**
    * Define the validation schema for unmark as template action
    */
@@ -38,7 +38,9 @@ export class UnmarkAsTemplateAction extends BaseAction<UnmarkAsTemplateActionDat
     const { id } = data;
 
     // Delete the template by pageId
-    const { error } = await safeQuery(() => db.delete(schema.libraryTemplates).where(eq(schema.libraryTemplates.pageId, id)));
+    const { error } = await safeQuery(() =>
+      db.delete(schema.libraryTemplates).where(eq(schema.libraryTemplates.pageId, id)),
+    );
 
     if (error) {
       throw new ActionError("Failed to unmark page as template", "DELETE_FAILED", error);

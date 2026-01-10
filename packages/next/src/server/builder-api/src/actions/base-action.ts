@@ -2,14 +2,14 @@ import { z } from "zod";
 import { getSupabaseAdmin } from "../../../supabase";
 import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
-import { ActionContext, ChaiAction } from "./chai-action-interface";
+import { ChaiAction, ChaiActionContext } from "./chai-action-interface";
 
 /**
  * Base Action Class
  * Provides common functionality for all action handlers
  */
-export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
-  protected context: ActionContext | null = null;
+export abstract class ChaiBaseAction<T = any, K = any> implements ChaiAction<T, K> {
+  protected context: ChaiActionContext | null = null;
   /**
    * Abstract method to get the validation schema for the action data
    * Each action must implement this to define its own validation rules
@@ -57,7 +57,7 @@ export abstract class BaseAction<T = any, K = any> implements ChaiAction<T, K> {
    * Set the action context
    * @param context The context to set
    */
-  setContext(context: ActionContext): void {
+  setContext(context: ChaiActionContext): void {
     this.context = context;
   }
 

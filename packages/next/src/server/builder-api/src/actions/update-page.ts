@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { PageTreeBuilder } from "../utils/page-tree-builder";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 import { SlugChangeHandler } from "./slug-change-handler";
 
 /**
@@ -45,7 +45,7 @@ type UpdatePageActionResponse = {
 /**
  * Action to update a page
  */
-export class UpdatePageAction extends BaseAction<UpdatePageActionData, UpdatePageActionResponse> {
+export class UpdatePageAction extends ChaiBaseAction<UpdatePageActionData, UpdatePageActionResponse> {
   private appId: string = "";
   private pageTreeBuilder?: PageTreeBuilder;
   private slugChangeHandler?: SlugChangeHandler;

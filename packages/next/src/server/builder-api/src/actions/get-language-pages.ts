@@ -3,7 +3,7 @@ import { omit } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type GetLanguagePagesActionData = {
   id: string;
@@ -26,7 +26,7 @@ type GetLanguagePagesActionResponse = Array<{
   dynamicSlugCustom: string | null;
 }>;
 
-export class GetLanguagePagesAction extends BaseAction<GetLanguagePagesActionData, GetLanguagePagesActionResponse> {
+export class GetLanguagePagesAction extends ChaiBaseAction<GetLanguagePagesActionData, GetLanguagePagesActionResponse> {
   protected getValidationSchema() {
     return z.object({
       id: z.string(),

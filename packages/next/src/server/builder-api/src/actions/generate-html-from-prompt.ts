@@ -2,7 +2,7 @@ import { generateText } from "ai";
 import "dotenv/config";
 import { z } from "zod";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 const aiModel = "anthropic/claude-haiku-4.5";
 
@@ -22,7 +22,7 @@ type GenerateHtmlFromPromptActionResponse = {
 /**
  * Action to generate clean Tailwind CSS HTML from a prompt
  */
-export class GenerateHtmlFromPromptAction extends BaseAction<
+export class GenerateHtmlFromPromptAction extends ChaiBaseAction<
   GenerateHtmlFromPromptActionData,
   GenerateHtmlFromPromptActionResponse
 > {

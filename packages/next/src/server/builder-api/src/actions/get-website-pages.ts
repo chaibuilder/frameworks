@@ -3,7 +3,7 @@ import { isEmpty } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type GetWebsitePagesActionData = {
   lang?: string;
@@ -25,7 +25,7 @@ type GetWebsitePagesActionResponse = Array<{
   isTemplate: boolean;
 }>;
 
-export class GetWebsitePagesAction extends BaseAction<GetWebsitePagesActionData, GetWebsitePagesActionResponse> {
+export class GetWebsitePagesAction extends ChaiBaseAction<GetWebsitePagesActionData, GetWebsitePagesActionResponse> {
   protected getValidationSchema() {
     return z.object({
       lang: z.string().optional(),

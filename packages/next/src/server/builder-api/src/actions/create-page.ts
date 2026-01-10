@@ -4,7 +4,7 @@ import { isEmpty, omit } from "lodash";
 import { z } from "zod";
 import { safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for CreatePageAction
@@ -40,7 +40,7 @@ type CreatePageActionResponse = {
 /**
  * Action to create a new page
  */
-export class CreatePageAction extends BaseAction<CreatePageActionData, CreatePageActionResponse> {
+export class CreatePageAction extends ChaiBaseAction<CreatePageActionData, CreatePageActionResponse> {
   /**
    * Define the validation schema for create page action
    */

@@ -2,7 +2,7 @@ import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GetChangesAction
@@ -30,7 +30,7 @@ type GetChangesActionResponse = PageChange[];
  * - Offline pages that can be taken online
  * - Theme changes if present
  */
-export class GetChangesAction extends BaseAction<GetChangesActionData, GetChangesActionResponse> {
+export class GetChangesAction extends ChaiBaseAction<GetChangesActionData, GetChangesActionResponse> {
   private appId: string = "";
 
   /**

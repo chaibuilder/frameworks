@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type GetDraftPageActionData = {
   id: string;
@@ -24,7 +24,7 @@ type GetDraftPageActionResponse = {
   languagePageId: string;
 };
 
-export class GetDraftPageAction extends BaseAction<GetDraftPageActionData, GetDraftPageActionResponse> {
+export class GetDraftPageAction extends ChaiBaseAction<GetDraftPageActionData, GetDraftPageActionResponse> {
   protected getValidationSchema() {
     return z.object({
       id: z.string(),

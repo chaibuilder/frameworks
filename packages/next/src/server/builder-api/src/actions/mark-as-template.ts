@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for MarkAsTemplateAction
@@ -28,7 +28,7 @@ type MarkAsTemplateActionResponse = {
 /**
  * Action to mark a page as a template
  */
-export class MarkAsTemplateAction extends BaseAction<MarkAsTemplateActionData, MarkAsTemplateActionResponse> {
+export class MarkAsTemplateAction extends ChaiBaseAction<MarkAsTemplateActionData, MarkAsTemplateActionResponse> {
   /**
    * Define the validation schema for mark as template action
    */

@@ -1,7 +1,7 @@
 import { ChaiBuilderPagesBackendInterface } from "@chaibuilder/pages/server";
 import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
-import { BaseAction } from "./builder-api/src/actions/base-action";
+import { ChaiBaseAction } from "./builder-api/src/actions/base-action";
 import { ChaiAssets } from "./builder-api/src/assets/class-chai-assets";
 import { SupabaseChaiBuilderBackEnd } from "./builder-api/src/SupabaseChaiBuilderBackEnd";
 import { ChaiBuilderUsers } from "./builder-api/src/users/ChaiBuilderUsers";
@@ -145,7 +145,7 @@ export class ChaiBuilderPostgresBackend implements ChaiBuilderPagesBackendInterf
         // Validate the data first
         if (!actionHandler.validate(data)) {
           // For BaseAction implementations, we can get detailed validation errors
-          const errorMessages = (actionHandler as BaseAction).getValidationErrors(data);
+          const errorMessages = (actionHandler as ChaiBaseAction).getValidationErrors(data);
           return {
             error: `Validation failed: ${errorMessages}`,
             code: "INVALID_REQUEST_DATA",

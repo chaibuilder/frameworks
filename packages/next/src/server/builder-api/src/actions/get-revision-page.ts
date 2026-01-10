@@ -4,7 +4,7 @@ import { get, has, isEmpty } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for GenerateSeoFieldAction
@@ -23,7 +23,7 @@ type GetRevisionPageActionResponse = {
 /**
  * Action to generate SEO fields for a page
  */
-export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData, GetRevisionPageActionResponse> {
+export class GetRevisionPageAction extends ChaiBaseAction<GetRevisionPageActionData, GetRevisionPageActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */
@@ -50,10 +50,7 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "draft":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPages.findFirst({
-            where: and(
-              eq(schema.appPages.id, data.id),
-              eq(schema.appPages.lang, data.lang ?? ""),
-            ),
+            where: and(eq(schema.appPages.id, data.id), eq(schema.appPages.lang, data.lang ?? "")),
           }),
         ));
         break;
@@ -61,10 +58,7 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "live":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPagesOnline.findFirst({
-            where: and(
-              eq(schema.appPagesOnline.id, data.id),
-              eq(schema.appPagesOnline.lang, data.lang ?? ""),
-            ),
+            where: and(eq(schema.appPagesOnline.id, data.id), eq(schema.appPagesOnline.lang, data.lang ?? "")),
           }),
         ));
         break;
@@ -72,10 +66,7 @@ export class GetRevisionPageAction extends BaseAction<GetRevisionPageActionData,
       case "revision":
         ({ data: blocksData, error } = await safeQuery(() =>
           db.query.appPagesRevisions.findFirst({
-            where: and(
-              eq(schema.appPagesRevisions.uid, data.id),
-              eq(schema.appPagesRevisions.lang, data.lang ?? ""),
-            ),
+            where: and(eq(schema.appPagesRevisions.uid, data.id), eq(schema.appPagesRevisions.lang, data.lang ?? "")),
           }),
         ));
         break;

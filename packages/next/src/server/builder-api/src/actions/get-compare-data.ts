@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for UpdatePageAction
@@ -31,7 +31,7 @@ type GetCompareDataActionResponse = {
 /**
  * Action to update a page
  */
-export class GetCompareDataAction extends BaseAction<GetCompareDataActionData, GetCompareDataActionResponse> {
+export class GetCompareDataAction extends ChaiBaseAction<GetCompareDataActionData, GetCompareDataActionResponse> {
   /**
    * Define the validation schema for update page action
    */

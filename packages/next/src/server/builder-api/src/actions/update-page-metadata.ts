@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for UpdatePageMetadataAction
@@ -19,7 +19,7 @@ type UpdatePageMetadataActionResponse = {
 /**
  * Action to update page metadata
  */
-export class UpdatePageMetadataAction extends BaseAction<
+export class UpdatePageMetadataAction extends ChaiBaseAction<
   UpdatePageMetadataActionData,
   UpdatePageMetadataActionResponse
 > {

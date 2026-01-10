@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for DuplicatePageAction
@@ -20,7 +20,7 @@ type DuplicatePageActionResponse = {
 /**
  * Action to duplicate a page
  */
-export class DuplicatePageAction extends BaseAction<DuplicatePageActionData, DuplicatePageActionResponse> {
+export class DuplicatePageAction extends ChaiBaseAction<DuplicatePageActionData, DuplicatePageActionResponse> {
   /**
    * Define the validation schema for duplicate page action
    */

@@ -3,7 +3,7 @@ import { first } from "lodash";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../../server/db";
 import { apiError } from "../lib";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 type UpdateWebsiteDataActionData = {
   data: Record<string, any>;
@@ -13,7 +13,10 @@ type UpdateWebsiteDataActionResponse = {
   success: boolean;
 };
 
-export class UpdateWebsiteDataAction extends BaseAction<UpdateWebsiteDataActionData, UpdateWebsiteDataActionResponse> {
+export class UpdateWebsiteDataAction extends ChaiBaseAction<
+  UpdateWebsiteDataActionData,
+  UpdateWebsiteDataActionResponse
+> {
   protected getValidationSchema() {
     return z.object({
       data: z.record(z.string(), z.any()),

@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, safeQuery, schema } from "../../../db";
 import { ActionError } from "./action-error";
-import { BaseAction } from "./base-action";
+import { ChaiBaseAction } from "./base-action";
 
 /**
  * Data type for DeletePageRevisionAction
@@ -18,7 +18,7 @@ type DeletePageRevisionActionResponse = {
 /**
  * Action to delete a page revision
  */
-export class DeletePageRevisionAction extends BaseAction<
+export class DeletePageRevisionAction extends ChaiBaseAction<
   DeletePageRevisionActionData,
   DeletePageRevisionActionResponse
 > {

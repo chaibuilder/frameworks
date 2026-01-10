@@ -222,8 +222,8 @@ export class SlugChangeHandler {
     }
     for (const langVariant of languageVariants) {
       // Calculate new slug for language variant, preserving language prefix
-      const languageVariantParentId =
-        parentLanguageNode?.filter((node) => node.lang === langVariant.lang)[0].id || null;
+      const matchingParentLangNode = parentLanguageNode?.filter((node) => node.lang === langVariant.lang)[0];
+      const languageVariantParentId = matchingParentLangNode?.id || null;
 
       const langVariantNewSlug = this.pageTreeBuilder.calculateSlugFromParent(
         languageVariantParentId,
@@ -293,13 +293,19 @@ export class SlugChangeHandler {
           "partialBlocks",
           "designTokens",
         ]);
+        // Remove fields that are explicitly undefined to avoid unintended updates
+        Object.keys(additionalFields).forEach((key) => {
+          if (additionalFields[key as keyof typeof additionalFields] === undefined) {
+            delete additionalFields[key as keyof typeof additionalFields];
+          }
+        });
         Object.assign(updateData, {
           ...additionalFields,
           changes,
         });
       }
 
-      const { data: result, error } = await safeQuery(() =>
+      const { error } = await safeQuery(() =>
         db
           .update(schema.appPages)
           .set(updateData)
@@ -319,16 +325,13 @@ export class SlugChangeHandler {
     // Update app_pages_online table in parallel
     // Ignore errors for online table as pages might not be published
     const onlineUpdatePromises = slugUpdates.map(async (update) => {
-      const { error } = await safeQuery(() =>
+      // Intentionally ignore errors for online table as pages might not be published
+      await safeQuery(() =>
         db
           .update(schema.appPagesOnline)
           .set({ slug: update.newSlug })
           .where(and(eq(schema.appPagesOnline.id, update.id), eq(schema.appPagesOnline.app, this.appId))),
       );
-      // Silently ignore errors for online table as pages might not be published
-      if (error) {
-        console.error(`Failed to update online page ${update.id}`, error);
-      }
     });
 
     await Promise.all(onlineUpdatePromises);

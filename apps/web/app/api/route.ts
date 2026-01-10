@@ -7,7 +7,6 @@ import { NextRequest, NextResponse } from "next/server";
 const apiKey = process.env.CHAIBUILDER_API_KEY!;
 
 //TODO: Register actions
-// ChaiActionsRegistry.registerActions(SupabaseAuthActions);
 // ChaiActionsRegistry.registerActions(SupabaseStorageActions);
 
 export const POST = async (req: NextRequest) => {

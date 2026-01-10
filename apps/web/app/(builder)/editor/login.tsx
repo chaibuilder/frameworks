@@ -1,5 +1,6 @@
 "use client";
 
+//TODO: move it out of @chaibuilder/nextjs
 import { getSupabaseClient } from "@chaibuilder/nextjs";
 import { useState } from "react";
 

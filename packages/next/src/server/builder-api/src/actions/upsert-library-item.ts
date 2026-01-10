@@ -85,6 +85,7 @@ export class UpsertLibraryItemAction extends ChaiBaseAction<
     }
 
     // Handle preview image upload if provided
+    //TODO: comment out for now
     const uploadedImageUrl = await this.uploadPreviewImage(previewImage, appId, userId ?? null, siteLibrary.id);
     const finalPreviewImageUrl = uploadedImageUrl || previewImageUrl;
 

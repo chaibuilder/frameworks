@@ -1,6 +1,6 @@
 import { kebabCase } from "lodash";
 import sharp from "sharp";
-import { getSupabaseAdmin } from "../../../supabase";
+import { getSupabaseAdmin } from "../../../../../../../apps/web/supabase";
 
 interface AssetUploaderArgs {
   file: Base64URLString;

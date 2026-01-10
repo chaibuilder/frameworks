@@ -4,10 +4,10 @@ import { has } from "lodash";
 import { unstable_cache } from "next/cache";
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import { getSupabaseAdmin } from "../../../../apps/web/supabase";
 import { withDataBinding } from "../utils/with-data-binding";
 import { getPageStyles } from "./get-page-styles";
 import { ChaiBuilderPostgresBackend } from "./PagesSupabaseBackend";
-import { getSupabaseAdmin } from "./supabase";
 
 type ChaiBuilderPage =
   | {

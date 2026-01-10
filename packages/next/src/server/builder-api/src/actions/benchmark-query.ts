@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import { getSupabaseAdmin } from "../../../../../../../apps/web/supabase";
 import { db, schema } from "../../../../server/db";
-import { getSupabaseAdmin } from "../../../supabase";
 import { CHAI_PAGES_TABLE_NAME } from "../CONSTANTS";
 import { apiError } from "../lib";
 import { ChaiBaseAction } from "./base-action";

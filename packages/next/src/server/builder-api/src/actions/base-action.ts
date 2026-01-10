@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getSupabaseAdmin } from "../../../supabase";
+import { getSupabaseAdmin } from "../../../../../../../apps/web/supabase";
 import { ChaiBuilderDAM } from "../ChaiBuilderDAM";
 import { ActionError } from "./action-error";
 import { ChaiAction, ChaiActionContext } from "./chai-action-interface";

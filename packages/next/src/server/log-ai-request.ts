@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "./supabase";
+import { getSupabaseAdmin } from "../../../../apps/web/supabase";
 
 export const AI_MODELS = [
   {

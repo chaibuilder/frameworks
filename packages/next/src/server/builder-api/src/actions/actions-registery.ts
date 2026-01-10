@@ -97,6 +97,12 @@ class ChaiActionsRegistry {
     this.actions[actionName] = handler;
   }
 
+  public registerActions(actions: Record<string, ChaiAction<any, any>>): void {
+    for (const [actionName, handler] of Object.entries(actions)) {
+      this.register(actionName, handler);
+    }
+  }
+
   /**
    * Get an action handler by name
    */

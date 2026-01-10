@@ -1,4 +1,5 @@
 import { ChaiBuilderPagesBackendInterface } from "@chaibuilder/pages/server";
+import { getSupabaseAdmin } from "../../../../apps/web/supabase";
 import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { ChaiBaseAction } from "./builder-api/src/actions/base-action";
@@ -6,7 +7,6 @@ import { ChaiAssets } from "./builder-api/src/assets/class-chai-assets";
 import { SupabaseChaiBuilderBackEnd } from "./builder-api/src/SupabaseChaiBuilderBackEnd";
 import { ChaiBuilderUsers } from "./builder-api/src/users/ChaiBuilderUsers";
 import { db } from "./db";
-import { getSupabaseAdmin } from "./supabase";
 
 export class ChaiBuilderPostgresBackend implements ChaiBuilderPagesBackendInterface {
   private appId;

@@ -1,5 +1,5 @@
 import ChaiActionsRegistry from "./builder-api/src/actions/actions-registery";
-import { chaiBuilderActionHandler } from "./builder-api/src/actions/chai-builder-actions-handler";
+import { initChaiBuilderActionHandler } from "./builder-api/src/actions/chai-builder-actions-handler";
 import { ChaiBuilder } from "./chai-builder";
 
 export {
@@ -10,6 +10,10 @@ export {
 } from "@chaibuilder/pages/server";
 
 export { db, schema } from "./db";
-export { ChaiActionsRegistry, chaiBuilderActionHandler };
+export { ChaiActionsRegistry, initChaiBuilderActionHandler };
+
+//TODO:
+// export SupabaseAuthActions = { 'ACTION_NAME': new ActionClass() }
+// export SupabaseStorageActions = { 'ACTION_NAME': new ActionClass() }
 
 export default ChaiBuilder;

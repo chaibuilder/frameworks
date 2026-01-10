@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "../../../supabase";
+import { getSupabaseAdmin } from "../../../../../../../apps/web/supabase";
 import { decodedApiKey } from "../lib";
 import { ChaiBuilderUsers } from "./ChaiBuilderUsers";
 

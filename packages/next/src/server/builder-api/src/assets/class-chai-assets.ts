@@ -1,5 +1,5 @@
 import { isEmpty, set } from "lodash";
-import { getSupabaseAdmin } from "../../../supabase";
+import { getSupabaseAdmin } from "../../../../../../../apps/web/supabase";
 import { AssetUploaderInterface, SupabaseStorageUploader } from "./class-chai-uploader";
 
 type ChaiAsset = any;

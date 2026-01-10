@@ -6,10 +6,11 @@ import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { BaseAction } from "./builder-api/src/actions/base-action";
 import { ChaiBuilder } from "./chai-builder";
+import { db } from "./db";
 import { handleAskAiRequest } from "./handleAskAiRequest";
 import { logAiRequest, logAiRequestError } from "./log-ai-request";
 
-export const builderApiHandler = ({ apiKey, db, userId }: { apiKey: string; db: any; userId: string }) => {
+export const builderApiHandler = ({ apiKey, userId }: { apiKey: string; userId: string }) => {
   return async (req: NextRequest) => {
     try {
       ChaiBuilder.setSiteId(apiKey);
@@ -53,25 +54,28 @@ export const builderApiHandler = ({ apiKey, db, userId }: { apiKey: string; db: 
         const { action, data } = requestBody;
         // Get the action handler from the registry
         const actionHandler = getChaiAction(action);
-        if (actionHandler) {
-          // Validate the data first
-          if (!actionHandler.validate(data)) {
-            // For BaseAction implementations, we can get detailed validation errors
-            const errorMessages = (actionHandler as BaseAction).getValidationErrors(data);
-            return {
-              error: `Validation failed: ${errorMessages}`,
-              code: "INVALID_REQUEST_DATA",
-              status: 400,
-            };
-          }
-
-          // If action is registered in the new system, use it
-          // Set the context on the action handler
-          actionHandler.setContext({ appId: apiKey, userId, db: db });
-
-          // Execute the action
-          response = await actionHandler.execute(data);
+        if (!actionHandler) {
+          return {
+            error: `Action ${action} not found`,
+            code: "ACTION_NOT_FOUND",
+            status: 404,
+          };
         }
+        // Validate the data first
+        if (!actionHandler.validate(data)) {
+          // For BaseAction implementations, we can get detailed validation errors
+          const errorMessages = (actionHandler as BaseAction).getValidationErrors(data);
+          return {
+            error: `Validation failed: ${errorMessages}`,
+            code: "INVALID_REQUEST_DATA",
+            status: 400,
+          };
+        }
+        // If action is registered in the new system, use it
+        // Set the context on the action handler
+        actionHandler.setContext({ appId: apiKey, userId, db });
+        // Execute the action
+        response = await actionHandler.execute(data);
       }
 
       if (has(response, "error")) {
@@ -91,13 +95,7 @@ export const builderApiHandler = ({ apiKey, db, userId }: { apiKey: string; db: 
 
       // Handle ActionError with specific error code and message
       if (error instanceof ActionError) {
-        return NextResponse.json(
-          {
-            error: error.message,
-            code: error.code,
-          },
-          { status: 400 },
-        );
+        return NextResponse.json({ error: error.message, code: error.code }, { status: 400 });
       }
 
       // Generic error fallback

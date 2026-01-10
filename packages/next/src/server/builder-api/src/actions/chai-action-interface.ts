@@ -1,15 +1,10 @@
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import * as schema from "../../../../drizzle/schema";
-
 /**
  * Action Context
  * Contains information and repositories needed by actions
  */
 export interface ChaiActionContext {
   appId: string;
-  db: PostgresJsDatabase<typeof schema>;
   userId?: string;
-  req?: unknown;
 }
 
 /**

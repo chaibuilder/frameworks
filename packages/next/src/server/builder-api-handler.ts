@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { ActionError } from "./builder-api/src/actions/action-error";
 import { getChaiAction } from "./builder-api/src/actions/actions-registery";
 import { ChaiBaseAction } from "./builder-api/src/actions/base-action";
-import { db } from "./db";
 
-export const chaiBuilderActionHandler = <T>(params: { apiKey: string; userId: string; req: T }) => {
+export const chaiBuilderActionHandler = (params: { apiKey: string; userId: string }) => {
   return async (actionData: { action: string; data?: unknown }) => {
     const { apiKey, userId } = params;
     try {
@@ -66,7 +65,7 @@ export const chaiBuilderActionHandler = <T>(params: { apiKey: string; userId: st
       }
       // If action is registered in the new system, use it
       // Set the context on the action handler
-      actionHandler.setContext({ appId: apiKey, userId, db, req: params.req });
+      actionHandler.setContext({ appId: apiKey, userId });
       // Execute the action
       return await actionHandler.execute(data);
       // }
